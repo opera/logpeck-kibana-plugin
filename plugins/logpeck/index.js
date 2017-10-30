@@ -6,23 +6,23 @@ export default function (kibana) {
     require: ['elasticsearch'],
     name: 'logpeck',
     uiExports: {
-      
+
       app: {
         title: 'Logpeck',
-        description: '管理监控任务',
+        description: '管理监控',
         main: 'plugins/logpeck/app'
       },
-      
-      
+
+
       translations: [
         resolve(__dirname, './translations/es.json')
       ],
-      
-      
+
+
       hacks: [
         'plugins/logpeck/hack'
       ]
-      
+
     },
 
     config(Joi) {
@@ -31,12 +31,13 @@ export default function (kibana) {
       }).default();
     },
 
-    
+
     init(server, options) {
       // Add server routes and initialize the plugin here
+
       exampleRoute(server);
     }
-    
+
 
   });
 };
