@@ -93,20 +93,20 @@
   <div class="title">
     <div class="title_top">
       <div class="name">
-        <a href="#/">lpgpeck</a>/addTask
+        <a href="#/">logpeck</a>/addTask
       </div>
     </div>
   </div>
   <div class="head">
     <div class="head_1">
-      <p class="describe">目标机器</p>
+      <p class="describe">Target Machine</p>
       <a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
         addHost
       </a>
     </div>
     <div class="head_2">
-      <p class="describe">添加任务</p>
-      <a href='#/addTask' ng-show="visible" class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">addTask</a>
+      <p class="describe">Add Task</p>
+      <p style="float: right;margin-right: 20px;color: red">{{addTaskResult}}</p>
     </div>
   </div>
   <div class="container_0">
@@ -128,7 +128,7 @@
         <input type="text" ng-model="Index"><br>
         Type:<br>
         <input type="text" ng-model="Type"><br>
-        <button ng-click="addTask()">ADD TASK</button>
+        <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="addTask()" href="#/">ADD TASK</a>
       </form>
     </div>
   </div>
