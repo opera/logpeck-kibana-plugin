@@ -91,7 +91,7 @@
 </style>
 
 
-<div  ng-controller="logpeckInit">
+<div>
   <div class="title">
     <div class="title_top">
       <div class="name">
@@ -101,10 +101,10 @@
   </div>
   <div class="head">
     <div class="head_1">
-      <p class="describe">Machine List</p>
-      <a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
+      <p class="describe">Logpeck Host</p>
+      <!--<a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
         addHost
-      </a>
+      </a>-->
     </div>
     <div class="head_2">
       <p class="describe">Add Machine</p>
@@ -112,7 +112,7 @@
     </div>
   </div>
   <div class="container_0">
-    <div class="container_1">
+    <div class="container_1" style="margin-top: 10px">
       <li ng-repeat="index in T_IpList">
         <div class="host_list">
           <div class="host_list_name">
@@ -123,9 +123,9 @@
     </div>
     <div class="container_2">
       <form novalidate>
-        IP:<br>
+        HOST:<br>
         <input type="text" ng-model="IP"><br>
-        <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="addHost()" href="#/">ADD HOST</a>
+        <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="addHost()" >ADD HOST</a>
       </form>
     </div>
   </div>

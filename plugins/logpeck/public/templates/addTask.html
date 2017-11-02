@@ -89,7 +89,7 @@
 </style>
 
 
-<div ng-controller="logpeckInit">
+<div>
   <div class="title">
     <div class="title_top">
       <div class="name">
@@ -99,7 +99,7 @@
   </div>
   <div class="head">
     <div class="head_1">
-      <p class="describe">Target Machine</p>
+      <p class="describe">Logpeck Host</p>
       <a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
         addHost
       </a>
@@ -120,7 +120,7 @@
         Name:<br>
         <input type="text" ng-model="Name"><br>
         LogPath:<br>
-        <input type="text" ng-model="LogPath"><br><br>
+        <input type="text" ng-model="LogPath"><br>
         <p>ESConfig:</p>
         Hosts:<br>
         <input type="text" ng-model="Hosts"><br>
@@ -128,7 +128,17 @@
         <input type="text" ng-model="Index"><br>
         Type:<br>
         <input type="text" ng-model="Type"><br>
-        <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="addTask()" href="#/">ADD TASK</a>
+        Mapping:<br>
+        <input type="text" ng-model="Mapping"><br>
+        Fields:<br>
+        <input type="text" ng-model="Fields"><br>
+        Delimiters:<br>
+        <input type="text" ng-model="Delimiters"><br>
+        FilterExpr:<br>
+        <input type="text" ng-model="FilterExpr"><br>
+        LogFormat:<br>
+        <input type="text" ng-model="LogFormat"><br><br>
+        <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="addTask()" >ADD TASK</a>
       </form>
     </div>
   </div>
