@@ -55,10 +55,29 @@
     -webkit-box-align: center;
     align-items: center;
     height: 50%;
+    padding-top: 7px;
     padding-left: 10px;
     font-size: 14px;
     font-weight: bold;
     float: left;
+  }
+  .subject{
+    height: 25px;
+    width: 100%;
+    float: left;
+  }
+  .subject_1{
+    width: 35%;
+    height: 100%;
+    float: left;
+    background-color: #F6F6F6;
+  }
+  .subject_2{
+    width: 63%;
+    height: 100%;
+    float: left;
+    background-color: #F6F6F6;
+    margin-left: 2%;
   }
   .container_0{
     width: 100%;
@@ -110,40 +129,73 @@
     float: left;
   }
   .task_list_name{
-    width: 25%;
+    width: 20%;
     height: 100%;
     float: left;
   }
   .task_list_status{
-    width: 25%;
+    width: 20%;
+    height: 100%;
+    float: left;
+  }
+  .task_list_logpath{
+    width: 20%;
     height: 100%;
     float: left;
   }
   .task_list_control{
-    width: 50%;
+    width: 40%;
     height: 100%;
     float: left;
   }
+  .Button--small {
+    font-size: 12px;
+    padding: 2px 16px 3px;
+    height: 22px;
+  }
+
 </style>
 
-<div  ng-controller="logpeckInit">
+<div>
   <div class="title">
     <div class="title_top">
       <div class="name">
-        logpeck
+        Logpeck
       </div>
+      <p style="float: right;margin-right: 20px;color: red" ng-show="logstat1">{{indexLog}}</p>
+      <p style="float: right;margin-right: 20px;color: green" ng-show="logstat2">{{indexLog}}</p>
     </div>
   </div>
   <div class="head">
     <div class="head_1">
-      <p class="describe">Machine List</p>
+      <p class="describe">Logpeck Host</p>
       <a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
-        addHost
+        Add
       </a>
     </div>
-    <div class="head_2">
+    <div class="head_2" ng-show="visible">
       <p class="describe">Task List</p>
-      <a href='#/addTask' ng-show="visible" class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">addTask</a>
+      <a href='#/addTask' ng-show="visible" class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
+        Add
+      </a>
+    </div>
+  </div>
+  <div class="subject">
+    <div class="subject_1">
+      <div style="margin-left:2%">
+        Host
+      </div>
+    </div>
+    <div class="subject_2" ng-show="visible">
+      <div class="task_list_name" style="padding-left: 10px">
+        Name
+      </div>
+      <div class="task_list_status">
+        Status
+      </div>
+      <div class="task_list_logpath">
+        LogPath
+      </div>
     </div>
   </div>
   <div class="container_0">
@@ -154,29 +206,39 @@
             {{ index }}
           </div>
           <div class="host_list_control">
-            <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="listTask($event)"  name="{{ index }}" style="float: right;margin-right: 10px">
-              list
-            </a>
-            <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeHost($event)" name="{{ index }}" style="float: right;margin-right: 10px">
+            <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeHost($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: red">
               remove
+            </a>
+            <a class="kuiButton kuiButton--primary Button--small " ng-click="listTask($event)"  name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;padding-left: 18px">
+              list
             </a>
           </div>
         </div>
       </li>
     </div>
-    <div class="container_2" >
-      <li ng-repeat="index in T_Name">
+    <div class="container_2" ng-show="visible">
+      <li ng-repeat="(key,value) in T_array">
         <div class="task_list">
           <div class="task_list_name">
-            {{ index }}
+            <a ng-click="updateList($event)" name="{{ value.name }}">{{ value.name }}</a>
           </div>
-          <div class="task_list_status">
-            <p>status</p>
+          <div class="task_list_status" ng-show="value.stop" style="color: red">
+             stop
           </div>
+          <div class="task_list_status" ng-show="value.start" style="color: green">
+             start
+          </div>
+          <div class="task_list_logpath">{{value.logpath}}</div>
           <div class="task_list_control">
-            <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="startTask($event)" name="{{ index }}" style="float: right;margin-right: 5px">start</a>
-            <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="stopTask($event)" name="{{ index }}" style="float: right;margin-right: 5px">stop</a>
-            <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="removeTask($event)" name="{{ index }}" style="float: right;margin-right: 5px">remove</a>
+            <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="removeTask($event)" name="{{  value.name }}"  style="float: right;margin-right: 5px;width: 58px;background-color: red">
+              remove
+            </a>
+            <a class="kuiButton kuiButton--primary Button--small " ng-click="stopTask($event)" name="{{  key }}"   style="float: right;margin-right: 5px;width: 58px">
+             stop
+            </a>
+            <a class="kuiButton kuiButton--primary Button--small " ng-click="startTask($event)" name="{{  key }}" id="{{ key }}" style="float: right;margin-right: 5px;width: 58px">
+              start
+            </a>
           </div>
         </div>
       </li>

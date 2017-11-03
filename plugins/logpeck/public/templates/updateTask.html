@@ -87,11 +87,6 @@
     height: 50px;
     float: left;
   }
-  .table{
-    width: 100%;
-    height: 600px;
-    float: left;
-  }
   .table_1{
     width: 98%;
     height: 50px;
@@ -126,7 +121,7 @@
   }
   .Button--small {
     font-size: 12px;
-    padding: 3px 16px 3px;
+    padding: 3px 10px 3px;
     width: 60px;
     height: 25px;
   }
@@ -137,7 +132,7 @@
   <div class="title">
     <div class="title_top">
       <div class="name">
-        <a href="#/">Logpeck</a>/AddTask
+        <a href="#/">Logpeck</a>/UpdateTask
       </div>
     </div>
   </div>
@@ -145,7 +140,7 @@
     <div class="head_1">
       <p class="describe">Logpeck Host</p>
       <!--<a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
-        AddHost
+        addHost
       </a>-->
     </div>
     <div class="head_2">
@@ -156,7 +151,7 @@
   <div class="container_0">
     <div class="container_1">
       <div class="host_list">
-          <p>{{ T_ip }}</p>
+        <p>{{ T_ip }}</p>
       </div>
     </div>
     <div class="container_2">
@@ -178,7 +173,7 @@
                 <input type="text" ng-model="Name" >
               </div>
               <div style="width: 70%;float: left">
-                <input type="text" ng-model="LogPath" style="width: 60%">
+                <input type="text" ng-model="LogPath" style="width: 60%" >
               </div>
             </div>
           </div>
@@ -257,7 +252,7 @@
           </div>
         </div>
         <div class="table_4">
-          <a class="kuiButton kuiButton--primary Button--small " ng-click="addTask()" >add</a>
+          <a class="kuiButton kuiButton--primary Button--small " ng-click="updateTask()" >update</a>
         </div>
       </div>
     </div>

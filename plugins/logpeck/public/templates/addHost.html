@@ -55,6 +55,7 @@
     align-items: center;
     height: 50%;
     padding-left: 10px;
+    padding-top: 7px;
     font-size: 14px;
     font-weight: bold;
     float: left;
@@ -88,31 +89,37 @@
     height: 40px;
     float: left;
   }
+  .Button--small {
+    font-size: 12px;
+    padding: 3px 16px 3px;
+    width: 60px;
+    height: 25px;
+  }
 </style>
 
 
-<div  ng-controller="logpeckInit">
+<div>
   <div class="title">
     <div class="title_top">
       <div class="name">
-        <a href="#/">logpeck</a>/addHost
+        <a href="#/">Logpeck</a>/AddHost
       </div>
     </div>
   </div>
   <div class="head">
     <div class="head_1">
-      <p class="describe">Machine List</p>
-      <a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
+      <p class="describe">Logpeck Host</p>
+      <!--<a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
         addHost
-      </a>
+      </a>-->
     </div>
     <div class="head_2">
-      <p class="describe">Add Machine</p>
+      <p class="describe">Add Host</p>
       <p style="float: right;margin-right: 20px;color: red">{{addHostResult}}</p>
     </div>
   </div>
   <div class="container_0">
-    <div class="container_1">
+    <div class="container_1" style="margin-top: 10px">
       <li ng-repeat="index in T_IpList">
         <div class="host_list">
           <div class="host_list_name">
@@ -122,11 +129,9 @@
       </li>
     </div>
     <div class="container_2">
-      <form novalidate>
-        IP:<br>
-        <input type="text" ng-model="IP"><br>
-        <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="addHost()" href="#/">ADD HOST</a>
-      </form>
+      <br>
+      <input type="text" ng-model="IP"><br><br>
+      <a class="kuiButton kuiButton--primary Button--small " ng-click="addHost()" >add</a>
     </div>
   </div>
 </div>
