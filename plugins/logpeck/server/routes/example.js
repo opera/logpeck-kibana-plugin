@@ -176,8 +176,13 @@ export default function (server) {
             var hosts=req.payload.hosts;
             var index=req.payload.index;
             var type=req.payload.type;
+            var Mapping=req.payload.Mapping;
+            var Fields=req.payload.Fields;
+            var Delimiters=req.payload.Delimiters;
+            var FilterExpr=req.payload.FilterExpr;
+            var LogFormat=req.payload.LogFormat;
             var ip=req.payload.ip;
-            Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '"} }'},
+            Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Mapping":"' + Mapping + '"},"Fields":"' + Fields +'","Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
               (err, xyResponse, payload) => {
                 if (err) {
                   res = '[{"result":"'+err+'"}]';
@@ -303,6 +308,121 @@ export default function (server) {
               }
             });
         }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+    {
+      path: '/api/logpeck/updateList',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var ip=req.payload.ip;
+          var name=req.payload.name;
+          var  res;
+          Wreck.post('http://'+ip+'/peck_task/list',
+            (err, xyResponse, payload) => {
+              var patt=new RegExp(/^List PeckTask failed,/);
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else if(payload==undefined){
+                res='[{"result":"undefined"}]';
+                reply(res);
+              }
+              else if(patt.test(res))
+              {
+                res='[{"result":"'+payload.toString()+'"}]';
+                reply(res);
+              }
+              else{
+                if(payload.toString()=="null"){
+                  res='[{"null":"true"}]';
+                  reply(res);
+                }
+                else{
+                  var list=JSON.parse(payload.toString());
+                  console.log(list);
+                  console.log(name);
+                  for(var id=0;id<list.length;id++){
+                    if(list[id]['Name']==name){
+                      reply(list[id]);
+                    }
+                  }
+                }
+              }
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+    {
+      path: '/api/logpeck/updateTask',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        var res;
+        const example = async function () {
+          var name=req.payload.name;
+          var logpath=req.payload.logpath;
+          var hosts=req.payload.hosts;
+          var index=req.payload.index;
+          var type=req.payload.type;
+          var Mapping=req.payload.Mapping;
+          var Fields=req.payload.Fields;
+          var Delimiters=req.payload.Delimiters;
+          var FilterExpr=req.payload.FilterExpr;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          Wreck.post('http://'+ip+'/peck_task/update', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Mapping":"' + Mapping + '"},"Fields":"' + Fields +'","Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else if(payload.toString()=="Update Success") {
+                Wreck.post('http://' + ip + '/peck_task/liststats',
+                  (err, xyResponse, payload) => {
+                    var patt=new RegExp(/^List TaskStatus failed,/);
+                    if (err) {
+                      res = '[{"result":"'+err+'"}]';
+                      reply(res);
+                    }
+                    else if(payload==undefined){
+                      res='[{"result":"undefined"}]';
+                      reply(res);
+                    }
+                    else if(patt.test(res))
+                    {
+                      res='[{"result":"'+payload.toString()+'"}]';
+                      reply(res);
+                    }
+                    else {
+                      if (payload.toString() == "null") {
+                        res = '[{"null":"true"}]';
+                        reply(res);
+                      }
+                      else {
+                        reply(payload.toString());
+                      }
+                    }
+                  });
+              }
+              else{
+                res = '[{"result":"'+payload.toString()+'"}]';
+                reply(res);
+              }
+            });
+        };
         try {
           example();
         }

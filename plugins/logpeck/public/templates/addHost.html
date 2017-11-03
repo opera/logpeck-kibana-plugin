@@ -55,6 +55,7 @@
     align-items: center;
     height: 50%;
     padding-left: 10px;
+    padding-top: 7px;
     font-size: 14px;
     font-weight: bold;
     float: left;
@@ -88,6 +89,12 @@
     height: 40px;
     float: left;
   }
+  .Button--small {
+    font-size: 12px;
+    padding: 3px 16px 3px;
+    width: 60px;
+    height: 25px;
+  }
 </style>
 
 
@@ -95,7 +102,7 @@
   <div class="title">
     <div class="title_top">
       <div class="name">
-        <a href="#/">logpeck</a>/addHost
+        <a href="#/">Logpeck</a>/AddHost
       </div>
     </div>
   </div>
@@ -107,7 +114,7 @@
       </a>-->
     </div>
     <div class="head_2">
-      <p class="describe">Add Machine</p>
+      <p class="describe">Add Host</p>
       <p style="float: right;margin-right: 20px;color: red">{{addHostResult}}</p>
     </div>
   </div>
@@ -122,11 +129,9 @@
       </li>
     </div>
     <div class="container_2">
-      <form novalidate>
-        HOST:<br>
-        <input type="text" ng-model="IP"><br>
-        <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="addHost()" >ADD HOST</a>
-      </form>
+      <br>
+      <input type="text" ng-model="IP"><br><br>
+      <a class="kuiButton kuiButton--primary Button--small " ng-click="addHost()" >add</a>
     </div>
   </div>
 </div>
