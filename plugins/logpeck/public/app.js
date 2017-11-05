@@ -36,12 +36,17 @@ var update_ip=[];
 uiModules
 .get('app/logpeck', [])
 .controller('logpeckInit',function ($scope ,$rootScope,$route, $http) {
+  $scope.mycolor1={"color":"#e4e4e4"};
+  $scope.mycolor2={"color":"#e4e4e4"};
+  $scope.mycolor3={"color":"#e4e4e4"};
+  $scope.mycolor4={"color":"#e4e4e4"};
+  $scope.mycolor5={"color":"#e4e4e4"};
+
   //初始化
   $http({
     method: 'POST',
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
-    console.log(update_ip);
     var new_arr = [];
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       new_arr.push(response['data']['hits']['hits'][id]['_source']['ip']);
@@ -74,11 +79,11 @@ uiModules
       update_ip_exit=false;
     }
     else {
-      $scope.Name = "";
-      $scope.LogPath = "";
-      $scope.Hosts = "";
-      $scope.Index = "";
-      $scope.Type = "";
+      $scope.Name = "TestLog";
+      $scope.LogPath = "test.log";
+      $scope.Hosts = "127.0.0.1:9200";
+      $scope.Index = "TestLog";
+      $scope.Type = "Mock";
       $scope.Mapping = "";
       $scope.Fields = "";
       $scope.Delimiters = "";
@@ -87,7 +92,7 @@ uiModules
     }
 
     $scope.T_IpList=new_arr;     //index and addhost:   hostlist
-    $scope.IP="";                //addhost:   input IP
+    $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
 
@@ -95,10 +100,33 @@ uiModules
   });
 
 
+
+  $scope.focus = function (string,target,mycolor) {
+    console.log(target);
+    if ($scope[target]) {
+      $scope[target] = '';
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+    else{
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $scope.blur = function (string,target,mycolor) {
+    if (!$scope[target] ) {
+      $scope[target] = string;
+      $scope[mycolor]={"color":"#e4e4e4"};
+    }
+    else{
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+
+
+
+
   //list task
   $scope.listTask = function ($event) {
     $rootScope.T_ip=event.target.getAttribute('name');
-    console.log($rootScope.T_ip);
     $http({
       method: 'POST',
       url: '../api/logpeck/list',
@@ -123,7 +151,6 @@ uiModules
           }
         }
         $scope.T_array = new_arr;
-        console.log($scope.T_array);
       }
       else{
         $scope.indexLog =response['data'][0]['result'];
@@ -327,11 +354,9 @@ uiModules
       url: '../api/logpeck/updateList',
       data: {ip: $rootScope.T_ip,name: name},
     }).then(function successCallback(response) {
-      console.log(response['data']['LogFormat']);
       if(response['data']['LogFormat']==""){
         response['data']['LogFormat']=="json";
       }
-      console.log(response['data']['LogFormat']);
       update_ip=response;
       update_ip_exit=true;
       window.location.href = "#/updateTask";
