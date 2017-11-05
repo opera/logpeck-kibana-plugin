@@ -14,19 +14,7 @@ export default function (kibana) {
         url: '/app/logpeck#/',
       },
 
-
-      translations: [
-        resolve(__dirname, './translations/es.json')
-      ],
-
     },
-
-    config(Joi) {
-      return Joi.object({
-        enabled: Joi.boolean().default(true),
-      }).default();
-    },
-
 
     init(server, options) {
       // Add server routes and initialize the plugin here
