@@ -10,18 +10,14 @@ export default function (kibana) {
       app: {
         title: 'Logpeck',
         description: '管理监控',
-        main: 'plugins/logpeck/app'
+        main: 'plugins/logpeck/app',
+        url: '/app/logpeck#/',
       },
 
 
       translations: [
         resolve(__dirname, './translations/es.json')
       ],
-
-
-      hacks: [
-        'plugins/logpeck/hack'
-      ]
 
     },
 
