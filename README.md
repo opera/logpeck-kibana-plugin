@@ -1,31 +1,36 @@
-# logpeck
-
-> 管理监控任务
+# Logpeck Kibana Plugin
 
 ---
 
-## development
+## About this plugin
 
-See the [kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) for instructions setting up your development environment. Once you have completed that, use the following npm tasks.
+We have been able to control collection tasks remotely with HTTP API by [Logpeck](https://github.com/opera/logpeck) instead of Logstash(NONE configuration file).To be more convenient,We want to send these HTTP requests by kibana plugin.
 
-  - `npm start`
 
-    Start kibana and have it include this plugin
+## Installation from build
 
-  - `npm start -- --config kibana.yml`
+* Before download this plugin,you should have installed [Elasticsearch](https://www.elastic.co/downloads)，[Kibana](https://www.elastic.co/downloads)(Kibana=5.6.3) and [Logpeck](https://github.com/opera/logpeck).
 
-    You can pass any argument that you would normally send to `bin/kibana` by putting them after `--` when running `npm start`
+- `cd kibana`
 
-  - `npm run build`
+   Into your Kibana installaton directory
 
-    Build a distributable archive
+- `git clone https://github.com/opera/logpeck-kibana-plugin.git`
 
-  - `npm run test:browser`
+   Clone this plugin to the Kibana installaton directory
 
-    Run the browser tests in a real web browser
+- `sh logpeck-kibana-plugin/install.sh`
 
-  - `npm run test:server`
+   Install logpeck-kibana-plugin
 
-    Run the server tests using mocha
+- `bin/kibana`
 
-For more information about any of these commands run `npm run ${task} -- --help`.
+   run your Kibana
+   
+
+## Kibana Plugin Development
+
+See the [kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) for instructions setting up your development environment.
+
+
+
