@@ -1,7 +1,7 @@
 {
   "name": "logpeck",
   "version": "0.0.0",
-  "description": "管理监控",
+  "description": "Simple, RESTful Log Collector",
   "main": "index.js",
   "kibana": {
     "version": "5.6.3",
