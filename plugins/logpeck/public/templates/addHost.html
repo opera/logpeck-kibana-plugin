@@ -130,7 +130,7 @@
     </div>
     <div class="container_2">
       <br>
-      <input type="text" ng-model="IP"><br><br>
+      <input type="text" ng-model="IP" ng-focus="focus('127.0.0.1:7117','IP','mycolor1')" ng-blur="blur('127.0.0.1:7117','IP')" ng-style="mycolor1"><br><br>
       <a class="kuiButton kuiButton--primary Button--small " ng-click="addHost()" >add</a>
     </div>
   </div>

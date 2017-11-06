@@ -347,8 +347,6 @@ export default function (server) {
                 }
                 else{
                   var list=JSON.parse(payload.toString());
-                  console.log(list);
-                  console.log(name);
                   for(var id=0;id<list.length;id++){
                     if(list[id]['Name']==name){
                       reply(list[id]);
