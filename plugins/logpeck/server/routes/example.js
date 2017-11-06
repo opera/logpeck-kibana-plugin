@@ -168,6 +168,7 @@ export default function (server) {
       path: '/api/logpeck/addTask',
       method: 'POST',
       handler(req, reply) {
+        var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
         var res;
         const example = async function () {
@@ -182,15 +183,16 @@ export default function (server) {
                 hosts+=",";
               }
             }
+            console.log(hosts);
             var index=req.payload.index;
             var type=req.payload.type;
             var Mapping=req.payload.Mapping;
-            var Fields=req.payload.Fields;
+            var Fields=array;
             var Delimiters=req.payload.Delimiters;
             var FilterExpr=req.payload.FilterExpr;
             var LogFormat=req.payload.LogFormat;
             var ip=req.payload.ip;
-            Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields +',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
+            Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":"' + Mapping + '"},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
               (err, xyResponse, payload) => {
                 if (err) {
                   res = '[{"result":"'+err+'"}]';
@@ -375,11 +377,15 @@ export default function (server) {
       path: '/api/logpeck/updateTask',
       method: 'POST',
       handler(req, reply) {
+        //if(req.payload.Fields)
+        var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
+        //console.log(req.payload.Fields);
         var res;
         const example = async function () {
           var name=req.payload.name;
           var logpath=req.payload.logpath;
+          console.log(req.payload.hosts);
           var hostsarray=req.payload.hosts.split(',');
           var hosts='';
           for(var id=0;id<hostsarray.length;id++)
@@ -392,12 +398,12 @@ export default function (server) {
           var index=req.payload.index;
           var type=req.payload.type;
           var Mapping=req.payload.Mapping;
-          var Fields=req.payload.Fields;
+          var Fields=array;
           var Delimiters=req.payload.Delimiters;
           var FilterExpr=req.payload.FilterExpr;
           var LogFormat=req.payload.LogFormat;
           var ip=req.payload.ip;
-          Wreck.post('http://'+ip+'/peck_task/update', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields +',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
+          Wreck.post('http://'+ip+'/peck_task/update', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":"' + Mapping + '"},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
