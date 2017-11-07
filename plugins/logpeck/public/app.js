@@ -48,8 +48,10 @@ uiModules
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
     var new_arr = [];
+    console.log(response);
+    console.log(response['data']['hits']);
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-      new_arr.push(response['data']['hits']['hits'][id]['_source']['ip']);
+      new_arr.push(response['data']['hits']['hits'][id]['_id']);
     }
     if(host_ip!=""){
       new_arr.push(host_ip);
@@ -95,6 +97,7 @@ uiModules
     }
 
     $scope.T_IpList=new_arr;     //index and addhost:   hostlist
+    console.log($scope.T_IpList);
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
@@ -327,6 +330,7 @@ uiModules
   };
 
   $scope.addHost = function () {
+    console.log($scope.IP);
     if ($scope.IP == ""||$scope.IP==undefined) {
       $scope.addHostResult = "host not exist";
     }
