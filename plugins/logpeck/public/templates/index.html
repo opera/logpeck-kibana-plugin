@@ -103,6 +103,7 @@
     padding-left: 2%;
     padding-right: 2%;
     padding-top: 10px;
+    padding-bottom: 2px;
     margin-bottom: 1px;
     width: 100%;
     height: 40px;
@@ -123,6 +124,7 @@
     padding-left: 2%;
     padding-right: 2%;
     padding-top: 10px;
+    padding-bottom: 2px;
     margin-bottom: 1px;
     width: 100%;
     height: 40px;
@@ -220,7 +222,9 @@
       <li ng-repeat="(key,value) in T_array">
         <div class="task_list">
           <div class="task_list_name">
-            <a ng-click="updateList($event)" name="{{ value.name }}">{{ value.name }}</a>
+            <a ng-click="updateList($event)" name="{{ value.name }}" style="word-wrap:break-word; word-break:break-all; overflow: scroll;">
+              {{ value.name }}
+            </a>
           </div>
           <div class="task_list_status" ng-show="value.stop" style="color: red">
              stop
@@ -228,7 +232,7 @@
           <div class="task_list_status" ng-show="value.start" style="color: green">
              start
           </div>
-          <div class="task_list_logpath">{{value.logpath}}</div>
+          <div class="task_list_logpath" style="word-wrap:break-word; word-break:break-all; overflow: scroll;">{{value.logpath}}</div>
           <div class="task_list_control">
             <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="removeTask($event)" name="{{  value.name }}"  style="float: right;margin-right: 5px;width: 58px;background-color: red">
               remove

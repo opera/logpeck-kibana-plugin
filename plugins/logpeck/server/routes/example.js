@@ -173,7 +173,6 @@ export default function (server) {
         const Wreck = require('wreck');
         var res;
         const example = async function () {
-          console.log(req.payload.Mapping);
             var name=req.payload.name;
             var logpath=req.payload.logpath;
             var hostsarray=req.payload.hosts.split(',');
@@ -193,6 +192,9 @@ export default function (server) {
             var FilterExpr=req.payload.FilterExpr;
             var LogFormat=req.payload.LogFormat;
             var ip=req.payload.ip;
+            if(Mapping==""||Mapping==null){
+              Mapping='""';
+            }
             Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
               (err, xyResponse, payload) => {
                 if (err) {
@@ -250,7 +252,6 @@ export default function (server) {
           var res;
           Wreck.get('http://sg-infra-offielinees-1:9200/logpeck/host/'+ip,
             (err, xyResponse, payload) => {
-            console.log(payload.toString());
               var exist=JSON.parse(payload.toString());
               //console.log(exist);
               var res;
@@ -272,7 +273,6 @@ export default function (server) {
                   });
               }
               else{
-                console.log(req.payload.ip);
                 res = '[{"result":"Already exist"}]';
                 reply(res);
               }
@@ -373,7 +373,6 @@ export default function (server) {
         const example = async function () {
           var name=req.payload.name;
           var logpath=req.payload.logpath;
-          console.log(req.payload.hosts);
           var hostsarray=req.payload.hosts.split(',');
           var hosts='';
           for(var id=0;id<hostsarray.length;id++)
@@ -391,6 +390,9 @@ export default function (server) {
           var FilterExpr=req.payload.FilterExpr;
           var LogFormat=req.payload.LogFormat;
           var ip=req.payload.ip;
+          if(Mapping==""||Mapping==null){
+            Mapping='""';
+          }
           Wreck.post('http://'+ip+'/peck_task/update', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
             (err, xyResponse, payload) => {
               if (err) {

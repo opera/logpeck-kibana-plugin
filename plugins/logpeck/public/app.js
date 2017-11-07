@@ -48,8 +48,6 @@ uiModules
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
     var new_arr = [];
-    console.log(response);
-    console.log(response['data']['hits']);
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       new_arr.push(response['data']['hits']['hits'][id]['_id']);
     }
@@ -74,6 +72,9 @@ uiModules
       $scope.Index=update_ip['data']['ESConfig']['Index'];
       $scope.Type=update_ip['data']['ESConfig']['Type'];
       $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping']);
+      if($scope.Mapping=='null'){
+        $scope.Mapping="";
+      }
       $scope.fields_array=update_ip['data']['Fields'];
       $scope.Delimiters=update_ip['data']['Delimiters'];
       $scope.FilterExpr=update_ip['data']['FilterExpr'];
@@ -97,7 +98,6 @@ uiModules
     }
 
     $scope.T_IpList=new_arr;     //index and addhost:   hostlist
-    console.log($scope.T_IpList);
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
@@ -108,7 +108,6 @@ uiModules
 
 
   $scope.focus = function (string,target,mycolor) {
-    console.log(target);
     if ($scope[target]) {
       $scope[target] = '';
       $scope[mycolor]={"color":"#2d2d2d"};
@@ -146,7 +145,6 @@ uiModules
       url: '../api/logpeck/list',
       data: {ip: event.target.getAttribute('name')},
     }).then(function successCallback(response) {
-      console.log(response);
       $scope.indexLog ='';
       if(response['data'][0]['result']==undefined) {
         $scope.visible = true;
@@ -261,7 +259,6 @@ uiModules
   };
 
   $scope.addTask = function () {
-    console.log($scope.Mapping);
     var T=false;
     if($scope.fields_array==null){
       ;
@@ -330,7 +327,6 @@ uiModules
   };
 
   $scope.addHost = function () {
-    console.log($scope.IP);
     if ($scope.IP == ""||$scope.IP==undefined) {
       $scope.addHostResult = "host not exist";
     }
@@ -398,7 +394,6 @@ uiModules
 
   //update
   $scope.updateTask = function () {
-    console.log($scope.Hosts);
     var T=false;
     if($scope.fields_array==null){
 
@@ -421,7 +416,6 @@ uiModules
       $scope.addTaskResult = "filed is not complete";
     }
     else {
-      console.log($scope.Hosts);
       $http({
         method: 'POST',
         url: '../api/logpeck/updateTask',
