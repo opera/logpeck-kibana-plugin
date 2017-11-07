@@ -71,7 +71,7 @@ uiModules
       $scope.Hosts=update_ip['data']['ESConfig']['Hosts'].toString();
       $scope.Index=update_ip['data']['ESConfig']['Index'];
       $scope.Type=update_ip['data']['ESConfig']['Type'];
-      $scope.Mapping=update_ip['data']['ESConfig']['Mapping'];
+      $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping']);
       $scope.fields_array=update_ip['data']['Fields'];
       $scope.Delimiters=update_ip['data']['Delimiters'];
       $scope.FilterExpr=update_ip['data']['FilterExpr'];
@@ -258,6 +258,7 @@ uiModules
   };
 
   $scope.addTask = function () {
+    console.log($scope.Mapping);
     var T=false;
     if($scope.fields_array==null){
       ;
