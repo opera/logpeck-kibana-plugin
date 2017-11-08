@@ -49,7 +49,7 @@ uiModules
   }).then(function successCallback(response) {
     var new_arr = [];
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-      new_arr.push(response['data']['hits']['hits'][id]['_source']['ip']);
+      new_arr.push(response['data']['hits']['hits'][id]['_id']);
     }
     if(host_ip!=""){
       new_arr.push(host_ip);
@@ -68,15 +68,21 @@ uiModules
     if(update_ip_exit!=false){
       $scope.Name=update_ip['data']['Name'];
       $scope.LogPath=update_ip['data']['LogPath'];
-      $scope.Hosts=update_ip['data']['ESConfig']['Hosts'][0];
+      $scope.Hosts=update_ip['data']['ESConfig']['Hosts'].toString();
       $scope.Index=update_ip['data']['ESConfig']['Index'];
       $scope.Type=update_ip['data']['ESConfig']['Type'];
-      $scope.Mapping=update_ip['data']['ESConfig']['Mapping'];
-      $scope.Fields=update_ip['data']['Fields'];
+      $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping']);
+      if($scope.Mapping=='null'){
+        $scope.Mapping="";
+      }
+      $scope.fields_array=update_ip['data']['Fields'];
       $scope.Delimiters=update_ip['data']['Delimiters'];
       $scope.FilterExpr=update_ip['data']['FilterExpr'];
       $scope.LogFormat=update_ip['data']['LogFormat'];
       update_ip_exit=false;
+      if($scope.fields_array==null){
+        $scope.fields_array=[];
+      }
     }
     else {
       $scope.Name = "TestLog";
@@ -85,7 +91,7 @@ uiModules
       $scope.Index = "TestLog";
       $scope.Type = "Mock";
       $scope.Mapping = "";
-      $scope.Fields = "";
+      $scope.fields_array=[];
       $scope.Delimiters = "";
       $scope.FilterExpr = "";
       $scope.LogFormat = "json";
@@ -102,7 +108,6 @@ uiModules
 
 
   $scope.focus = function (string,target,mycolor) {
-    console.log(target);
     if ($scope[target]) {
       $scope[target] = '';
       $scope[mycolor]={"color":"#2d2d2d"};
@@ -121,7 +126,15 @@ uiModules
     }
   }
 
+  $scope.plusfields=function () {
+    $scope.fields_array.push({Name:"",Value:""});
+    //console.log($scope.fields_array);
+  }
 
+  $scope.minusfields=function () {
+    $scope.fields_array.pop();
+    //console.log($scope.fields_array);
+  }
 
 
   //list task
@@ -132,7 +145,6 @@ uiModules
       url: '../api/logpeck/list',
       data: {ip: event.target.getAttribute('name')},
     }).then(function successCallback(response) {
-      console.log(response);
       $scope.indexLog ='';
       if(response['data'][0]['result']==undefined) {
         $scope.visible = true;
@@ -247,7 +259,22 @@ uiModules
   };
 
   $scope.addTask = function () {
-    if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
+    var T=false;
+    if($scope.fields_array==null){
+      ;
+    }
+    else {
+      for (var id = 0; id < $scope.fields_array.length; id++) {
+        if ($scope.fields_array[id].Name == '' || $scope.fields_array[id].Value == '') {
+          T = true;
+          break;
+        }
+      }
+    }
+    if(T){
+      $scope.addTaskResult = "fields is not complete";
+    }
+    else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
       $scope.addTaskResult = "IP is not complete";
     }
     else if($scope.Name==""||$scope.LogPath==""||$scope.Hosts==""||$scope.Index==""||$scope.Type==""){
@@ -264,7 +291,7 @@ uiModules
           index: $scope.Index,
           type: $scope.Type,
           Mapping: $scope.Mapping,
-          Fields: $scope.Fields,
+          Fields: $scope.fields_array,
           Delimiters: $scope.Delimiters,
           FilterExpr: $scope.FilterExpr,
           LogFormat: $scope.LogFormat,
@@ -367,6 +394,21 @@ uiModules
 
   //update
   $scope.updateTask = function () {
+    var T=false;
+    if($scope.fields_array==null){
+
+    }
+    else {
+      for (var id = 0; id < $scope.fields_array.length; id++) {
+        if ($scope.fields_array[id].Name == '' || $scope.fields_array[id].Value == '') {
+          T = true;
+          break;
+        }
+      }
+    }
+    if(T){
+      $scope.addTaskResult = "fields is not complete";
+    }
     if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
       $scope.addTaskResult = "IP is not complete";
     }
@@ -384,7 +426,7 @@ uiModules
           index: $scope.Index,
           type: $scope.Type,
           Mapping: $scope.Mapping,
-          Fields: $scope.Fields,
+          Fields: $scope.fields_array,
           Delimiters: $scope.Delimiters,
           FilterExpr: $scope.FilterExpr,
           LogFormat: $scope.LogFormat,
