@@ -33,7 +33,7 @@
     float: left;
   }
   .head_1{
-    width: 35%;
+    width: 20%;
     height: 100%;
     float: left;
     background-color: #F6F6F6;
@@ -41,7 +41,7 @@
     padding-top: 10px;
   }
   .head_2{
-    width: 63%;
+    width: 78%;
     height: 100%;
     float: left;
     background-color: #F6F6F6;
@@ -66,13 +66,13 @@
     float: left;
   }
   .container_1{
-    width: 35%;
+    width: 20%;
     height: 100%;
     float: left;
   }
   .container_2{
     margin-left: 2%;
-    width: 63%;
+    width: 78%;
     height: 100%;
     float: left;
   }
@@ -87,35 +87,29 @@
     height: 50px;
     float: left;
   }
-  .table{
-    width: 100%;
-    height: 600px;
-    float: left;
-  }
   .table_1{
     width: 98%;
     height: 50px;
     float: left;
   }
   .table_2{
-    width: 98%;
-    height: 270px;
-    padding-top: 5px;
+    width: 86%;
+    height: 260px;
+    padding-top: 15px;
     padding-bottom: 5px;
     margin-top: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     border-top:3px solid #e4e4e4;
     border-bottom:3px solid #e4e4e4;
     float: left;
   }
   .table_3{
     width: 98%;
-    height: 200px;
     float: left;
   }
   .table_4{
     float: left;
-    margin-top: 10px;
+    margin-top: 40px;
   }
   .table_line{
     width: 100%;
@@ -137,7 +131,7 @@
 </style>
 
 
-<div>
+<div ng-style="divlength">
   <div class="title">
     <div class="title_top">
       <div class="name">
@@ -160,7 +154,7 @@
   <div class="container_0">
     <div class="container_1">
       <div class="host_list">
-          <p>{{ T_ip }}</p>
+        <a ng-click="jump()">{{ T_ip }}</a>
       </div>
     </div>
     <div class="container_2">
@@ -179,16 +173,16 @@
             </div>
             <div  class="table_title">
               <div style="width: 30%;float: left">
-                <input type="text" ng-model="Name" ng-focus="focus('TestLog','Name','mycolor1')" ng-blur="blur('TestLog','Name','mycolor1')" ng-style="mycolor1">
+                <input type="text" ng-model="Name" style="width: 97%" ng-focus="focus('TestLog','Name','mycolor1')" ng-blur="blur('TestLog','Name','mycolor1')" ng-style="mycolor1">
               </div>
               <div style="width: 70%;float: left">
-                <input type="text" ng-model="LogPath" style="width: 60%" ng-focus="focus('test.log','LogPath','mycolor2')" ng-blur="blur('test.log','LogPath','mycolor2')" ng-style="mycolor2">
+                <input type="text" ng-model="LogPath" style="width: 80%" ng-focus="focus('test.log','LogPath','mycolor2')" ng-blur="blur('test.log','LogPath','mycolor2')" ng-style="mycolor2">
               </div>
             </div>
           </div>
         </div>
         <div class="table_2">
-          <div  class="table_title" style="margin-bottom: 15px;font-size: 16px">
+          <div  class="table_title" style="margin-bottom: 20px;font-size: 16px">
             Elasticsearch Config:
           </div>
           <div class="table_line">
@@ -197,57 +191,57 @@
               <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
             </div>
             <div  class="table_title">
-              <input type="text" ng-model="Hosts" style="width: 74%"  ng-focus="focus('127.0.0.1:9200','Hosts','mycolor3')" ng-blur="blur('127.0.0.1:9200','Hosts','mycolor3')" ng-style="mycolor3">
+              <input type="text" ng-model="Hosts" style="width: 100%"  ng-focus="focus('127.0.0.1:9200','Hosts','mycolor3')" ng-blur="blur('127.0.0.1:9200','Hosts','mycolor3')" ng-style="mycolor3">
             </div>
           </div>
-          <div class="table_line">
-            <div  class="table_title">
-              <div style="width: 30%;float: left">
+          <div style="width: 100%;float: left">
+            <div style="width: 50%;float: left">
+              <div style="width: 100%;float: left">
                 <div style="float: left">Index:</div>
                 <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
               </div>
-              <div style="width: 70%;float: left">
+              <div style="width: 100%;float: left">
+                <input style="width: 93%;" type="text" ng-model="Index" ng-focus="focus('TestLog','Index','mycolor4')" ng-blur="blur('TestLog','Index','mycolor4')" ng-style="mycolor4">
+              </div>
+              <div style="width: 100%;float: left;margin-top: 15px">
                 <div style="float: left">Type:</div>
                 <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
               </div>
-            </div>
-            <div  class="table_title">
-              <div style="width: 30%;float: left">
-                <input type="text" ng-model="Index" ng-focus="focus('TestLog','Index','mycolor4')" ng-blur="blur('TestLog','Index','mycolor4')" ng-style="mycolor4">
-              </div>
-              <div style="width: 70%;float: left">
-                <input type="text" ng-model="Type" ng-focus="focus('Mock','Type','mycolor5')" ng-blur="blur('Mock','Type','mycolor5')" ng-style="mycolor5">
+              <div style="width: 100%;float: left">
+                <input style="width: 93%;" type="text" ng-model="Type" ng-focus="focus('Mock','Type','mycolor5')" ng-blur="blur('Mock','Type','mycolor5')" ng-style="mycolor5">
               </div>
             </div>
-          </div>
-          <div  class="table_title">
-            Mapping:
-          </div>
-          <div style="width: 100%;height: 90px;float: left">
-            <textarea rows="3" cols="51" ng-model="Mapping">
-              {{Mapping}}
-            </textarea>
+            <div style="width: 50%;float: left">
+              <div style="width: 100%;float: left">
+                Mapping:
+              </div>
+              <div style="width: 100%;float: left">
+                <textarea rows="4" cols="56" ng-model="Mapping" style="border: 1px solid gainsboro">
+                   {{Mapping}}
+                </textarea>
+              </div>
+            </div>
           </div>
         </div>
         <div class="table_3">
-          <div class="table_title" style="margin-bottom: 10px">
-            LogFormat:
-            <select ng-model="LogFormat">
-              <option value="json">json</option>
-              <option value ="text">text</option>
-            </select>
-          </div>
           <div class="table_line">
             <div class="table_title">
-              <div style="width: 30%;float: left">Delimiters:</div>
-              <div style="width: 70%;float: left">FilterExpr:</div>
+              <div style="width: 12%;float: left">LogFormat:</div>
+              <div style="width: 38%;float: left">Delimiters:</div>
+              <div style="width: 38%;float: left">FilterExpr:</div>
             </div>
             <div  class="table_title">
-              <div style="width: 30%;float: left">
-                <input type="text" ng-model="Delimiters" >
+              <div style="width: 12%;float: left">
+                <select ng-model="LogFormat">
+                  <option value="json">json</option>
+                  <option value ="text">text</option>
+                </select>
               </div>
-              <div style="width: 70%;float: left">
-                <input type="text" ng-model="FilterExpr" >
+              <div style="width: 38%;float: left">
+                <input style="width: 84%;" type="text" ng-model="Delimiters" >
+              </div>
+              <div style="width: 38%;float: left">
+                <input style="width: 100%;" type="text" ng-model="FilterExpr" >
               </div>
             </div>
           </div>
@@ -273,7 +267,7 @@
           </div>
         </div>
         <div class="table_4">
-          <a class="kuiButton kuiButton--primary Button--small " ng-click="addTask()" >add</a>
+          <a class="kuiButton kuiButton--primary Button--big " ng-click="addTask()" >add</a>
         </div>
       </div>
     </div>

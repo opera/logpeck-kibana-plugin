@@ -41,13 +41,15 @@ uiModules
   $scope.mycolor3={"color":"#e4e4e4"};
   $scope.mycolor4={"color":"#e4e4e4"};
   $scope.mycolor5={"color":"#e4e4e4"};
-
   //初始化
   $http({
     method: 'POST',
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
     var new_arr = [];
+    $scope.llength=786;
+    var t=$scope.llength+'px';
+    $scope.divlength={"height":t};
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       new_arr.push(response['data']['hits']['hits'][id]['_id']);
     }
@@ -128,11 +130,17 @@ uiModules
 
   $scope.plusfields=function () {
     $scope.fields_array.push({Name:"",Value:""});
+    $scope.llength+=26;
+    var t=$scope.llength+'px';
+    $scope.divlength={"height":t}
     //console.log($scope.fields_array);
   }
 
   $scope.minusfields=function () {
     $scope.fields_array.pop();
+    $scope.llength-=26;
+    var t=$scope.llength+'px';
+    $scope.divlength={"height":t}
     //console.log($scope.fields_array);
   }
 
@@ -459,6 +467,42 @@ uiModules
       }, function errorCallback() {
       });
     }
+  };
+
+
+  $scope.jump = function () {
+      $http({
+        method: 'POST',
+        url: '../api/logpeck/jump',
+        data: {
+          ip: $rootScope.T_ip
+        },
+      }).then(function successCallback(response) {
+        if(response['data'][0]['result']==undefined) {
+          var new_arr = [];
+          if (response['data'][0]['null'] != "true") {
+            var name;
+            var stat;
+            var start;
+            var logpath;
+            for (var id = 0; id < response['data'].length; id++) {
+              name=response['data'][id]['Name'];
+              logpath=response['data'][id]['LogPath'];
+              stat=response['data'][id]['Stop'];
+              start=!stat;
+              new_arr.push({name:name,logpath:logpath,stop:stat,start:start});
+            }
+          }
+          //$scope.T_array = new_arr;
+          task_ip = new_arr;
+          task_ip_exist = true;
+          window.location.href = "#/";
+        }
+        else {
+          $scope.addTaskResult =response['data'][0]['result'];
+        }
+      }, function errorCallback() {
+      });
   };
 
 
