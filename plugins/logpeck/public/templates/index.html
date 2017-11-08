@@ -221,8 +221,8 @@
     <div class="container_2" ng-show="visible">
       <li ng-repeat="(key,value) in T_array">
         <div class="task_list">
-          <div class="task_list_name">
-            <a ng-click="updateList($event)" name="{{ value.name }}" style="word-wrap:break-word; word-break:break-all; overflow: scroll;">
+          <div class="task_list_name" style="word-wrap:break-word; word-break:break-all; overflow: scroll;">
+            <a ng-click="updateList($event)" name="{{ value.name }}" >
               {{ value.name }}
             </a>
           </div>
