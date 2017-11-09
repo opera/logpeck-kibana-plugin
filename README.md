@@ -1,15 +1,19 @@
 # Logpeck Kibana Plugin
 
----
-
 ## About this plugin
 
-We have been able to control collection tasks remotely with HTTP API by [Logpeck](https://github.com/opera/logpeck) instead of Logstash(NONE configuration file).To be more convenient,We want to send these HTTP requests by kibana plugin.
+This plugin is used to control [Logpeck](https://github.com/opera/logpeck) which is a simple and agile log collector.
 
+Try controling our log collection task visualized and updating collection task freely.
+
+<p float="left">
+  <img src="https://github.com/opera/resources/blob/master/logpeck/1.png" width="400" />
+  <img src="https://github.com/opera/resources/blob/master/logpeck/2.png" width="400" /> 
+</p>
 
 ## Installation from build
 
-* Before download this plugin,you should have installed [Elasticsearch](https://www.elastic.co/downloads)，[Kibana](https://www.elastic.co/downloads)(Kibana=5.6.3) and [Logpeck](https://github.com/opera/logpeck).
+* Before download this plugin,you should have installed [Elasticsearch](https://www.elastic.co/downloads)，[Kibana](https://www.elastic.co/downloads)(Version >= 5.2) and [Logpeck](https://github.com/opera/logpeck).
 
 - `cd kibana`
 
