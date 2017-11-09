@@ -9,7 +9,7 @@ export default function (server) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.post('http://localhost:9200/logpeck/host/_search?q=*&pretty',
+          Wreck.post('http://sg-infra-offielinees-1:9200/logpeck/host/_search?q=*&pretty',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -250,7 +250,7 @@ export default function (server) {
         const example = async function () {
           var ip=req.payload.ip;
           var res;
-          Wreck.get('http://localhost:9200/logpeck/host/'+ip,
+          Wreck.get('http://sg-infra-offielinees-1:9200/logpeck/host/'+ip,
             (err, xyResponse, payload) => {
               var exist=JSON.parse(payload.toString());
               //console.log(exist);
@@ -260,7 +260,7 @@ export default function (server) {
                 reply(res);
               }
               else if(exist['found']==false) {
-                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "true"}'},
+                Wreck.put('http://sg-infra-offielinees-1:9200/logpeck/host/'+ip,{payload: '{ "exist" : "true"}'},
                   (err, xyResponse, payload) => {
                     if (err) {
                       res='[{"result":"err"}]';
@@ -294,7 +294,7 @@ export default function (server) {
           var ip=req.payload.ip;
           var res;
 
-          Wreck.delete('http://localhost:9200/logpeck/host/' + ip + '?',
+          Wreck.delete('http://sg-infra-offielinees-1:9200/logpeck/host/' + ip + '?',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';

@@ -191,7 +191,7 @@
               <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
             </div>
             <div  class="table_title">
-              <input type="text" ng-model="Hosts" style="width: 100%"  ng-focus="focus('127.0.0.1:9200','Hosts','mycolor3')" ng-blur="blur('127.0.0.1:9200','Hosts','mycolor3')" ng-style="mycolor3">
+              <input type="text" ng-model="Hosts" style="width: 100%"  ng-focus="focus2('sg-infra-offielinees-1:9200,sg-infra-offielinees-2:9200,sg-infra-offielinees-3:9200,sg-infra-offielinees-4:9200,sg-infra-offielinees-5:9200','Hosts','mycolor3')" ng-blur="blur2('sg-infra-offielinees-1:9200,sg-infra-offielinees-2:9200,sg-infra-offielinees-3:9200,sg-infra-offielinees-4:9200,sg-infra-offielinees-5:9200','Hosts','mycolor3')" ng-style="mycolor3">
             </div>
           </div>
           <div style="width: 100%;float: left">
@@ -201,14 +201,14 @@
                 <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
               </div>
               <div style="width: 100%;float: left">
-                <input style="width: 93%;" type="text" ng-model="Index" ng-focus="focus('TestLog','Index','mycolor4')" ng-blur="blur('TestLog','Index','mycolor4')" ng-style="mycolor4">
+                <input style="width: 93%;" type="text" ng-model="Index" ng-focus="focus2('my_index-%{+2006.01.02}','Index','mycolor4')" ng-blur="blur2('my_index-%{+2006.01.02}','Index','mycolor4')" ng-style="mycolor4">
               </div>
               <div style="width: 100%;float: left;margin-top: 15px">
                 <div style="float: left">Type:</div>
                 <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
               </div>
               <div style="width: 100%;float: left">
-                <input style="width: 93%;" type="text" ng-model="Type" ng-focus="focus('Mock','Type','mycolor5')" ng-blur="blur('Mock','Type','mycolor5')" ng-style="mycolor5">
+                <input style="width: 93%;" type="text" ng-model="Type" ng-focus="focus('MyType','Type','mycolor5')" ng-blur="blur('MyType','Type','mycolor5')" ng-style="mycolor5">
               </div>
             </div>
             <div style="width: 50%;float: left">
@@ -216,7 +216,7 @@
                 Mapping:
               </div>
               <div style="width: 100%;float: left">
-                <textarea rows="4" cols="56" ng-model="Mapping" style="border: 1px solid gainsboro">
+                <textarea rows="4" cols="56" ng-model="Mapping" style="border: 1px solid gainsboro" ng-focus="focus3('Mapping','mycolor6')" ng-focus="blur3('Mapping','mycolor6')" ng-style="mycolor6">
                    {{Mapping}}
                 </textarea>
               </div>
