@@ -92,7 +92,7 @@ uiModules
     else {
       $scope.Name = "TestLog";
       $scope.LogPath = "test.log";
-      $scope.Hosts = "sg-infra-offielinees-1:9200,sg-infra-offielinees-2:9200,sg-infra-offielinees-3:9200,sg-infra-offielinees-4:9200,sg-infra-offielinees-5:9200";
+      $scope.Hosts = "127.0.0.1:9200";
       $scope.Index = "my_index-%{+2006.01.02}";
       $scope.Type = "MyType";
       $scope.Mapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
