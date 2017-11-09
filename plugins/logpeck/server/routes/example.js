@@ -188,7 +188,16 @@ export default function (server) {
             var type=req.payload.type;
             var Mapping=req.payload.Mapping;
             var Fields=array;
-            var Delimiters=req.payload.Delimiters;
+            var tmp=req.payload.Delimiters;
+            var Delimiters='';
+            for(var id=0;id<tmp.length;id++)
+            {
+              if(tmp[id]=='"'){
+                Delimiters+="\\";
+              }
+              Delimiters+=tmp[id];
+            }
+            console.log(Delimiters);
             var FilterExpr=req.payload.FilterExpr;
             var LogFormat=req.payload.LogFormat;
             var ip=req.payload.ip;
@@ -239,6 +248,7 @@ export default function (server) {
           example();
         }
         catch (err) {
+          console.log('err');
         }
       }
     },
@@ -386,7 +396,15 @@ export default function (server) {
           var type=req.payload.type;
           var Mapping=req.payload.Mapping;
           var Fields=array;
-          var Delimiters=req.payload.Delimiters;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
           var FilterExpr=req.payload.FilterExpr;
           var LogFormat=req.payload.LogFormat;
           var ip=req.payload.ip;
@@ -440,6 +458,50 @@ export default function (server) {
         }
       }
     },
+
+    {
+      path: '/api/logpeck/jump',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        var res;
+        const example = async function () {
+          var ip=req.payload.ip;
+          Wreck.post('http://' + ip + '/peck_task/liststats',
+            (err, xyResponse, payload) => {
+              var patt=new RegExp(/^List TaskStatus failed,/);
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else if(payload==undefined){
+                res='[{"result":"undefined"}]';
+                reply(res);
+              }
+              else if(patt.test(res))
+              {
+                res='[{"result":"'+payload.toString()+'"}]';
+                reply(res);
+              }
+              else {
+                if (payload.toString() == "null") {
+                  res = '[{"null":"true"}]';
+                  reply(res);
+                }
+                else {
+                  reply(payload.toString());
+                }
+              }
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
   ]);
 
 }

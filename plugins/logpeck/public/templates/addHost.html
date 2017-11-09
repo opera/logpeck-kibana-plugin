@@ -33,7 +33,7 @@
     float: left;
   }
   .head_1{
-    width: 35%;
+    width: 30%;
     height: 100%;
     float: left;
     background-color: #F6F6F6;
@@ -41,7 +41,7 @@
     padding-top: 10px;
   }
   .head_2{
-    width: 63%;
+    width: 68%;
     height: 100%;
     float: left;
     background-color: #F6F6F6;
@@ -66,13 +66,13 @@
     float: left;
   }
   .container_1{
-    width: 35%;
+    width: 30%;
     height: 100%;
     float: left;
   }
   .container_2{
     margin-left: 2%;
-    width: 63%;
+    width: 68%;
     height: 100%;
     float: left;
   }
@@ -120,7 +120,7 @@
   </div>
   <div class="container_0">
     <div class="container_1" style="margin-top: 10px">
-      <li ng-repeat="index in T_IpList">
+      <li ng-repeat="index in T_IpList | orderBy:index">
         <div class="host_list">
           <div class="host_list_name">
             {{ index }}

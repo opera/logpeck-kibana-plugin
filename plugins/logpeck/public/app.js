@@ -9,6 +9,7 @@ import template2 from './templates/addTask.html';
 import template3 from './templates/addHost.html';
 import template4 from './templates/updateTask.html';
 
+
 uiRoutes.enable();
 uiRoutes
   .when('/', {
@@ -41,6 +42,7 @@ uiModules
   $scope.mycolor3={"color":"#e4e4e4"};
   $scope.mycolor4={"color":"#e4e4e4"};
   $scope.mycolor5={"color":"#e4e4e4"};
+  $scope.mycolor6={"color":"#e4e4e4"};
 
   //初始化
   $http({
@@ -48,6 +50,9 @@ uiModules
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
     var new_arr = [];
+    $scope.llength=786;
+    var t=$scope.llength+'px';
+    $scope.divlength={"height":t};
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       new_arr.push(response['data']['hits']['hits'][id]['_id']);
     }
@@ -71,7 +76,7 @@ uiModules
       $scope.Hosts=update_ip['data']['ESConfig']['Hosts'].toString();
       $scope.Index=update_ip['data']['ESConfig']['Index'];
       $scope.Type=update_ip['data']['ESConfig']['Type'];
-      $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping']);
+      $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping'],null,4);
       if($scope.Mapping=='null'){
         $scope.Mapping="";
       }
@@ -87,10 +92,10 @@ uiModules
     else {
       $scope.Name = "TestLog";
       $scope.LogPath = "test.log";
-      $scope.Hosts = "127.0.0.1:9200";
-      $scope.Index = "TestLog";
-      $scope.Type = "Mock";
-      $scope.Mapping = "";
+      $scope.Hosts = "sg-infra-offielinees-1:9200,sg-infra-offielinees-2:9200,sg-infra-offielinees-3:9200,sg-infra-offielinees-4:9200,sg-infra-offielinees-5:9200";
+      $scope.Index = "my_index-%{+2006.01.02}";
+      $scope.Type = "MyType";
+      $scope.Mapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
       $scope.fields_array=[];
       $scope.Delimiters = "";
       $scope.FilterExpr = "";
@@ -107,9 +112,9 @@ uiModules
 
 
 
+
   $scope.focus = function (string,target,mycolor) {
     if ($scope[target]) {
-      $scope[target] = '';
       $scope[mycolor]={"color":"#2d2d2d"};
     }
     else{
@@ -125,14 +130,38 @@ uiModules
       $scope[mycolor]={"color":"#2d2d2d"};
     }
   }
+  $scope.focus3 = function (target,mycolor) {
+    if ($scope[target]) {
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+    else{
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $scope.blur3 = function (target,mycolor) {
+    if (!$scope[target] ) {
+      $scope[target] = "";
+      $scope[mycolor]={"color":"#e4e4e4"};
+    }
+    else{
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+
 
   $scope.plusfields=function () {
     $scope.fields_array.push({Name:"",Value:""});
+    $scope.llength+=26;
+    var t=$scope.llength+'px';
+    $scope.divlength={"height":t}
     //console.log($scope.fields_array);
   }
 
   $scope.minusfields=function () {
     $scope.fields_array.pop();
+    $scope.llength-=26;
+    var t=$scope.llength+'px';
+    $scope.divlength={"height":t}
     //console.log($scope.fields_array);
   }
 
@@ -322,6 +351,7 @@ uiModules
           $scope.addTaskResult =response['data'][0]['result'];
         }
       }, function errorCallback() {
+        console.log('err');
       });
     }
   };
@@ -460,6 +490,46 @@ uiModules
       });
     }
   };
+
+
+  $scope.jump = function () {
+      $http({
+        method: 'POST',
+        url: '../api/logpeck/jump',
+        data: {
+          ip: $rootScope.T_ip
+        },
+      }).then(function successCallback(response) {
+        if(response['data'][0]['result']==undefined) {
+          var new_arr = [];
+          if (response['data'][0]['null'] != "true") {
+            var name;
+            var stat;
+            var start;
+            var logpath;
+            for (var id = 0; id < response['data'].length; id++) {
+              name=response['data'][id]['Name'];
+              logpath=response['data'][id]['LogPath'];
+              stat=response['data'][id]['Stop'];
+              start=!stat;
+              new_arr.push({name:name,logpath:logpath,stop:stat,start:start});
+            }
+          }
+          //$scope.T_array = new_arr;
+          task_ip = new_arr;
+          task_ip_exist = true;
+          window.location.href = "#/";
+        }
+        else {
+          $scope.addTaskResult =response['data'][0]['result'];
+        }
+      }, function errorCallback() {
+      });
+  };
+
+  $scope.addDefault=function () {
+    $scope.Delimiters='":{} ,[]';
+  }
 
 
 })
