@@ -112,9 +112,9 @@ uiModules
 
 
 
+
   $scope.focus = function (string,target,mycolor) {
     if ($scope[target]) {
-      $scope[target] = '';
       $scope[mycolor]={"color":"#2d2d2d"};
     }
     else{
@@ -122,23 +122,6 @@ uiModules
     }
   }
   $scope.blur = function (string,target,mycolor) {
-    if (!$scope[target] ) {
-      $scope[target] = string;
-      $scope[mycolor]={"color":"#e4e4e4"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.focus2 = function (string,target,mycolor) {
-    if ($scope[target]) {
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.blur2 = function (string,target,mycolor) {
     if (!$scope[target] ) {
       $scope[target] = string;
       $scope[mycolor]={"color":"#e4e4e4"};
@@ -368,6 +351,7 @@ uiModules
           $scope.addTaskResult =response['data'][0]['result'];
         }
       }, function errorCallback() {
+        console.log('err');
       });
     }
   };
@@ -542,6 +526,10 @@ uiModules
       }, function errorCallback() {
       });
   };
+
+  $scope.addDefault=function () {
+    $scope.Delimiters='":{} ,[]';
+  }
 
 
 })
