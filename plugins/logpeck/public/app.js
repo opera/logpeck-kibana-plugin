@@ -9,6 +9,7 @@ import template2 from './templates/addTask.html';
 import template3 from './templates/addHost.html';
 import template4 from './templates/updateTask.html';
 
+
 uiRoutes.enable();
 uiRoutes
   .when('/', {
@@ -41,6 +42,8 @@ uiModules
   $scope.mycolor3={"color":"#e4e4e4"};
   $scope.mycolor4={"color":"#e4e4e4"};
   $scope.mycolor5={"color":"#e4e4e4"};
+  $scope.mycolor6={"color":"#e4e4e4"};
+
   //初始化
   $http({
     method: 'POST',
@@ -73,7 +76,7 @@ uiModules
       $scope.Hosts=update_ip['data']['ESConfig']['Hosts'].toString();
       $scope.Index=update_ip['data']['ESConfig']['Index'];
       $scope.Type=update_ip['data']['ESConfig']['Type'];
-      $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping']);
+      $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping'],null,4);
       if($scope.Mapping=='null'){
         $scope.Mapping="";
       }
@@ -90,9 +93,9 @@ uiModules
       $scope.Name = "TestLog";
       $scope.LogPath = "test.log";
       $scope.Hosts = "127.0.0.1:9200";
-      $scope.Index = "TestLog";
-      $scope.Type = "Mock";
-      $scope.Mapping = "";
+      $scope.Index = "my_index-%{+2006.01.02}";
+      $scope.Type = "MyType";
+      $scope.Mapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
       $scope.fields_array=[];
       $scope.Delimiters = "";
       $scope.FilterExpr = "";
@@ -109,9 +112,9 @@ uiModules
 
 
 
+
   $scope.focus = function (string,target,mycolor) {
     if ($scope[target]) {
-      $scope[target] = '';
       $scope[mycolor]={"color":"#2d2d2d"};
     }
     else{
@@ -127,6 +130,24 @@ uiModules
       $scope[mycolor]={"color":"#2d2d2d"};
     }
   }
+  $scope.focus3 = function (target,mycolor) {
+    if ($scope[target]) {
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+    else{
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $scope.blur3 = function (target,mycolor) {
+    if (!$scope[target] ) {
+      $scope[target] = "";
+      $scope[mycolor]={"color":"#e4e4e4"};
+    }
+    else{
+      $scope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+
 
   $scope.plusfields=function () {
     $scope.fields_array.push({Name:"",Value:""});
@@ -330,6 +351,7 @@ uiModules
           $scope.addTaskResult =response['data'][0]['result'];
         }
       }, function errorCallback() {
+        console.log('err');
       });
     }
   };
@@ -504,6 +526,10 @@ uiModules
       }, function errorCallback() {
       });
   };
+
+  $scope.addDefault=function () {
+    $scope.Delimiters='":{} ,[]';
+  }
 
 
 })

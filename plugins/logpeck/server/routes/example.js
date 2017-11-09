@@ -188,7 +188,16 @@ export default function (server) {
             var type=req.payload.type;
             var Mapping=req.payload.Mapping;
             var Fields=array;
-            var Delimiters=req.payload.Delimiters;
+            var tmp=req.payload.Delimiters;
+            var Delimiters='';
+            for(var id=0;id<tmp.length;id++)
+            {
+              if(tmp[id]=='"'){
+                Delimiters+="\\";
+              }
+              Delimiters+=tmp[id];
+            }
+            console.log(Delimiters);
             var FilterExpr=req.payload.FilterExpr;
             var LogFormat=req.payload.LogFormat;
             var ip=req.payload.ip;
@@ -239,6 +248,7 @@ export default function (server) {
           example();
         }
         catch (err) {
+          console.log('err');
         }
       }
     },
@@ -386,7 +396,15 @@ export default function (server) {
           var type=req.payload.type;
           var Mapping=req.payload.Mapping;
           var Fields=array;
-          var Delimiters=req.payload.Delimiters;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
           var FilterExpr=req.payload.FilterExpr;
           var LogFormat=req.payload.LogFormat;
           var ip=req.payload.ip;

@@ -120,7 +120,7 @@
   </div>
   <div class="container_0">
     <div class="container_1" style="margin-top: 10px">
-      <li ng-repeat="index in T_IpList">
+      <li ng-repeat="index in T_IpList | orderBy:index">
         <div class="host_list">
           <div class="host_list_name">
             {{ index }}
