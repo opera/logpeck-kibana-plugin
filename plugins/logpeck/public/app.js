@@ -49,15 +49,18 @@ uiModules
     method: 'POST',
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
+    $scope.llength=640;
     var new_arr = [];
-    $scope.llength=786;
+    $scope.T_IpList=[];
     var t=$scope.llength+'px';
     $scope.divlength={"height":t};
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-      new_arr.push(response['data']['hits']['hits'][id]['_id']);
+      //new_arr.push(response['data']['hits']['hits'][id]['_id']);
+      $scope.T_IpList.push(response['data']['hits']['hits'][id]['_id']);
     }
     if(host_ip!=""){
-      new_arr.push(host_ip);
+      //new_arr.push(host_ip);
+      $scope.T_IpList.push(host_ip);
       host_ip="";
     }
     if(task_ip_exist!=false){
@@ -102,15 +105,27 @@ uiModules
       $scope.LogFormat = "json";
     }
 
-    $scope.T_IpList=new_arr;     //index and addhost:   hostlist
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
 
   }, function errorCallback() {
+    console.log('err');
   });
 
 
+  $http({
+    method: 'POST',
+    url: '../api/logpeck/list_model',
+  }).then(function successCallback(response) {
+    $scope.ModelList=[];
+    for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
+      //new_arr.push(response['data']['hits']['hits'][id]['_id']);
+      $scope.ModelList.push(response['data']['hits']['hits'][id]['_id']);
+    }
+  }, function errorCallback(err) {
+    console.log('err');
+  });
 
 
   $scope.focus = function (string,target,mycolor) {
@@ -375,6 +390,7 @@ uiModules
           $scope.addHostResult = response['data'][0]['result'];
         }
       }, function errorCallback() {
+        console.log('err');
       });
     }
   };
@@ -529,8 +545,104 @@ uiModules
 
   $scope.addDefault=function () {
     $scope.Delimiters='":{} ,[]';
-  }
+  };
 
+  $scope.addModel = function () {
+    if ($scope.model_name == ""||$scope.model_name ==undefined) {
+      $scope.addTaskResult = "model is null";
+    }
+    else{
+      var exist= false;
+      for(var i=0;i<$scope.ModelList.length;i++)
+      {
+        if($scope.model_name ==$scope.ModelList[i]){
+          exist=true;
+        }
+      }
+      if(exist==true)
+      {
+        if(!confirm("Confirm coverage")){
+          return;
+        }
+      }
+      $http({
+        method: 'POST',
+        url: '../api/logpeck/addModel',
+        data: {
+          model_name: $scope.model_name,
+          name: $scope.Name,
+          logpath: $scope.LogPath,
+          hosts: $scope.Hosts,
+          index: $scope.Index,
+          type: $scope.Type,
+          Mapping: $scope.Mapping,
+          Fields: $scope.fields_array,
+          Delimiters: $scope.Delimiters,
+          FilterExpr: $scope.FilterExpr,
+          LogFormat: $scope.LogFormat,
+        },
+      }).then(function successCallback(response) {
+        if (response['data'][0]['result'] == "Add success") {
+          $scope.ModelList.push($scope.model_name);
+          console.log($scope.ModelList);
+          $scope.addTaskResult = response['data'][0]['result'];
+          $scope.model_name ="";
+        }
+        else{
+          $scope.addTaskResult = response['data'][0]['result'];
+        }
+      }, function errorCallback() {
+        console.log('err');
+      });
+    }
+  };
+  $scope.removeModel = function ($event) {
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/removeModel',
+      data:{model: event.target.getAttribute('name')},
+    }).then(function successCallback(response) {
+      console.log("app")
+      $scope.addTaskResult ='';
+      if(response['data'][0]['result'] != "err"){
+        var new_arr = [];
+        for (var id=0 ; id<$scope.ModelList.length ; id++) {
+          if(response['data'][0]['result']!=$scope.ModelList[id]) {
+            new_arr.push($scope.ModelList[id]);
+          }
+        }
+        $scope.ModelList=new_arr;
+      }
+      else{
+        $scope.addTaskResult=response['data'][0]['result'];
+      }
+    }, function errorCallback() {
+    });
+  };
+
+  $scope.applyModel = function ($event){
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/apply_model',
+      data:{model: event.target.getAttribute('name')},
+    }).then(function successCallback(response) {
+      console.log(response['data']['_source'])
+      $scope.Name=response['data']['_source']['Name'];
+      $scope.LogPath=response['data']['_source']['LogPath'];
+      $scope.Hosts=response['data']['_source']['ESConfig']['Hosts'].toString();
+      $scope.Index=response['data']['_source']['ESConfig']['Index'];
+      $scope.Type=response['data']['_source']['ESConfig']['Type'];
+      $scope.Mapping=JSON.stringify(response['data']['_source']['ESConfig']['Mapping'],null,4);
+      if($scope.Mapping=='null'){
+        $scope.Mapping="";
+      }
+      $scope.fields_array=response['data']['_source']['Fields'];
+      $scope.Delimiters=response['data']['_source']['Delimiters'];
+      $scope.FilterExpr=response['data']['_source']['FilterExpr'];
+      $scope.LogFormat=response['data']['_source']['LogFormat'];
+    }, function errorCallback() {
+    });
+  };
 
 })
 

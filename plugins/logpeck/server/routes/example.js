@@ -9,13 +9,15 @@ export default function (server) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.post('http://sg-infra-offielinees-1:9200/logpeck/host/_search?q=*&pretty',
+          Wreck.post('http://localhost:9200/logpeck/host/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
               }
               reply(payload.toString());
+              console.log("...................");
+              console.log(payload.toString());
             });
         };
         try {
@@ -260,7 +262,7 @@ export default function (server) {
         const example = async function () {
           var ip=req.payload.ip;
           var res;
-          Wreck.get('http://sg-infra-offielinees-1:9200/logpeck/host/'+ip,
+          Wreck.get('http://localhost:9200/logpeck/host/'+ip,
             (err, xyResponse, payload) => {
               var exist=JSON.parse(payload.toString());
               //console.log(exist);
@@ -270,7 +272,7 @@ export default function (server) {
                 reply(res);
               }
               else if(exist['found']==false) {
-                Wreck.put('http://sg-infra-offielinees-1:9200/logpeck/host/'+ip,{payload: '{ "exist" : "true"}'},
+                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "true"}'},
                   (err, xyResponse, payload) => {
                     if (err) {
                       res='[{"result":"err"}]';
@@ -304,7 +306,7 @@ export default function (server) {
           var ip=req.payload.ip;
           var res;
 
-          Wreck.delete('http://sg-infra-offielinees-1:9200/logpeck/host/' + ip + '?',
+          Wreck.delete('http://localhost:9200/logpeck/host/' + ip + '?',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -492,6 +494,150 @@ export default function (server) {
                   reply(payload.toString());
                 }
               }
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
+    {
+      path: '/api/logpeck/addModel',
+      method: 'POST',
+      handler(req, reply) {
+        var array=JSON.stringify(req.payload.Fields);
+        const Wreck = require('wreck');
+        const example = async function () {
+          var model_name=req.payload.model_name;
+          var name=req.payload.name;
+          var logpath=req.payload.logpath;
+          var hostsarray=req.payload.hosts.split(',');
+          var hosts='';
+          for(var id=0;id<hostsarray.length;id++)
+          {
+            hosts+='"'+hostsarray[id]+'"';
+            if(id+1<hostsarray.length){
+              hosts+=",";
+            }
+          }
+          var index=req.payload.index;
+          var type=req.payload.type;
+          var Mapping=req.payload.Mapping;
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var FilterExpr=req.payload.FilterExpr;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          if(Mapping==""||Mapping==null){
+            Mapping='""';
+          }
+          var res;
+          Wreck.put('http://localhost:9200/logpeck/model/'+model_name,{payload: '{"Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '"}'},
+            (err, xyResponse, payload) => {
+              if (err) {
+                res='[{"result":"err"}]';
+                reply(res);
+              }
+              else {
+                console.log(payload.toString());
+                res = '[{"result":"Add success"}]';
+                reply(res);
+              }
+            });
+        }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
+    {
+      path: '/api/logpeck/removeModel',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var model_name=req.payload.model;
+          var res;
+
+          Wreck.delete('http://localhost:9200/logpeck/model/' + model_name + '?',
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else {
+                res = '[{"result":"' + model_name + '"}]';
+                reply(res);
+              }
+            });
+        }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
+    {
+      path: '/api/logpeck/apply_model',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var model_name=req.payload.model;
+          var res;
+
+          Wreck.get('http://localhost:9200/logpeck/model/' + model_name ,
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else {
+                console.log(payload.toString());
+                reply(payload.toString());
+              }
+            });
+        }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
+    {
+      path: '/api/logpeck/list_model',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var res;
+          Wreck.post('http://localhost:9200/logpeck/model/_search?q=*&size=1000&pretty',
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              reply(payload.toString());
+              console.log("...................");
+              console.log(payload.toString());
             });
         };
         try {
