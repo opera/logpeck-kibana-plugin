@@ -271,6 +271,9 @@ uiModules
 
   //removeTask
   $scope.removeTask = function ($event) {
+    if(!confirm("Remove a task")){
+      return;
+    }
     $http({
       method: 'POST',
       url: '../api/logpeck/remove',
@@ -396,6 +399,9 @@ uiModules
   };
 
   $scope.removeHost = function ($event) {
+    if(!confirm("Remove a host")){
+      return;
+    }
     $http({
       method: 'POST',
       url: '../api/logpeck/removeHost',
