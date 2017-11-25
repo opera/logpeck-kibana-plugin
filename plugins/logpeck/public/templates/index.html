@@ -28,7 +28,6 @@
   }
   .head{
     margin-top: 20px;
-    margin-bottom: 20px;
     height: 50px;
     width: 100%;
     float: left;
@@ -68,9 +67,9 @@
   }
   .subject_1{
     width: 26%;
-    height: 100%;
+    height: 645px;
     float: left;
-    background-color: #F6F6F6;
+    overflow: auto;
   }
   .subject_2{
     width: 72%;
@@ -78,23 +77,7 @@
     float: left;
     background-color: #F6F6F6;
     margin-left: 2%;
-  }
-  .container_0{
-    width: 100%;
-    height: 100%;
-    float: left;
-  }
-  .container_1{
-    width: 26%;
-    height: 600px;
-    float: left;
-    overflow: auto;
-  }
-  .container_2{
-    margin-left: 2%;
-    width: 72%;
-    height: 100%;
-    float: left;
+    margin-top: 20px;
   }
   li{
     list-style-type:none
@@ -191,82 +174,72 @@
       </a>
     </div>
   </div>
-  <div class="subject">
-    <div class="subject_1">
-      <div style="margin-left:2%">
-        Host
-      </div>
-    </div>
-    <div class="subject_2" ng-show="visible">
-      <div class="task_list_name" style="padding-left: 10px">
-        Name
-      </div>
-      <div class="task_list_status" style="width: 20%">
-        Status
-      </div>
-      <div class="task_list_logpath">
-        LogPath
-      </div>
-    </div>
-  </div>
-  <div class="container_0">
-    <div class="container_1">
-      <li ng-repeat="index in T_IpList | orderBy:index">
-        <div class="host_list">
-          <div class="host_list_name">
-            <a ng-click="listTask($event)"  name="{{ index }}">
-              {{ index }}
-            </a>
-          </div>
-          <div class="host_list_control">
-            <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeHost($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: red">
-              remove
-            </a>
-          </div>
-        </div>
-      </li>
-    </div>
-    <div class="container_2" ng-show="visible">
-      <li ng-repeat="(key,value) in T_array">
-        <div class="task_list">
-          <div style="width: 23%;height: 100%;float: left">
-            <div class="task_list_name2">
-              <div style="vertical-align:middle; display:table-cell; word-wrap:break-word; word-break:break-all; overflow: scroll; ">
-              <a ng-click="updateList($event)" name="{{ value.name }}">
-                {{ value.name }}
+    <div class="subject">
+      <div class="subject_1">
+        <li ng-repeat="index in T_IpList | orderBy:index">
+          <div class="host_list">
+            <div class="host_list_name">
+              <a ng-click="listTask($event)"  name="{{ index }}">
+                {{ index }}
               </a>
-              </div>
+            </div>
+            <div class="host_list_control">
+              <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeHost($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: red">
+                remove
+              </a>
             </div>
           </div>
-          <div class="task_list_status" ng-show="value.stop" style="color: red;padding-top: 11px;">
-             stop
-          </div>
-          <div class="task_list_status" ng-show="value.start" style="color: green;padding-top: 11px;">
-             start
-          </div>
-
-          <div style="width: 34%;height: 100%;float: left">
-            <div class="task_list_name2">
-              <div style="vertical-align:middle; display:table-cell;word-wrap:break-word; word-break:break-all; overflow: scroll;">
-                {{value.logpath}}
-              </div>
-            </div>
-          </div>
-
-
-          <div class="task_list_control">
-            <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="removeTask($event)" name="{{  value.name }}"  style="float: right;margin-right: 5px;width: 58px;background-color: red">
-              remove
-            </a>
-            <a class="kuiButton kuiButton--primary Button--small " ng-click="stopTask($event)" name="{{  key }}"   style="float: right;margin-right: 5px;width: 58px">
-             stop
-            </a>
-            <a class="kuiButton kuiButton--primary Button--small " ng-click="startTask($event)" name="{{  key }}" id="{{ key }}" style="float: right;margin-right: 5px;width: 58px">
-              start
-            </a>
-          </div>
+        </li>
+      </div>
+      <div class="subject_2" ng-show="visible">
+        <div class="task_list_name" style="padding-left: 10px">
+          Name
         </div>
-      </li>
+        <div class="task_list_status" style="width: 20%">
+          Status
+        </div>
+        <div class="task_list_logpath">
+          LogPath
+        </div>
+        <li ng-repeat="(key,value) in T_array">
+          <div class="task_list">
+            <div style="width: 23%;height: 100%;float: left">
+              <div class="task_list_name2">
+                <div style="vertical-align:middle; display:table-cell; word-wrap:break-word; word-break:break-all; overflow: scroll; ">
+                  <a ng-click="updateList($event)" name="{{ value.name }}">
+                    {{ value.name }}
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="task_list_status" ng-show="value.stop" style="color: red;padding-top: 11px;">
+              stop
+            </div>
+            <div class="task_list_status" ng-show="value.start" style="color: green;padding-top: 11px;">
+              start
+            </div>
+
+            <div style="width: 34%;height: 100%;float: left">
+              <div class="task_list_name2">
+                <div style="vertical-align:middle; display:table-cell;word-wrap:break-word; word-break:break-all; overflow: scroll;">
+                  {{value.logpath}}
+                </div>
+              </div>
+            </div>
+
+            <div class="task_list_control">
+              <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="removeTask($event)" name="{{  value.name }}"  style="float: right;margin-right: 5px;width: 58px;background-color: red">
+                remove
+              </a>
+              <a class="kuiButton kuiButton--primary Button--small " ng-click="stopTask($event)" name="{{  key }}"   style="float: right;margin-right: 5px;width: 58px">
+                stop
+              </a>
+              <a class="kuiButton kuiButton--primary Button--small " ng-click="startTask($event)" name="{{  key }}" id="{{ key }}" style="float: right;margin-right: 5px;width: 58px">
+                start
+              </a>
+            </div>
+          </div>
+        </li>
+      </div>
     </div>
-  </div>
 </div>

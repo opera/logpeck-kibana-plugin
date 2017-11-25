@@ -210,6 +210,7 @@ uiModules
       }
       else{
         $scope.indexLog =response['data'][0]['result'];
+        $scope.T_array = [];
       }
     }, function errorCallback(err) {
       console.log('err');
@@ -648,6 +649,31 @@ uiModules
       $scope.LogFormat=response['data']['_source']['LogFormat'];
     }, function errorCallback() {
     });
+  };
+
+  $scope.keyUp = function (){
+      $http({
+        method: 'POST',
+        url: '../api/logpeck/key_up',
+        data: {path: $scope.LogPath,
+          ip: $rootScope.T_ip,
+        },
+      }).then(function successCallback(response) {
+        $scope.path_array=[];
+        if(response['data']=="null"||response['data']=='open '+$scope.LogPath+'/: no such file or directory'){
+          $scope.path_array=[];
+        }
+        else {
+          for (var id=0;id<response['data'].length;id++){
+            $scope.path_array.push(response['data'][id]);
+          }
+        }
+      }, function errorCallback() {
+      });
+  };
+
+  $scope.optionChange = function(){
+    $scope.keyUp();
   };
 
 })

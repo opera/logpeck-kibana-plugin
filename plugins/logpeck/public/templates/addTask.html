@@ -236,7 +236,10 @@
                 <input type="text" ng-model="Name" style="width: 97%" ng-focus="focus('TestLog','Name','mycolor1')" ng-blur="blur('TestLog','Name','mycolor1')" ng-style="mycolor1">
               </div>
               <div style="width: 70%;float: left">
-                <input type="text" ng-model="LogPath" style="width: 80%" ng-focus="focus('test.log','LogPath','mycolor2')" ng-blur="blur('test.log','LogPath','mycolor2')" ng-style="mycolor2">
+                <input list="Path" ng-keyup="keyUp()" ng-change="optionChange()" type="text" ng-model="LogPath" style="width: 80%" ng-focus="focus('test.log','LogPath','mycolor2')" ng-blur="blur('test.log','LogPath','mycolor2')" ng-style="mycolor2">
+                <datalist id="Path">
+                    <option ng-repeat="index in path_array">{{LogPath}}{{index}}</option>
+                </datalist>
               </div>
             </div>
           </div>
