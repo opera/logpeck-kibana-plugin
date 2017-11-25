@@ -648,6 +648,33 @@ export default function (server) {
       }
     },
 
+    {
+      path: '/api/logpeck/key_up',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        var path=req.payload.path;
+        var ip=req.payload.ip;
+        const example = async function () {
+          var res;
+          Wreck.post('http://'+ip+'/listpath?path='+path,
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              reply(payload.toString());
+              console.log(payload.toString());
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
   ]);
 
 }
