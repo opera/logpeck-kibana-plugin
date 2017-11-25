@@ -6,7 +6,6 @@ import 'ui/autoload/styles';
 import './less/main.less';
 import template1 from './templates/index.html';
 import template2 from './templates/addTask.html';
-import template3 from './templates/addHost.html';
 import template4 from './templates/updateTask.html';
 
 
@@ -18,10 +17,6 @@ uiRoutes
   })
   .when('/addTask', {
     template : template2,
-    controller : 'logpeckInit',
-  })
-  .when('/addHost', {
-    template : template3,
     controller : 'logpeckInit',
   })
   .when('/updateTask', {
