@@ -6,7 +6,6 @@ import 'ui/autoload/styles';
 import './less/main.less';
 import template1 from './templates/index.html';
 import template2 from './templates/addTask.html';
-import template3 from './templates/addHost.html';
 import template4 from './templates/updateTask.html';
 
 
@@ -20,16 +19,11 @@ uiRoutes
     template : template2,
     controller : 'logpeckInit',
   })
-  .when('/addHost', {
-    template : template3,
-    controller : 'logpeckInit',
-  })
   .when('/updateTask', {
     template : template4,
     controller : 'logpeckInit',
   });
 
-var host_ip="";
 var task_ip_exist=false;
 var update_ip_exit=false;
 var task_ip=[];
@@ -57,11 +51,6 @@ uiModules
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       //new_arr.push(response['data']['hits']['hits'][id]['_id']);
       $scope.T_IpList.push(response['data']['hits']['hits'][id]['_id']);
-    }
-    if(host_ip!=""){
-      //new_arr.push(host_ip);
-      $scope.T_IpList.push(host_ip);
-      host_ip="";
     }
     if(task_ip_exist!=false){
       $scope.T_array=task_ip;
@@ -209,6 +198,8 @@ uiModules
         $scope.T_array = new_arr;
       }
       else{
+        $scope.logstat1=true;
+        $scope.logstat2=false;
         $scope.indexLog =response['data'][0]['result'];
         $scope.T_array = [];
       }
@@ -386,12 +377,17 @@ uiModules
         data: {ip: $scope.IP},
       }).then(function successCallback(response) {
         if (response['data'][0]['result'] == "Add success") {
-          host_ip=$scope.IP;
-          $scope.addHostResult = response['data'][0]['result'];
-          window.location.href="#/";
+          $scope.T_IpList.push($scope.IP);
+          $scope.T_array=[];
+          $scope.logstat1=false;
+          $scope.logstat2=true;
+          $scope.indexLog="Add success";
+
         }
         else{
-          $scope.addHostResult = response['data'][0]['result'];
+          $scope.logstat1=true;
+          $scope.logstat2=false;
+          $scope.indexLog=response['data'][0]['result'];
         }
       }, function errorCallback() {
         console.log('err');
