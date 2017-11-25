@@ -210,6 +210,7 @@ uiModules
       }
       else{
         $scope.indexLog =response['data'][0]['result'];
+        $scope.T_array = [];
       }
     }, function errorCallback(err) {
       console.log('err');
