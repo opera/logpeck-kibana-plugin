@@ -204,35 +204,38 @@ export default function (server) {
             }
             Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
               (err, xyResponse, payload) => {
+              console.log(payload.toString());
                 if (err) {
-                  res = '[{"result":"'+err+'"},{"result":"err"}]';
+                  res = '[{"result":"'+err+'"}]';
                   reply(res);
                   return;
                 }
                 else if(payload.toString()=="Add Success") {
                   Wreck.post('http://' + ip + '/peck_task/liststats',
                     (err, xyResponse, payload) => {
+                     console.log(payload.toString())
                       var patt=new RegExp(/^List TaskStatus failed,/);
                       if (err) {
-                        res = '[{"result":"'+err+'"},{"result":"err"}]';
+                        res = '[{"result":"'+err+'"}]';
                         reply(res);
                       }
                       else if(payload==undefined){
-                        res='[{"result":"undefined"},{"result":"err"}]';
+                        res='[{"result":"undefined"}]';
                         reply(res);
                       }
                       else if(patt.test(res))
                       {
-                        res='[{"result":"'+payload.toString()+'"},{"result":"err"}]';
+                        res='[{"result":"'+payload.toString()+'"}]';
                         reply(res);
                       }
                       else {
                         if (payload.toString() == "null") {
-                          res = '[{"result":"null"},{"result":"true"}]';
+                          res = '[{"result":"null"}]';
                           reply(res);
                         }
                         else {
-                          res = '[{"result":"'+payload.toString()+'"},{"result":"true"}]';
+                          console.log(payload.toString());
+                          res = payload.toString();
                           reply(res);
                         }
                       }
@@ -240,7 +243,6 @@ export default function (server) {
                 }
                 else{
                   res = '[{"result":"'+payload.toString()+'"},{"result":"err"}]';
-                  console.log("。。。。。。。。。。。。");
                   console.log(payload.toString());
                   reply(res);
                 }
@@ -712,7 +714,6 @@ export default function (server) {
           }
           Wreck.post('http://'+ip+'/peck_task/test', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '","Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'},
             (err, xyResponse, payload) => {
-            console.log(xyResponse.statusMessage)
               if (err) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
