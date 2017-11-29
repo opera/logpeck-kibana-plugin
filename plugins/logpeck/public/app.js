@@ -97,6 +97,7 @@ uiModules
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
+    $scope.testArea=false;
 
   }, function errorCallback() {
     console.log('err');
@@ -155,17 +156,17 @@ uiModules
 
   $scope.plusfields=function () {
     $scope.fields_array.push({Name:"",Value:""});
-    $scope.llength+=26;
-    var t=$scope.llength+'px';
-    $scope.divlength={"height":t}
+    //$scope.llength+=26;
+    //var t=$scope.llength+'px';
+    //$scope.divlength={"height":t}
     //console.log($scope.fields_array);
   }
 
   $scope.minusfields=function () {
     $scope.fields_array.pop();
-    $scope.llength-=26;
-    var t=$scope.llength+'px';
-    $scope.divlength={"height":t}
+    //$scope.llength-=26;
+    //var t=$scope.llength+'px';
+    //$scope.divlength={"height":t}
     //console.log($scope.fields_array);
   }
 
@@ -312,12 +313,21 @@ uiModules
     }
     if(T){
       $scope.addTaskResult = "fields is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
     }
     else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
       $scope.addTaskResult = "IP is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
     }
     else if($scope.Name==""||$scope.LogPath==""||$scope.Hosts==""||$scope.Index==""||$scope.Type==""){
       $scope.addTaskResult = "filed is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
     }
     else {
       $http({
@@ -337,9 +347,10 @@ uiModules
           ip: $rootScope.T_ip
         },
       }).then(function successCallback(response) {
-        if(response['data'][0]['result']==undefined) {
+        console.log(response);
+        if(response['data'][1]['result']=='true') {
           var new_arr = [];
-          if (response['data'][0]['null'] != "true") {
+          if (response['data'][0]['result'] != "null") {
             var name;
             var stat;
             var start;
@@ -359,9 +370,15 @@ uiModules
         }
         else {
           $scope.addTaskResult =response['data'][0]['result'];
+          $scope.testArea=true;
+          $scope.testResults = $scope.addTaskResult;
+          $scope.error={"color":"#ff0000"};
         }
       }, function errorCallback() {
-        console.log('err');
+        $scope.addTaskResult ='add error';
+        $scope.testArea=true;
+        $scope.testResults = $scope.addTaskResult;
+        $scope.error={"color":"#ff0000"};
       });
     }
   };
@@ -457,12 +474,21 @@ uiModules
     }
     if(T){
       $scope.addTaskResult = "fields is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
     }
     if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
       $scope.addTaskResult = "IP is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
     }
     else if($scope.Name==""||$scope.LogPath==""||$scope.Hosts==""||$scope.Index==""||$scope.Type==""){
       $scope.addTaskResult = "filed is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
     }
     else {
       $http({
@@ -504,6 +530,9 @@ uiModules
         }
         else {
           $scope.addTaskResult =response['data'][0]['result'];
+          $scope.testArea=true;
+          $scope.testResults = $scope.addTaskResult;
+          $scope.error={"color":"#ff0000"};
         }
       }, function errorCallback() {
       });
@@ -541,6 +570,9 @@ uiModules
         }
         else {
           $scope.addTaskResult =response['data'][0]['result'];
+          $scope.testArea=true;
+          $scope.testResults = $scope.addTaskResult;
+          $scope.error={"color":"#ff0000"};
         }
       }, function errorCallback() {
       });
@@ -551,8 +583,13 @@ uiModules
   };
 
   $scope.addModel = function () {
+    $scope.addTaskResult="";
+    $scope.testArea=false;
     if ($scope.model_name == ""||$scope.model_name ==undefined) {
       $scope.addTaskResult = "model is null";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
     }
     else{
       var exist= false;
@@ -593,6 +630,9 @@ uiModules
         }
         else{
           $scope.addTaskResult = response['data'][0]['result'];
+          $scope.testArea=true;
+          $scope.testResults = $scope.addTaskResult;
+          $scope.error={"color":"#ff0000"};
         }
       }, function errorCallback() {
         console.log('err');
@@ -600,6 +640,8 @@ uiModules
     }
   };
   $scope.removeModel = function ($event) {
+    $scope.addTaskResult="";
+    $scope.testArea=false;
     $http({
       method: 'POST',
       url: '../api/logpeck/removeModel',
@@ -618,12 +660,17 @@ uiModules
       }
       else{
         $scope.addTaskResult=response['data'][0]['result'];
+        $scope.testArea=true;
+        $scope.testResults = $scope.addTaskResult;
+        $scope.error={"color":"#ff0000"};
       }
     }, function errorCallback() {
     });
   };
 
   $scope.applyModel = function ($event){
+    $scope.addTaskResult="";
+    $scope.testArea=false;
     $http({
       method: 'POST',
       url: '../api/logpeck/apply_model',
@@ -672,6 +719,77 @@ uiModules
     $scope.keyUp();
   };
 
+  $scope.testTask = function () {
+    $scope.addTaskResult="";
+    $scope.testArea=true;
+    $scope.TestNum=10;
+    $scope.Time=2;
+    var T=false;
+    if($scope.fields_array==null){
+      ;
+    }
+    else {
+      for (var id = 0; id < $scope.fields_array.length; id++) {
+        if ($scope.fields_array[id].Name == '' || $scope.fields_array[id].Value == '') {
+          T = true;
+          break;
+        }
+      }
+    }
+    if(T){
+      $scope.addTaskResult = "fields is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
+    }
+    else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
+      $scope.addTaskResult = "IP is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
+    }
+    else if($scope.Name==""||$scope.LogPath==""||$scope.Hosts==""||$scope.Index==""||$scope.Type==""){
+      $scope.addTaskResult = "filed is not complete";
+      $scope.testArea=true;
+      $scope.testResults = $scope.addTaskResult;
+      $scope.error={"color":"#ff0000"};
+    }
+    else {
+      $http({
+        method: 'POST',
+        url: '../api/logpeck/testTask',
+        data: {
+          name: $scope.Name,
+          logpath: $scope.LogPath,
+          hosts: $scope.Hosts,
+          index: $scope.Index,
+          type: $scope.Type,
+          Mapping: $scope.Mapping,
+          Fields: $scope.fields_array,
+          Delimiters: $scope.Delimiters,
+          FilterExpr: $scope.FilterExpr,
+          LogFormat: $scope.LogFormat,
+          TestNum: $scope.TestNum,
+          Timeout:    $scope.Time,
+          ip: $rootScope.T_ip
+        },
+      }).then(function successCallback(response) {
+        if(response['data'][0]['result']==undefined) {
+          var obj = angular.fromJson(response['data'])
+          $scope.testResults=JSON.stringify(obj,null,4);
+          $scope.error={"color":"#2d2d2d"};
+        }
+        else {
+          $scope.addTaskResult =response['data'][0]['result'];
+          $scope.testArea=true;
+          $scope.testResults = $scope.addTaskResult;
+          $scope.error={"color":"#ff0000"};
+        }
+      }, function errorCallback() {
+        console.log('err');
+      });
+    }
+  };
 })
 
 

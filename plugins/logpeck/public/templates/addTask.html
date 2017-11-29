@@ -84,8 +84,9 @@
   .container_2{
     margin-left: 2%;
     width: 78%;
-    height: 100%;
+    height: 640px;
     float: left;
+    overflow: auto;
   }
   li{
     list-style-type:none
@@ -117,9 +118,8 @@
   }
   .table_2{
     width: 86%;
-    height: 260px;
-    padding-top: 15px;
-    padding-bottom: 5px;
+    height: 255px;
+    padding-top: 20px;
     margin-top: 20px;
     margin-bottom: 20px;
     border-top:3px solid #e4e4e4;
@@ -131,8 +131,10 @@
     float: left;
   }
   .table_4{
+    margin-top: 25px;
+    margin-bottom: 20px;
+    width: 98%;
     float: left;
-    margin-top: 40px;
   }
   .table_line{
     width: 100%;
@@ -183,10 +185,10 @@
     </div>
     <div class="head_2">
       <p class="describe">Task Config</p>
-      <p style="float: right;margin-right: 20px;color: red">{{addTaskResult}}</p>
+      <!--<p style="float: right;margin-right: 20px;color: red">{{addTaskResult}}</p>-->
     </div>
   </div>
-  <div class="container_0" ng-style="divlength">
+  <div class="container_0">
     <div class="container_1">
       <div class="host_list">
         <a ng-click="jump()">{{ T_ip }}</a>
@@ -219,7 +221,6 @@
     </div>
     <div class="container_2">
       <div class="table_1">
-        <div>
           <div class="table_line">
             <div class="table_title">
               <div style="width: 30%;float: left">
@@ -243,7 +244,7 @@
               </div>
             </div>
           </div>
-        </div>
+      </div>
         <div class="table_2">
           <div  class="table_title" style="margin-bottom: 20px;font-size: 16px">
             Elasticsearch Config
@@ -294,7 +295,7 @@
                 <div style="width: 80px;float: left">Delimiters</div>
                 <div style="width: 25px;float: left"><a class="kuiButton kuiButton--primary Button--small " ng-click="addDefault()" >":{} ,[]</a></div>
               </div>
-              <div style="width: 38%;float: left">FilterExpr</div>
+              <div style="width: 38%;float: left">Keywords</div>
             </div>
             <div  class="table_title">
               <div style="width: 12%;float: left">
@@ -333,9 +334,14 @@
           </div>
         </div>
         <div class="table_4">
+          <div style="width: 100%;float: left;margin-bottom: 20px" ng-show="testArea">
+             <textarea rows="10" ng-model="testResults" style="border: 1px solid gainsboro;width: 88%;" ng-style="error">
+               {{testResults}}
+             </textarea>
+          </div>
           <a class="kuiButton kuiButton--primary Button--big " ng-click="addTask()" >add</a>
+          <a class="kuiButton kuiButton--primary Button--big " ng-click="testTask()" >test</a>
         </div>
-      </div>
     </div>
   </div>
 </div>

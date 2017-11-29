@@ -16,8 +16,6 @@ export default function (server) {
                 reply(res);
               }
               reply(payload.toString());
-              console.log("...................");
-              console.log(payload.toString());
             });
         };
         try {
@@ -155,7 +153,6 @@ export default function (server) {
               }
               else{
                 res = '[{"result":"'+payload.toString()+'"}]';
-                console.log(res);
                 reply(res);
               }
             });
@@ -199,7 +196,6 @@ export default function (server) {
               }
               Delimiters+=tmp[id];
             }
-            console.log(Delimiters);
             var FilterExpr=req.payload.FilterExpr;
             var LogFormat=req.payload.LogFormat;
             var ip=req.payload.ip;
@@ -209,39 +205,43 @@ export default function (server) {
             Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
               (err, xyResponse, payload) => {
                 if (err) {
-                  res = '[{"result":"'+err+'"}]';
+                  res = '[{"result":"'+err+'"},{"result":"err"}]';
                   reply(res);
+                  return;
                 }
                 else if(payload.toString()=="Add Success") {
                   Wreck.post('http://' + ip + '/peck_task/liststats',
                     (err, xyResponse, payload) => {
                       var patt=new RegExp(/^List TaskStatus failed,/);
                       if (err) {
-                        res = '[{"result":"'+err+'"}]';
+                        res = '[{"result":"'+err+'"},{"result":"err"}]';
                         reply(res);
                       }
                       else if(payload==undefined){
-                        res='[{"result":"undefined"}]';
+                        res='[{"result":"undefined"},{"result":"err"}]';
                         reply(res);
                       }
                       else if(patt.test(res))
                       {
-                        res='[{"result":"'+payload.toString()+'"}]';
+                        res='[{"result":"'+payload.toString()+'"},{"result":"err"}]';
                         reply(res);
                       }
                       else {
                         if (payload.toString() == "null") {
-                          res = '[{"null":"true"}]';
+                          res = '[{"result":"null"},{"result":"true"}]';
                           reply(res);
                         }
                         else {
-                          reply(payload.toString());
+                          res = '[{"result":"'+payload.toString()+'"},{"result":"true"}]';
+                          reply(res);
                         }
                       }
                     });
                 }
                 else{
-                  res = '[{"result":"'+payload.toString()+'"}]';
+                  res = '[{"result":"'+payload.toString()+'"},{"result":"err"}]';
+                  console.log("。。。。。。。。。。。。");
+                  console.log(payload.toString());
                   reply(res);
                 }
               });
@@ -550,7 +550,6 @@ export default function (server) {
                 reply(res);
               }
               else {
-                console.log(payload.toString());
                 res = '[{"result":"Add success"}]';
                 reply(res);
               }
@@ -609,7 +608,6 @@ export default function (server) {
                 reply(res);
               }
               else {
-                console.log(payload.toString());
                 reply(payload.toString());
               }
             });
@@ -636,8 +634,6 @@ export default function (server) {
                 reply(res);
               }
               reply(payload.toString());
-              console.log("...................");
-              console.log(payload.toString());
             });
         };
         try {
@@ -664,13 +660,81 @@ export default function (server) {
                 reply(res);
               }
               reply(payload.toString());
-              console.log(payload.toString());
             });
         };
         try {
           example();
         }
         catch (err) {
+        }
+      }
+    },
+
+    {
+      path: '/api/logpeck/testTask',
+      method: 'POST',
+      handler(req, reply) {
+        var array=JSON.stringify(req.payload.Fields);
+        const Wreck = require('wreck');
+        var res;
+        const example = async function () {
+          var name=req.payload.name;
+          var logpath=req.payload.logpath;
+          var hostsarray=req.payload.hosts.split(',');
+          var hosts='';
+          for(var id=0;id<hostsarray.length;id++)
+          {
+            hosts+='"'+hostsarray[id]+'"';
+            if(id+1<hostsarray.length){
+              hosts+=",";
+            }
+          }
+          var index=req.payload.index;
+          var type=req.payload.type;
+          var Mapping=req.payload.Mapping;
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var FilterExpr=req.payload.FilterExpr;
+          var LogFormat=req.payload.LogFormat;
+          var TestNum=req.payload.TestNum;
+          var Timeout=req.payload.Timeout;
+          var ip=req.payload.ip;
+          if(Mapping==""||Mapping==null){
+            Mapping='""';
+          }
+          Wreck.post('http://'+ip+'/peck_task/test', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '","Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'},
+            (err, xyResponse, payload) => {
+            console.log(xyResponse.statusMessage)
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else {
+                if(xyResponse.statusMessage=='OK'){
+                  console.log(payload.toString());
+                  var res=payload.toString();
+                  reply(res);
+                }
+                else{
+                  res = '[{"result":"'+payload.toString()+'"}]';
+                  reply(res);
+                }
+              }
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+          console.log(err);
         }
       }
     },
