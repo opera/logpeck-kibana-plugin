@@ -30,13 +30,14 @@ var task_ip=[];
 var update_ip=[];
 uiModules
 .get('app/logpeck', [])
-.controller('logpeckInit',function ($scope ,$rootScope,$route, $http) {
+.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interval) {
   $scope.mycolor1={"color":"#e4e4e4"};
   $scope.mycolor2={"color":"#e4e4e4"};
   $scope.mycolor3={"color":"#e4e4e4"};
   $scope.mycolor4={"color":"#e4e4e4"};
   $scope.mycolor5={"color":"#e4e4e4"};
   $scope.mycolor6={"color":"#e4e4e4"};
+
 
   //初始化
   $http({
@@ -348,7 +349,7 @@ uiModules
         },
       }).then(function successCallback(response) {
         console.log(response);
-        if(response['data'][1]['result']=='true') {
+        if(response['data'][0]['result']==undefined) {
           var new_arr = [];
           if (response['data'][0]['result'] != "null") {
             var name;
@@ -375,10 +376,7 @@ uiModules
           $scope.error={"color":"#ff0000"};
         }
       }, function errorCallback() {
-        $scope.addTaskResult ='add error';
-        $scope.testArea=true;
-        $scope.testResults = $scope.addTaskResult;
-        $scope.error={"color":"#ff0000"};
+        console.log('error')
       });
     }
   };
