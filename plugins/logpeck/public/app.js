@@ -38,7 +38,6 @@ uiModules
   $scope.mycolor5={"color":"#e4e4e4"};
   $scope.mycolor6={"color":"#e4e4e4"};
 
-
   //初始化
   $http({
     method: 'POST',
@@ -107,12 +106,12 @@ uiModules
 
   $http({
     method: 'POST',
-    url: '../api/logpeck/list_model',
+    url: '../api/logpeck/list_template',
   }).then(function successCallback(response) {
-    $scope.ModelList=[];
+    $scope.TemplateList=[];
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       //new_arr.push(response['data']['hits']['hits'][id]['_id']);
-      $scope.ModelList.push(response['data']['hits']['hits'][id]['_id']);
+      $scope.TemplateList.push(response['data']['hits']['hits'][id]['_id']);
     }
   }, function errorCallback(err) {
     console.log('err');
@@ -580,20 +579,20 @@ uiModules
     $scope.Delimiters='":{} ,[]';
   };
 
-  $scope.addModel = function () {
+  $scope.addTemplate = function () {
     $scope.addTaskResult="";
     $scope.testArea=false;
-    if ($scope.model_name == ""||$scope.model_name ==undefined) {
-      $scope.addTaskResult = "model is null";
+    if ($scope.template_name == ""||$scope.template_name ==undefined) {
+      $scope.addTaskResult = "template is null";
       $scope.testArea=true;
       $scope.testResults = $scope.addTaskResult;
       $scope.error={"color":"#ff0000"};
     }
     else{
       var exist= false;
-      for(var i=0;i<$scope.ModelList.length;i++)
+      for(var i=0;i<$scope.TemplateList.length;i++)
       {
-        if($scope.model_name ==$scope.ModelList[i]){
+        if($scope.template_name ==$scope.TemplateList[i]){
           exist=true;
         }
       }
@@ -605,9 +604,9 @@ uiModules
       }
       $http({
         method: 'POST',
-        url: '../api/logpeck/addModel',
+        url: '../api/logpeck/addTemplate',
         data: {
-          model_name: $scope.model_name,
+          template_name: $scope.template_name,
           name: $scope.Name,
           logpath: $scope.LogPath,
           hosts: $scope.Hosts,
@@ -621,10 +620,10 @@ uiModules
         },
       }).then(function successCallback(response) {
         if (response['data'][0]['result'] == "Add success") {
-          $scope.ModelList.push($scope.model_name);
-          console.log($scope.ModelList);
+          $scope.TemplateList.push($scope.template_name);
+          console.log($scope.TemplateList);
           $scope.addTaskResult = response['data'][0]['result'];
-          $scope.model_name ="";
+          $scope.template_name ="";
         }
         else{
           $scope.addTaskResult = response['data'][0]['result'];
@@ -637,24 +636,24 @@ uiModules
       });
     }
   };
-  $scope.removeModel = function ($event) {
+  $scope.removeTemplate = function ($event) {
     $scope.addTaskResult="";
     $scope.testArea=false;
     $http({
       method: 'POST',
-      url: '../api/logpeck/removeModel',
-      data:{model: event.target.getAttribute('name')},
+      url: '../api/logpeck/removeTemplate',
+      data:{template_name: event.target.getAttribute('name')},
     }).then(function successCallback(response) {
       console.log("app")
       $scope.addTaskResult ='';
       if(response['data'][0]['result'] != "err"){
         var new_arr = [];
-        for (var id=0 ; id<$scope.ModelList.length ; id++) {
-          if(response['data'][0]['result']!=$scope.ModelList[id]) {
-            new_arr.push($scope.ModelList[id]);
+        for (var id=0 ; id<$scope.TemplateList.length ; id++) {
+          if(response['data'][0]['result']!=$scope.TemplateList[id]) {
+            new_arr.push($scope.TemplateList[id]);
           }
         }
-        $scope.ModelList=new_arr;
+        $scope.TemplateList=new_arr;
       }
       else{
         $scope.addTaskResult=response['data'][0]['result'];
@@ -666,13 +665,13 @@ uiModules
     });
   };
 
-  $scope.applyModel = function ($event){
+  $scope.applyTemplate = function ($event){
     $scope.addTaskResult="";
     $scope.testArea=false;
     $http({
       method: 'POST',
-      url: '../api/logpeck/apply_model',
-      data:{model: event.target.getAttribute('name')},
+      url: '../api/logpeck/applyTemplate',
+      data:{template_name: event.target.getAttribute('name')},
     }).then(function successCallback(response) {
       console.log(response['data']['_source'])
       $scope.Name=response['data']['_source']['Name'];

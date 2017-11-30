@@ -198,20 +198,20 @@
           <p class="describe">Task Templates</p>
         </div>
         <div style="width: 100%;height: 40px;float: left;background-color: #e4e4e4;padding-top: 8px;padding-bottom: 10px;padding-left:2%;padding-right: 13px">
-          <input type="text" ng-model="model_name">
-          <a class="kuiButton kuiButton--primary Button--middle" ng-click="addModel()" style="float:right;margin-top: 2px">save</a>
+          <input type="text" ng-model="template_name">
+          <a class="kuiButton kuiButton--primary Button--middle" ng-click="addTemplate()" style="float:right;margin-top: 2px">save</a>
         </div>
       </div>
       <div class="model_list">
-        <li ng-repeat="index in ModelList | orderBy:index">
+        <li ng-repeat="index in TemplateList | orderBy:index">
           <div class="name_list">
             <div style="width: 70%;float: left;" >
-              <a ng-click="applyModel($event)" name="{{ index }}">
+              <a ng-click="applyTemplate($event)" name="{{ index }}">
                 {{index}}
               </a>
             </div>
             <div style="width: 30%;float: right">
-              <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeModel($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: red">
+              <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeTemplate($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: red">
                 remove
               </a>
             </div>

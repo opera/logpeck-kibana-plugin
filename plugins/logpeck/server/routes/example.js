@@ -507,13 +507,13 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/addModel',
+      path: '/api/logpeck/addTemplate',
       method: 'POST',
       handler(req, reply) {
         var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
         const example = async function () {
-          var model_name=req.payload.model_name;
+          var template_name=req.payload.template_name;
           var name=req.payload.name;
           var logpath=req.payload.logpath;
           var hostsarray=req.payload.hosts.split(',');
@@ -545,7 +545,7 @@ export default function (server) {
             Mapping='""';
           }
           var res;
-          Wreck.put('http://localhost:9200/logpeck/template/'+model_name,{payload: '{"Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '"}'},
+          Wreck.put('http://localhost:9200/.logpeck/template/'+template_name,{payload: '{"Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '"}'},
             (err, xyResponse, payload) => {
             console.log(xyResponse.statusMessage);
               if (err) {
@@ -573,22 +573,22 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/removeModel',
+      path: '/api/logpeck/removeTemplate',
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
-          var model_name=req.payload.model;
+          var template_name=req.payload.template_name;
           var res;
 
-          Wreck.delete('http://localhost:9200/logpeck/template/' + model_name + '?',
+          Wreck.delete('http://localhost:9200/.logpeck/template/' + template_name + '?',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
               }
               else {
-                res = '[{"result":"' + model_name + '"}]';
+                res = '[{"result":"' + template_name + '"}]';
                 reply(res);
               }
             });
@@ -602,15 +602,15 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/apply_model',
+      path: '/api/logpeck/applyTemplate',
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
-          var model_name=req.payload.model;
+          var template_name=req.payload.template_name;
           var res;
 
-          Wreck.get('http://localhost:9200/logpeck/template/' + model_name ,
+          Wreck.get('http://localhost:9200/.logpeck/template/' + template_name ,
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -630,13 +630,13 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/list_model',
+      path: '/api/logpeck/list_template',
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.post('http://localhost:9200/logpeck/template/_search?q=*&size=1000&pretty',
+          Wreck.post('http://localhost:9200/.logpeck/template/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
