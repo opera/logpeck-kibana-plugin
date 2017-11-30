@@ -28,15 +28,56 @@ var task_ip_exist=false;
 var update_ip_exit=false;
 var task_ip=[];
 var update_ip=[];
-uiModules
-.get('app/logpeck', [])
-.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interval) {
+var status=[];
+var app=uiModules.get('app/logpeck', [])
+app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interval) {
   $scope.mycolor1={"color":"#e4e4e4"};
   $scope.mycolor2={"color":"#e4e4e4"};
   $scope.mycolor3={"color":"#e4e4e4"};
   $scope.mycolor4={"color":"#e4e4e4"};
   $scope.mycolor5={"color":"#e4e4e4"};
   $scope.mycolor6={"color":"#e4e4e4"};
+
+  $scope.set_color = function (payment) {
+      return { color: status[payment] }
+  }
+
+  //refresh
+  var timer = $interval(function(){
+    //list host
+    var t=[];
+    var version=[];
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/init',
+    }).then(function successCallback(response1) {
+      for (var id = 0 ; id<response1['data']['hits']['total'] ; id++) {
+        var host=response1['data']['hits']['hits'][id]['_id'];
+        //list status
+        $http({
+          method: 'POST',
+          url: '../api/logpeck/refresh',
+          data: {ip: response1['data']['hits']['hits'][id]['_id'],status:response1['data']['hits']['hits'][id]['_source']['exist']},
+        }).then(function successCallback(response2) {
+          console.log(response2['data']);
+          version[response2['data']['ip']]=response2['data']['version'];
+          if(response2['data']['code']==502){
+            t[response2['data']['ip']]="red";
+          } else{
+            t[response2['data']['ip']]="#2f99c1";
+          }
+        }, function errorCallback(err) {
+          console.log('err2');
+        });
+      }
+      status=t;
+    }, function errorCallback(err) {
+      console.log('err1');
+    });
+  },10000);
+  $scope.$on('$destroy',function(){
+    $interval.cancel(timer);
+  });
 
   //初始化
   $http({
@@ -48,9 +89,17 @@ uiModules
     $scope.T_IpList=[];
     var t=$scope.llength+'px';
     $scope.divlength={"height":t};
+
+    $scope.contents=[];
+
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       //new_arr.push(response['data']['hits']['hits'][id]['_id']);
       $scope.T_IpList.push(response['data']['hits']['hits'][id]['_id']);
+      if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
+        status[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+      }else{
+        status[response['data']['hits']['hits'][id]['_id']]="red";
+      }
     }
     if(task_ip_exist!=false){
       $scope.T_array=task_ip;
@@ -179,6 +228,7 @@ uiModules
       url: '../api/logpeck/list',
       data: {ip: event.target.getAttribute('name')},
     }).then(function successCallback(response) {
+      console.log(response);
       $scope.indexLog ='';
       if(response['data'][0]['result']==undefined) {
         $scope.visible = true;
@@ -787,7 +837,8 @@ uiModules
       });
     }
   };
-})
+});
+
 
 
 

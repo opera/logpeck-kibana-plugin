@@ -747,6 +747,49 @@ export default function (server) {
       }
     },
 
+    {
+      path: '/api/logpeck/refresh',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var ip=req.payload.ip;
+          var status=req.payload.status;
+          var now="";
+          var  res;
+          var version="";
+          Wreck.post('http://'+ip+'/version',
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = err.output.statusCode;
+                now="false";
+              }
+              else {
+                res=xyResponse.statusCode;
+                now="true";
+                if(res==200){
+                  version=payload.toString();
+                }
+              }
+              if(status != now){
+                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "'+now+'"}'},
+                  (err, xyResponse, payload) => {
+                  if (err) {
+
+                  }
+                });
+              }
+              reply({"ip":ip,"code":res,"version":version});
+          });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
   ]);
 
 }
