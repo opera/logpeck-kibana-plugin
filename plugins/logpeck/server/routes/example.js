@@ -15,6 +15,8 @@ export default function (server) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
               }
+              var b = JSON.parse(payload.toString());
+              //console.log(b['hits']['hits']);
               reply(payload.toString());
             });
         };
@@ -274,7 +276,7 @@ export default function (server) {
                 reply(res);
               }
               else if(exist['found']==false) {
-                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "true"}'},
+                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "false"}'},
                   (err, xyResponse, payload) => {
                     if (err) {
                       res='[{"result":"err"}]';
@@ -752,35 +754,59 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        const example = async function () {
-          var ip=req.payload.ip;
-          var status=req.payload.status;
-          var now="";
-          var  res;
-          var version="";
-          Wreck.post('http://'+ip+'/version',
+        function list(ip,status) {
+          var i=0;
+          Wreck.post('http://' + ip + '/version',
             (err, xyResponse, payload) => {
+              var version = '';
+              var now;
+              var code;
               if (err) {
-                res = err.output.statusCode;
-                now="false";
+                code = err.output.statusCode;
+                now = "false";
+                version = 'error';
               }
               else {
-                res=xyResponse.statusCode;
-                now="true";
-                if(res==200){
-                  version=payload.toString();
+                code = xyResponse.statusCode;
+                now = "true";
+                if (code == 200) {
+                  version = payload.toString();
                 }
               }
-              if(status != now){
-                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "'+now+'"}'},
+              if (status != now) {
+                Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
                   (err, xyResponse, payload) => {
-                  if (err) {
+                    if (err) {
 
-                  }
-                });
+                    }
+                  });
               }
-              reply({"ip":ip,"code":res,"version":version});
-          });
+              i = i + 1;
+            });
+          return i;
+        }
+        const example = function () {
+          Wreck.post('http://localhost:9200/logpeck/host/_search?q=*&size=1000&pretty',
+            (err, xyResponse, payload) => {
+              var ip;
+              var status;
+              var version = '';
+              var now;
+              var code;
+              if (err) {
+                code = err.output.statusCode;
+                reply("refresh err:"+code);
+              }
+              var b = JSON.parse(payload.toString());
+              //console.log(b['hits']['total']);
+              //list status
+              for (var id = 0; id < b['hits']['total']; id++) {
+                ip=b['hits']['hits'][id]['_id'];
+                status = b['hits']['hits'][id]['_source']['exist'];
+                list(ip,status);
+              }
+              reply("refresh success");
+            });
         };
         try {
           example();

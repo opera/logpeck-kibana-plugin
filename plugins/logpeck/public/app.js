@@ -40,40 +40,38 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 
   $scope.set_color = function (payment) {
       return { color: status[payment] }
+
   }
 
   //refresh
   var timer = $interval(function(){
-    //list host
-    var t=[];
-    var version=[];
+    var t = [];
     $http({
       method: 'POST',
       url: '../api/logpeck/init',
-    }).then(function successCallback(response1) {
-      for (var id = 0 ; id<response1['data']['hits']['total'] ; id++) {
-        var host=response1['data']['hits']['hits'][id]['_id'];
-        //list status
-        $http({
-          method: 'POST',
-          url: '../api/logpeck/refresh',
-          data: {ip: response1['data']['hits']['hits'][id]['_id'],status:response1['data']['hits']['hits'][id]['_source']['exist']},
-        }).then(function successCallback(response2) {
-          console.log(response2['data']);
-          version[response2['data']['ip']]=response2['data']['version'];
-          if(response2['data']['code']==502){
-            t[response2['data']['ip']]="red";
-          } else{
-            t[response2['data']['ip']]="#2f99c1";
-          }
-        }, function errorCallback(err) {
-          console.log('err2');
-        });
+    }).then(function successCallback(response) {
+      for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
+        if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
+          t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+        }else{
+          t[response['data']['hits']['hits'][id]['_id']]="red";
+        }
       }
-      status=t;
     }, function errorCallback(err) {
       console.log('err1');
     });
+
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/refresh',
+    }).then(function successCallback(response2) {
+
+      }, function errorCallback(err) {
+      console.log('err2');
+    });
+
+    status = t;
+   // });
   },10000);
   $scope.$on('$destroy',function(){
     $interval.cancel(timer);
