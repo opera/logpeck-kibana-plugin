@@ -816,6 +816,50 @@ export default function (server) {
       }
     },
 
+    {
+      path: '/api/logpeck/version',
+      method: 'POST',
+      handler(req, reply) {
+        var ip=req.payload.ip;
+        var status="false";
+        const Wreck = require('wreck');
+        const example = function () {
+          Wreck.post('http://' + ip + '/version',
+            (err, xyResponse, payload) => {
+              var version = '';
+              var now;
+              var code;
+              if (err) {
+                code = err.output.statusCode;
+                now = "false";
+                version = 'error';
+              }
+              else {
+                code = xyResponse.statusCode;
+                now = "true";
+                if (code == 200) {
+                  version = payload.toString();
+                }
+              }
+              if (status != now) {
+                Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
+                  (err, xyResponse, payload) => {
+                    if (err) {
+
+                    }
+                  });
+              }
+              reply(now);
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
   ]);
 
 }

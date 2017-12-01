@@ -71,7 +71,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     });
 
     status = t;
-   // });
   },10000,1);
   $scope.$on('$destroy',function(){
     $interval.cancel(timer);
@@ -444,7 +443,22 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           $scope.logstat1=false;
           $scope.logstat2=true;
           $scope.indexLog="Add success";
-          timer();
+
+          $http({
+            method: 'POST',
+            url: '../api/logpeck/version',
+            data: {ip: $scope.IP},
+          }).then(function successCallback(response) {
+            if(response['data']=="true"){
+              status[$scope.IP]="#2f99c1";
+            }
+            else{
+              status[$scope.IP]="red";
+            }
+          }, function errorCallback() {
+            console.log('err');
+          });
+
         }
         else{
           $scope.logstat1=true;
