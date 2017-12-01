@@ -72,7 +72,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 
     status = t;
    // });
-  },10000);
+  },10000,1);
   $scope.$on('$destroy',function(){
     $interval.cancel(timer);
   });
@@ -444,7 +444,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           $scope.logstat1=false;
           $scope.logstat2=true;
           $scope.indexLog="Add success";
-
+          timer();
         }
         else{
           $scope.logstat1=true;
