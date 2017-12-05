@@ -179,7 +179,7 @@
         Logpeck
       </div>
       <p style="float: right;margin-right: 20px;color: red" ng-show="logstat1">{{indexLog}}</p>
-      <p style="float: right;margin-right: 20px;color: green" ng-show="logstat2">{{indexLog}}</p>
+      <p style="float: right;margin-right: 20px;color: #2f99c1" ng-show="logstat2">{{indexLog}}</p>
     </div>
   </div>
   <div class="head">
@@ -203,7 +203,7 @@
           <li ng-repeat="index in T_IpList | orderBy:index">
             <div class="host_list">
               <div class="host_list_name">
-                <a ng-click="listTask($event)"  name="{{ index }}">
+                <a ng-click="listTask($event)"  name="{{ index }}" ng-style="set_color(index)" >
                   {{ index }}
                 </a>
               </div>
@@ -240,7 +240,7 @@
             <div class="task_list_status" ng-show="value.stop" style="color: red;padding-top: 11px;">
               stop
             </div>
-            <div class="task_list_status" ng-show="value.start" style="color: green;padding-top: 11px;">
+            <div class="task_list_status" ng-show="value.start" style="color: #2f99c1;padding-top: 11px;">
               start
             </div>
 

@@ -15,6 +15,8 @@ export default function (server) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
               }
+              var b = JSON.parse(payload.toString());
+              //console.log(b['hits']['hits']);
               reply(payload.toString());
             });
         };
@@ -204,35 +206,38 @@ export default function (server) {
             }
             Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
               (err, xyResponse, payload) => {
+              console.log(payload.toString());
                 if (err) {
-                  res = '[{"result":"'+err+'"},{"result":"err"}]';
+                  res = '[{"result":"'+err+'"}]';
                   reply(res);
                   return;
                 }
                 else if(payload.toString()=="Add Success") {
                   Wreck.post('http://' + ip + '/peck_task/liststats',
                     (err, xyResponse, payload) => {
+                     console.log(payload.toString())
                       var patt=new RegExp(/^List TaskStatus failed,/);
                       if (err) {
-                        res = '[{"result":"'+err+'"},{"result":"err"}]';
+                        res = '[{"result":"'+err+'"}]';
                         reply(res);
                       }
                       else if(payload==undefined){
-                        res='[{"result":"undefined"},{"result":"err"}]';
+                        res='[{"result":"undefined"}]';
                         reply(res);
                       }
                       else if(patt.test(res))
                       {
-                        res='[{"result":"'+payload.toString()+'"},{"result":"err"}]';
+                        res='[{"result":"'+payload.toString()+'"}]';
                         reply(res);
                       }
                       else {
                         if (payload.toString() == "null") {
-                          res = '[{"result":"null"},{"result":"true"}]';
+                          res = '[{"result":"null"}]';
                           reply(res);
                         }
                         else {
-                          res = '[{"result":"'+payload.toString()+'"},{"result":"true"}]';
+                          console.log(payload.toString());
+                          res = payload.toString();
                           reply(res);
                         }
                       }
@@ -240,7 +245,6 @@ export default function (server) {
                 }
                 else{
                   res = '[{"result":"'+payload.toString()+'"},{"result":"err"}]';
-                  console.log("。。。。。。。。。。。。");
                   console.log(payload.toString());
                   reply(res);
                 }
@@ -272,7 +276,7 @@ export default function (server) {
                 reply(res);
               }
               else if(exist['found']==false) {
-                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "true"}'},
+                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "false"}'},
                   (err, xyResponse, payload) => {
                     if (err) {
                       res='[{"result":"err"}]';
@@ -505,13 +509,13 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/addModel',
+      path: '/api/logpeck/addTemplate',
       method: 'POST',
       handler(req, reply) {
         var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
         const example = async function () {
-          var model_name=req.payload.model_name;
+          var template_name=req.payload.template_name;
           var name=req.payload.name;
           var logpath=req.payload.logpath;
           var hostsarray=req.payload.hosts.split(',');
@@ -543,15 +547,22 @@ export default function (server) {
             Mapping='""';
           }
           var res;
-          Wreck.put('http://localhost:9200/logpeck/model/'+model_name,{payload: '{"Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '"}'},
+          Wreck.put('http://localhost:9200/.logpeck/template/'+template_name,{payload: '{"Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '"}'},
             (err, xyResponse, payload) => {
+            console.log(xyResponse.statusMessage);
               if (err) {
-                res='[{"result":"err"}]';
+                res='[{"result":"'+err+'"}]';
                 reply(res);
               }
               else {
-                res = '[{"result":"Add success"}]';
-                reply(res);
+                if( xyResponse.statusMessage=='OK'|| xyResponse.statusMessage=='Created' ){
+                  res = '[{"result":"Add success"}]';
+                  reply(res);
+                }
+                else{
+                  res = '[{"result":"'+payload.toString()+'"}]';
+                  reply(res);
+                }
               }
             });
         }
@@ -564,22 +575,22 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/removeModel',
+      path: '/api/logpeck/removeTemplate',
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
-          var model_name=req.payload.model;
+          var template_name=req.payload.template_name;
           var res;
 
-          Wreck.delete('http://localhost:9200/logpeck/model/' + model_name + '?',
+          Wreck.delete('http://localhost:9200/.logpeck/template/' + template_name + '?',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
               }
               else {
-                res = '[{"result":"' + model_name + '"}]';
+                res = '[{"result":"' + template_name + '"}]';
                 reply(res);
               }
             });
@@ -593,15 +604,15 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/apply_model',
+      path: '/api/logpeck/applyTemplate',
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
-          var model_name=req.payload.model;
+          var template_name=req.payload.template_name;
           var res;
 
-          Wreck.get('http://localhost:9200/logpeck/model/' + model_name ,
+          Wreck.get('http://localhost:9200/.logpeck/template/' + template_name ,
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -621,13 +632,13 @@ export default function (server) {
     },
 
     {
-      path: '/api/logpeck/list_model',
+      path: '/api/logpeck/list_template',
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.post('http://localhost:9200/logpeck/model/_search?q=*&size=1000&pretty',
+          Wreck.post('http://localhost:9200/.logpeck/template/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -712,7 +723,6 @@ export default function (server) {
           }
           Wreck.post('http://'+ip+'/peck_task/test', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '","Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'},
             (err, xyResponse, payload) => {
-            console.log(xyResponse.statusMessage)
               if (err) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
@@ -735,6 +745,117 @@ export default function (server) {
         }
         catch (err) {
           console.log(err);
+        }
+      }
+    },
+
+    {
+      path: '/api/logpeck/refresh',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        function list(ip,status) {
+          var i=0;
+          Wreck.post('http://' + ip + '/version',
+            (err, xyResponse, payload) => {
+              var version = '';
+              var now;
+              var code;
+              if (err) {
+                code = err.output.statusCode;
+                now = "false";
+                version = 'error';
+              }
+              else {
+                code = xyResponse.statusCode;
+                now = "true";
+                if (code == 200) {
+                  version = payload.toString();
+                }
+              }
+              if (status != now) {
+                Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
+                  (err, xyResponse, payload) => {
+                    if (err) {
+
+                    }
+                  });
+              }
+              i = i + 1;
+            });
+          return i;
+        }
+        const example = function () {
+          Wreck.post('http://localhost:9200/logpeck/host/_search?q=*&size=1000&pretty',
+            (err, xyResponse, payload) => {
+              var ip;
+              var status;
+              var version = '';
+              var now;
+              var code;
+              if (err) {
+                code = err.output.statusCode;
+                reply("refresh err:"+code);
+              }
+              var b = JSON.parse(payload.toString());
+              //console.log(b['hits']['total']);
+              //list status
+              for (var id = 0; id < b['hits']['total']; id++) {
+                ip=b['hits']['hits'][id]['_id'];
+                status = b['hits']['hits'][id]['_source']['exist'];
+                list(ip,status);
+              }
+              reply("refresh success");
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+
+    {
+      path: '/api/logpeck/version',
+      method: 'POST',
+      handler(req, reply) {
+        var ip=req.payload.ip;
+        var status="false";
+        const Wreck = require('wreck');
+        const example = function () {
+          Wreck.post('http://' + ip + '/version',
+            (err, xyResponse, payload) => {
+              var version = '';
+              var now;
+              var code;
+              if (err) {
+                code = err.output.statusCode;
+                now = "false";
+                version = 'error';
+              }
+              else {
+                code = xyResponse.statusCode;
+                now = "true";
+                if (code == 200) {
+                  version = payload.toString();
+                }
+              }
+              if (status != now) {
+                Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
+                  (err, xyResponse, payload) => {
+                    if (err) {
+
+                    }
+                  });
+              }
+              reply(now);
+            });
+        };
+        try {
+          example();
+        }
+        catch (err) {
         }
       }
     },
