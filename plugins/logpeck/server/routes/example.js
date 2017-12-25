@@ -75,7 +75,7 @@ export default function (server) {
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
-          var name=req.payload.name;
+          var name=req.payload.Name;
           var ip=req.payload.ip;
           var  res;
           Wreck.post('http://'+ip+'/peck_task/start',{ payload: '{ "Name" : "'+name+'" }' },
@@ -103,7 +103,7 @@ export default function (server) {
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
-          var name=req.payload.name;
+          var name=req.payload.Name;
           var ip=req.payload.ip;
           var res;
           Wreck.post('http://'+ip+'/peck_task/stop',{ payload: '{ "Name" : "'+name+'" }' },
@@ -131,7 +131,7 @@ export default function (server) {
       handler(req, reply) {
         const Wreck = require('wreck');
         const example = async function () {
-          var name=req.payload.name;
+          var name=req.payload.Name;
           var ip=req.payload.ip;
           Wreck.post('http://'+ip+'/peck_task/remove',{ payload: '{ "Name" : "'+name+'" }' },
             (err, xyResponse, payload) => {
@@ -173,10 +173,11 @@ export default function (server) {
         var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
         var res;
-        const example = async function () {
-            var name=req.payload.name;
-            var logpath=req.payload.logpath;
-            var hostsarray=req.payload.hosts.split(',');
+        const ElasticSearch = async function () {
+            var name=req.payload.Name;
+            var logpath=req.payload.Logpath;
+            var configName=req.payload.ConfigName;
+            var hostsarray=req.payload.Sender.Hosts.split(',');
             var hosts='';
             for(var id=0;id<hostsarray.length;id++)
             {
@@ -185,9 +186,9 @@ export default function (server) {
                 hosts+=",";
               }
             }
-            var index=req.payload.index;
-            var type=req.payload.type;
-            var Mapping=req.payload.Mapping;
+            var index=req.payload.Sender.Index;
+            var type=req.payload.Sender.Type;
+            var Mapping=req.payload.Sender.Mapping;
             var Fields=array;
             var tmp=req.payload.Delimiters;
             var Delimiters='';
@@ -198,16 +199,25 @@ export default function (server) {
               }
               Delimiters+=tmp[id];
             }
-            var FilterExpr=req.payload.FilterExpr;
+            var Keywords=req.payload.Keywords;
             var LogFormat=req.payload.LogFormat;
             var ip=req.payload.ip;
             if(Mapping==""||Mapping==null){
               Mapping='""';
             }
-            Wreck.post('http://'+ip+'/peck_task/add', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
+            Wreck.post('http://'+ip+'/peck_task/add', {payload:
+              '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+                  '"SenderConfig":{'+
+                         '"SenderName":"'+configName+'",'+
+                         '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"FieldsKey":"","Aggregators":{}}' +
+                   '},'+
+                  '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+              '" }'
+              },
               (err, xyResponse, payload) => {
-              console.log(payload.toString());
+              //console.log(payload.toString());
                 if (err) {
+                  console.log(err)
                   res = '[{"result":"'+err+'"}]';
                   reply(res);
                   return;
@@ -250,8 +260,91 @@ export default function (server) {
                 }
               });
         };
+
+        const InfluxDb = async function () {
+          var Name=req.payload.Name;
+          var Logpath=req.payload.Logpath;
+          var ConfigName=req.payload.ConfigName;
+          var Hosts=req.payload.Sender.Hosts;
+          var Interval=req.payload.Sender.Interval;
+          var FieldsKey=req.payload.Sender.FieldsKey;
+          var DBName=req.payload.Sender.DBName;
+          var Aggregators=JSON.stringify(req.payload.Sender.Aggregators);
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          console.log(Aggregators);
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var Keywords=req.payload.Keywords;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          Wreck.post('http://'+ip+'/peck_task/add', {payload:
+            '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+ConfigName+'",'+
+            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","Aggregators":'+Aggregators+'}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
+            (err, xyResponse, payload) => {
+              //console.log(payload.toString());
+              if (err) {
+                console.log(err)
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+                return;
+              }
+              else if(payload.toString()=="Add Success") {
+                Wreck.post('http://' + ip + '/peck_task/liststats',
+                  (err, xyResponse, payload) => {
+                    console.log(payload.toString())
+                    var patt=new RegExp(/^List TaskStatus failed,/);
+                    if (err) {
+                      res = '[{"result":"'+err+'"}]';
+                      reply(res);
+                    }
+                    else if(payload==undefined){
+                      res='[{"result":"undefined"}]';
+                      reply(res);
+                    }
+                    else if(patt.test(res))
+                    {
+                      res='[{"result":"'+payload.toString()+'"}]';
+                      reply(res);
+                    }
+                    else {
+                      if (payload.toString() == "null") {
+                        res = '[{"result":"null"}]';
+                        reply(res);
+                      }
+                      else {
+                        console.log(payload.toString());
+                        res = payload.toString();
+                        reply(res);
+                      }
+                    }
+                  });
+              }
+              else{
+                res = '[{"result":"'+payload.toString()+'"},{"result":"err"}]';
+                console.log(payload.toString());
+                reply(res);
+              }
+            });
+        };
         try {
-          example();
+          if(req.payload.ConfigName=="ElasticSearchConfig"){
+            ElasticSeach();
+          }else if(req.payload.ConfigName=="InfluxDbConfig"){
+            InfluxDb();
+          }
         }
         catch (err) {
           console.log('err');
@@ -336,10 +429,11 @@ export default function (server) {
         const Wreck = require('wreck');
         const example = async function () {
           var ip=req.payload.ip;
-          var name=req.payload.name;
+          var name=req.payload.Name;
           var  res;
           Wreck.post('http://'+ip+'/peck_task/list',
             (err, xyResponse, payload) => {
+            console.log("[updateList] ",payload.toString())
               var patt=new RegExp(/^List PeckTask failed,/);
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -386,10 +480,11 @@ export default function (server) {
         const Wreck = require('wreck');
         //console.log(req.payload.Fields);
         var res;
-        const example = async function () {
-          var name=req.payload.name;
-          var logpath=req.payload.logpath;
-          var hostsarray=req.payload.hosts.split(',');
+        const ElasticSeach = async function () {
+          var name=req.payload.Name;
+          var logpath=req.payload.Logpath;
+          var configName=req.payload.ConfigName;
+          var hostsarray=req.payload.Sender.Hosts.split(',');
           var hosts='';
           for(var id=0;id<hostsarray.length;id++)
           {
@@ -398,9 +493,9 @@ export default function (server) {
               hosts+=",";
             }
           }
-          var index=req.payload.index;
-          var type=req.payload.type;
-          var Mapping=req.payload.Mapping;
+          var index=req.payload.Sender.Index;
+          var type=req.payload.Sender.Type;
+          var Mapping=req.payload.Sender.Mapping;
           var Fields=array;
           var tmp=req.payload.Delimiters;
           var Delimiters='';
@@ -411,13 +506,92 @@ export default function (server) {
             }
             Delimiters+=tmp[id];
           }
-          var FilterExpr=req.payload.FilterExpr;
+          var Keywords=req.payload.Keywords;
           var LogFormat=req.payload.LogFormat;
           var ip=req.payload.ip;
           if(Mapping==""||Mapping==null){
             Mapping='""';
           }
-          Wreck.post('http://'+ip+'/peck_task/update', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '" }'},
+          Wreck.post('http://'+ip+'/peck_task/update', {payload:
+            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+configName+'",'+
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"FieldsKey":"","Aggregators":{}}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else if(payload.toString()=="Update Success") {
+                Wreck.post('http://' + ip + '/peck_task/liststats',
+                  (err, xyResponse, payload) => {
+                    var patt=new RegExp(/^List TaskStatus failed,/);
+                    if (err) {
+                      res = '[{"result":"'+err+'"}]';
+                      reply(res);
+                    }
+                    else if(payload==undefined){
+                      res='[{"result":"undefined"}]';
+                      reply(res);
+                    }
+                    else if(patt.test(res))
+                    {
+                      res='[{"result":"'+payload.toString()+'"}]';
+                      reply(res);
+                    }
+                    else {
+                      if (payload.toString() == "null") {
+                        res = '[{"null":"true"}]';
+                        reply(res);
+                      }
+                      else {
+                        reply(payload.toString());
+                      }
+                    }
+                  });
+              }
+              else{
+                res = '[{"result":"'+payload.toString()+'"}]';
+                reply(res);
+              }
+            });
+        };
+        const InfluxDb = async function () {
+          var Name=req.payload.Name;
+          var Logpath=req.payload.Logpath;
+          var ConfigName=req.payload.ConfigName;
+          var Hosts=req.payload.Sender.Hosts;
+          var Interval=req.payload.Sender.Interval;
+          var FieldsKey=req.payload.Sender.FieldsKey;
+          var DBName=req.payload.Sender.DBName;
+          var Aggregators=JSON.stringify(req.payload.Sender.Aggregators);
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          console.log(Aggregators);
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var Keywords=req.payload.Keywords;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          Wreck.post('http://'+ip+'/peck_task/update', {payload:
+            '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+ConfigName+'",'+
+            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","Aggregators":'+Aggregators+'}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
             (err, xyResponse, payload) => {
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -458,7 +632,11 @@ export default function (server) {
             });
         };
         try {
-          example();
+          if(req.payload.ConfigName=="ElasticSearchConfig"){
+            ElasticSeach();
+          }else if(req.payload.ConfigName=="InfluxDbConfig"){
+            InfluxDb();
+          }
         }
         catch (err) {
         }
@@ -514,11 +692,12 @@ export default function (server) {
       handler(req, reply) {
         var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
-        const example = async function () {
+        const ElasticSeach = async function () {
           var template_name=req.payload.template_name;
-          var name=req.payload.name;
-          var logpath=req.payload.logpath;
-          var hostsarray=req.payload.hosts.split(',');
+          var name=req.payload.Name;
+          var logpath=req.payload.Logpath;
+          var configName=req.payload.ConfigName;
+          var hostsarray=req.payload.Sender.Hosts.split(',');
           var hosts='';
           for(var id=0;id<hostsarray.length;id++)
           {
@@ -527,9 +706,9 @@ export default function (server) {
               hosts+=",";
             }
           }
-          var index=req.payload.index;
-          var type=req.payload.type;
-          var Mapping=req.payload.Mapping;
+          var index=req.payload.Sender.Index;
+          var type=req.payload.Sender.Type;
+          var Mapping=req.payload.Sender.Mapping;
           var Fields=array;
           var tmp=req.payload.Delimiters;
           var Delimiters='';
@@ -540,14 +719,22 @@ export default function (server) {
             }
             Delimiters+=tmp[id];
           }
-          var FilterExpr=req.payload.FilterExpr;
+          var Keywords=req.payload.Keywords;
           var LogFormat=req.payload.LogFormat;
           var ip=req.payload.ip;
           if(Mapping==""||Mapping==null){
             Mapping='""';
           }
           var res;
-          Wreck.put('http://localhost:9200/.logpeck/template/'+template_name,{payload: '{"Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":' + Fields + ',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '"}'},
+          Wreck.put('http://localhost:9200/.logpeck/template/'+template_name,{payload:
+            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+            '"SenderConfig":{'+
+            '"Name":"'+configName+'",'+
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"FieldsKey":"","Aggregators":{}}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
             (err, xyResponse, payload) => {
             console.log(xyResponse.statusMessage);
               if (err) {
@@ -566,8 +753,64 @@ export default function (server) {
               }
             });
         }
+        const InfluxDb = async function () {
+          var template_name=req.payload.template_name;
+          var Name=req.payload.Name;
+          var Logpath=req.payload.Logpath;
+          var ConfigName=req.payload.ConfigName;
+          var Hosts=req.payload.Sender.Hosts;
+          var Interval=req.payload.Sender.Interval;
+          var FieldsKey=req.payload.Sender.FieldsKey;
+          var DBName=req.payload.Sender.DBName;
+          var Aggregators=JSON.stringify(req.payload.Sender.Aggregators);
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          console.log(Aggregators);
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var Keywords=req.payload.Keywords;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          var res;
+          Wreck.post('http://localhost:9200/.logpeck/template/'+template_name,{payload:
+          '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
+          '"SenderConfig":{'+
+          '"SenderName":"'+ConfigName+'",'+
+          '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","Aggregators":'+Aggregators+'}' +
+          '},'+
+          '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+          '" }'
+          },
+            (err, xyResponse, payload) => {
+              console.log(xyResponse.statusMessage);
+              if (err) {
+                res='[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else {
+                if( xyResponse.statusMessage=='OK'|| xyResponse.statusMessage=='Created' ){
+                  res = '[{"result":"Add success"}]';
+                  reply(res);
+                }
+                else{
+                  res = '[{"result":"'+payload.toString()+'"}]';
+                  reply(res);
+                }
+              }
+            });
+        }
         try {
-          example();
+          if(req.payload.ConfigName=="ElasticSearchConfig"){
+            ElasticSeach();
+          }else if(req.payload.ConfigName=="InfluxDbConfig"){
+            InfluxDb();
+          }
         }
         catch (err) {
         }
@@ -660,7 +903,7 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        var path=req.payload.path;
+        var path=req.payload.LogPath;
         var ip=req.payload.ip;
         const example = async function () {
           var res;
@@ -689,20 +932,12 @@ export default function (server) {
         const Wreck = require('wreck');
         var res;
         const example = async function () {
-          var name=req.payload.name;
-          var logpath=req.payload.logpath;
-          var hostsarray=req.payload.hosts.split(',');
+          var name=req.payload.Name;
+          var logpath=req.payload.Logpath;
+          var configName=req.payload.ConfigName;
           var hosts='';
-          for(var id=0;id<hostsarray.length;id++)
-          {
-            hosts+='"'+hostsarray[id]+'"';
-            if(id+1<hostsarray.length){
-              hosts+=",";
-            }
-          }
-          var index=req.payload.index;
-          var type=req.payload.type;
-          var Mapping=req.payload.Mapping;
+          var index='';
+          var type='';
           var Fields=array;
           var tmp=req.payload.Delimiters;
           var Delimiters='';
@@ -713,16 +948,22 @@ export default function (server) {
             }
             Delimiters+=tmp[id];
           }
-          var FilterExpr=req.payload.FilterExpr;
+          var Keywords=req.payload.Keywords;
           var LogFormat=req.payload.LogFormat;
           var TestNum=req.payload.TestNum;
           var Timeout=req.payload.Timeout;
           var ip=req.payload.ip;
-          if(Mapping==""||Mapping==null){
-            Mapping='""';
-          }
-          Wreck.post('http://'+ip+'/peck_task/test', {payload: '{ "Name" : "' + name + '","LogPath":"' + logpath + '","ESConfig":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + '},"Fields":'+array+',"Delimiters":"' + Delimiters + '","FilterExpr":"' + FilterExpr + '","LogFormat":"' + LogFormat + '","Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'},
+          Wreck.post('http://'+ip+'/peck_task/test', {payload:
+            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+configName+'",'+
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Interval":0,"FieldsKey":"","Aggregators":{}}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat + '" ,'+
+            '"Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'
+            },
             (err, xyResponse, payload) => {
+            console.log(payload.toString());
               if (err) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);

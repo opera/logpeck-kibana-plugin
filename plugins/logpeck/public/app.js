@@ -37,6 +37,9 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   $scope.mycolor4={"color":"#e4e4e4"};
   $scope.mycolor5={"color":"#e4e4e4"};
   $scope.mycolor6={"color":"#e4e4e4"};
+  $scope.mycolor7={"color":"#e4e4e4"};
+  $scope.mycolor8={"color":"#e4e4e4"};
+  $scope.mycolor9={"color":"#e4e4e4"};
 
   $scope.set_color = function (payment) {
       return { color: status[payment] }
@@ -46,10 +49,21 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   //refresh
   var timer = $interval(function(){
     var t = [];
+
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/refresh',
+    }).then(function successCallback(response2) {
+
+    }, function errorCallback(err) {
+      console.log('err2');
+    });
+
     $http({
       method: 'POST',
       url: '../api/logpeck/init',
     }).then(function successCallback(response) {
+      console.log("*******",response['data']['hits']['hits'])
       for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
         if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
           t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
@@ -61,17 +75,9 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       console.log('err1');
     });
 
-    $http({
-      method: 'POST',
-      url: '../api/logpeck/refresh',
-    }).then(function successCallback(response2) {
-
-      }, function errorCallback(err) {
-      console.log('err2');
-    });
 
     status = t;
-  },10000,1);
+  },1,1);
   $scope.$on('$destroy',function(){
     $interval.cancel(timer);
   });
@@ -111,17 +117,62 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     if(update_ip_exit!=false){
       $scope.Name=update_ip['data']['Name'];
       $scope.LogPath=update_ip['data']['LogPath'];
-      $scope.Hosts=update_ip['data']['ESConfig']['Hosts'].toString();
-      $scope.Index=update_ip['data']['ESConfig']['Index'];
-      $scope.Type=update_ip['data']['ESConfig']['Type'];
-      $scope.Mapping=JSON.stringify(update_ip['data']['ESConfig']['Mapping'],null,4);
-      if($scope.Mapping=='null'){
-        $scope.Mapping="";
+      $scope.ConfigName=update_ip['data']['SenderConfig']['SenderName'];
+      if($scope.ConfigName=="ElasticSearchConfig")
+      {
+        $scope.elasticsearch=true;
+        $scope.influxdb=false;
+
+        $scope.influxHosts = "127.0.0.1:8086";
+        $scope.influxInterval = 30;
+        $scope.influxFieldsKey = "FieldsKey";
+        $scope.influxDBName = "DBname";
+        $scope.influxdb_array=[];
+
+        $scope.esHosts=update_ip['data']['SenderConfig']['Config']['Hosts'].toString();
+        $scope.esIndex=update_ip['data']['SenderConfig']['Config']['Index'];
+        $scope.esType=update_ip['data']['SenderConfig']['Config']['Type'];
+        $scope.esMapping=JSON.stringify(update_ip['data']['SenderConfig']['Config']['Mapping'],null,4);
+        if($scope.esMapping=='null'){
+          $scope.esMapping="";
+        }
+      }else if($scope.ConfigName=="InfluxDbConfig") {
+        $scope.elasticsearch=false;
+        $scope.influxdb=true;
+
+        $scope.esHosts = "127.0.0.1:9200";
+        $scope.esIndex = "my_index-%{+2006.01.02}";
+        $scope.esType = "MyType";
+        $scope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
+
+        $scope.influxHosts = update_ip['data']['SenderConfig']['Config']['Hosts'].toString();
+        $scope.influxInterval = update_ip['data']['SenderConfig']['Config']['Interval'];
+        $scope.influxFieldsKey = update_ip['data']['SenderConfig']['Config']['FieldsKey'];
+        $scope.influxDBName = update_ip['data']['SenderConfig']['Config']['DBName'];
+        $scope.influxdb_array=[];
+        var tmp=update_ip['data']['SenderConfig']['Config']['Aggregators'];
+        console.log(tmp);
+        for (var key in tmp) {
+          var aggregations='';
+          for(var key2 in tmp[key]["Aggregations"]){
+            aggregations+=tmp[key]["Aggregations"][key2];
+            if(key2+1<tmp[key]["Aggregations"].length){
+              aggregations+=",";
+            }
+          }
+          $scope.influxdb_array.push({measurment:key,value:{"PreFields":tmp[key]["PreFields"],"Target":tmp[key]["Target"],"Aggregations":aggregations,"Tags":tmp[key]["Tags"],"Timestamp":tmp[key]["Timestamp"]}});
+        }
+        console.log($scope.influxdb_array);
       }
       $scope.fields_array=update_ip['data']['Fields'];
       $scope.Delimiters=update_ip['data']['Delimiters'];
-      $scope.FilterExpr=update_ip['data']['FilterExpr'];
+      $scope.Keywords=update_ip['data']['Keywords'];
       $scope.LogFormat=update_ip['data']['LogFormat'];
+      if($scope.LogFormat=="text"){
+        $scope.type=true;
+      }else if($scope.LogFormat=="json"){
+        $scope.type=false;
+      }
       update_ip_exit=false;
       if($scope.fields_array==null){
         $scope.fields_array=[];
@@ -130,14 +181,26 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     else {
       $scope.Name = "TestLog";
       $scope.LogPath = "test.log";
-      $scope.Hosts = "127.0.0.1:9200";
-      $scope.Index = "my_index-%{+2006.01.02}";
-      $scope.Type = "MyType";
-      $scope.Mapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
+      $scope.ConfigName = "ElasticSearchConfig";
+
+      $scope.esHosts = "127.0.0.1:9200";
+      $scope.esIndex = "my_index-%{+2006.01.02}";
+      $scope.esType = "MyType";
+      $scope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
+
+      $scope.influxHosts = "127.0.0.1:8086";
+      $scope.influxInterval = 30;
+      $scope.influxFieldsKey = "FieldsKey";
+      $scope.influxDBName = "DBname";
+      $scope.influxdb_array=[];
+
       $scope.fields_array=[];
       $scope.Delimiters = "";
-      $scope.FilterExpr = "";
-      $scope.LogFormat = "json";
+      $scope.Keywords = "";
+      $scope.LogFormat = "text";
+      $scope.elasticsearch=true;
+      $scope.influxdb=false;
+      $scope.type=true;
     }
 
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
@@ -199,24 +262,52 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     }
   }
 
+  $scope.plusTags=function (key) {
+    $scope.influxdb_array[key]['value']['Tags'].push("");
+    console.log($scope.influxdb_array[key]['value']['Tags']);
+  }
+  $scope.minusTags=function (key) {
+    $scope.influxdb_array[key].value.Tags.pop();
+  }
+
+  $scope.plusinfluxdb=function () {
+    $scope.influxdb_array.push({measurment:"",value:{"PreFields":"","Target":"","Aggregations":[],"Tags":[],"Timestamp":""}});
+  }
+  $scope.minusinfluxdb=function () {
+    $scope.influxdb_array.pop();
+  }
 
   $scope.plusfields=function () {
     $scope.fields_array.push({Name:"",Value:""});
-    //$scope.llength+=26;
-    //var t=$scope.llength+'px';
-    //$scope.divlength={"height":t}
-    //console.log($scope.fields_array);
-  }
 
-  $scope.minusfields=function () {
-    $scope.fields_array.pop();
-    //$scope.llength-=26;
-    //var t=$scope.llength+'px';
-    //$scope.divlength={"height":t}
-    //console.log($scope.fields_array);
+  }
+  $scope.minusfields=function (idx) {
+    $scope.fields_array.splice(idx,1);
   }
 
 
+  $scope.optionChange = function(){
+    $scope.keyUp();
+  };
+
+  $scope.configChange = function(configName){
+    console.log(configName);
+    if(configName=="ElasticSearchConfig"){
+      $scope.elasticsearch=true;
+      $scope.influxdb=false;
+    }
+    if(configName=="InfluxDbConfig"){
+      $scope.elasticsearch=false;
+      $scope.influxdb=true;
+    }
+  }
+  $scope.typeChange= function(type) {
+    if(type=="text"){
+      $scope.type=true;
+    }else if(type=="json"){
+      $scope.type=false;
+    }
+  }
   //list task
   $scope.listTask = function ($event) {
     $rootScope.T_ip=event.target.getAttribute('name');
@@ -262,7 +353,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/start',
-      data: {name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
+      data: {Name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
       if(response['data'][0]['result']!="Start Success"){
@@ -289,7 +380,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/stop',
-      data: {name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
+      data: {Name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
       if(response['data'][0]['result']!="Stop Success"){
@@ -317,7 +408,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/remove',
-      data: {name: event.target.getAttribute('name'),ip: $rootScope.T_ip},
+      data: {Name: event.target.getAttribute('name'),ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
       $scope.visible=true;
@@ -347,6 +438,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 
   $scope.addTask = function () {
     var T=false;
+    var influxaggregations={};
     if($scope.fields_array==null){
       ;
     }
@@ -356,6 +448,25 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           T = true;
           break;
         }
+      }
+    }
+    if($scope.influxdb_array==null){
+      ;
+    }
+    else {
+      for (var i=0;i<$scope.influxdb_array.length;i++) {
+        if ($scope.influxdb_array[i].measurment == ''||$scope.influxdb_array[i].value.Target==''||$scope.influxdb_array[i].value.Aggregations==''||$scope.influxdb_array[i].value.Timestamp=='') {
+          T = true;
+          break;
+        }
+
+        var Aggregationsarray=$scope.influxdb_array[i].value.Aggregations.split(',');
+        $scope.influxdb_array[i].value.Aggregations=[];
+        for(var id=0;id<Aggregationsarray.length;id++)
+        {
+          $scope.influxdb_array[i].value.Aggregations.push(Aggregationsarray[id]);
+        }
+        influxaggregations[$scope.influxdb_array[i].measurment]=$scope.influxdb_array[i].value;
       }
     }
     if(T){
@@ -370,26 +481,30 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $scope.testResults = $scope.addTaskResult;
       $scope.error={"color":"#ff0000"};
     }
-    else if($scope.Name==""||$scope.LogPath==""||$scope.Hosts==""||$scope.Index==""||$scope.Type==""){
+    else if($scope.Name==""||$scope.LogPath==""||$scope.esHosts==""||$scope.esIndex==""||$scope.esType==""){
       $scope.addTaskResult = "filed is not complete";
       $scope.testArea=true;
       $scope.testResults = $scope.addTaskResult;
       $scope.error={"color":"#ff0000"};
     }
     else {
+      if($scope.ConfigName=="ElasticSearchConfig"){
+        $scope.Sender={Hosts: $scope.esHosts, Index: $scope.esIndex, Type: $scope.esType, Mapping: $scope.esMapping,}
+      }else if($scope.ConfigName=="InfluxDbConfig"){
+        $scope.Sender={Hosts: $scope.influxHosts, Interval: $scope.influxInterval, FieldsKey: $scope.influxFieldsKey, DBName: $scope.influxDBName,Aggregators:influxaggregations}
+        console.log($scope.Sender);
+      }
       $http({
         method: 'POST',
         url: '../api/logpeck/addTask',
         data: {
-          name: $scope.Name,
-          logpath: $scope.LogPath,
-          hosts: $scope.Hosts,
-          index: $scope.Index,
-          type: $scope.Type,
-          Mapping: $scope.Mapping,
+          Name: $scope.Name,
+          Logpath: $scope.LogPath,
+          ConfigName:$scope.ConfigName,
+          Sender:$scope.Sender,
           Fields: $scope.fields_array,
           Delimiters: $scope.Delimiters,
-          FilterExpr: $scope.FilterExpr,
+          Keywords: $scope.Keywords,
           LogFormat: $scope.LogFormat,
           ip: $rootScope.T_ip
         },
@@ -504,11 +619,12 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/updateList',
-      data: {ip: $rootScope.T_ip,name: name},
+      data: {ip: $rootScope.T_ip,Name: name},
     }).then(function successCallback(response) {
       if(response['data']['LogFormat']==""){
         response['data']['LogFormat']=="json";
       }
+      console.log("updateList------",response)
       update_ip=response;
       update_ip_exit=true;
       window.location.href = "#/updateTask";
@@ -520,6 +636,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   //update
   $scope.updateTask = function () {
     var T=false;
+    var influxaggregations={}
     if($scope.fields_array==null){
 
     }
@@ -529,6 +646,25 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           T = true;
           break;
         }
+      }
+    }
+    if($scope.influxdb_array==null){
+      ;
+    }
+    else {
+      for (var i=0;i<$scope.influxdb_array.length;i++) {
+        if ($scope.influxdb_array[i].measurment == ''||$scope.influxdb_array[i].value.Target==''||$scope.influxdb_array[i].value.Aggregations==''||$scope.influxdb_array[i].value.Timestamp=='') {
+          T = true;
+          break;
+        }
+        var Aggregationsarray=$scope.influxdb_array[i].value.Aggregations.split(',');
+        $scope.influxdb_array[i].value.Aggregations=[];
+        for(var id=0;id<Aggregationsarray.length;id++)
+        {
+          $scope.influxdb_array[i].value.Aggregations.push(Aggregationsarray[id]);
+        }
+        influxaggregations[$scope.influxdb_array[i].measurment]=$scope.influxdb_array[i].value;
+        console.log(influxaggregations)
       }
     }
     if(T){
@@ -543,26 +679,30 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $scope.testResults = $scope.addTaskResult;
       $scope.error={"color":"#ff0000"};
     }
-    else if($scope.Name==""||$scope.LogPath==""||$scope.Hosts==""||$scope.Index==""||$scope.Type==""){
+    else if($scope.Name==""||$scope.LogPath==""||$scope.esHosts==""||$scope.esIndex==""||$scope.esType==""){
       $scope.addTaskResult = "filed is not complete";
       $scope.testArea=true;
       $scope.testResults = $scope.addTaskResult;
       $scope.error={"color":"#ff0000"};
     }
     else {
+      if($scope.ConfigName=="ElasticSearchConfig"){
+        $scope.Sender={Hosts: $scope.esHosts, Index: $scope.esIndex, Type: $scope.esType, Mapping: $scope.esMapping,}
+      }else if($scope.ConfigName=="InfluxDbConfig"){
+        $scope.Sender={Hosts: $scope.influxHosts, Interval: $scope.influxInterval, FieldsKey: $scope.influxFieldsKey, DBName: $scope.influxDBName,Aggregators:influxaggregations}
+        console.log($scope.Sender);
+      }
       $http({
         method: 'POST',
         url: '../api/logpeck/updateTask',
         data: {
-          name: $scope.Name,
-          logpath: $scope.LogPath,
-          hosts: $scope.Hosts,
-          index: $scope.Index,
-          type: $scope.Type,
-          Mapping: $scope.Mapping,
+          Name: $scope.Name,
+          Logpath: $scope.LogPath,
+          ConfigName:$scope.ConfigName,
+          Sender: $scope.Sender,
           Fields: $scope.fields_array,
           Delimiters: $scope.Delimiters,
-          FilterExpr: $scope.FilterExpr,
+          Keywords: $scope.Keywords,
           LogFormat: $scope.LogFormat,
           ip: $rootScope.T_ip
         },
@@ -664,20 +804,23 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           return;
         }
       }
+      if($scope.ConfigName=="ElasticSearchConfig"){
+        $scope.Sender={Hosts: $scope.esHosts, Index: $scope.esIndex, Type: $scope.esType, Mapping: $scope.esMapping,}
+      }else if($scope.ConfigName=="InfluxDbConfig"){
+        $scope.Sender={Hosts: $scope.influxHosts, Interval: $scope.influxInterval, FieldsKey: $scope.influxFieldsKey, DBName: $scope.influxDBName,Aggregators:$scope.influxdb_array}
+      }
       $http({
         method: 'POST',
         url: '../api/logpeck/addTemplate',
         data: {
           template_name: $scope.template_name,
-          name: $scope.Name,
-          logpath: $scope.LogPath,
-          hosts: $scope.Hosts,
-          index: $scope.Index,
-          type: $scope.Type,
-          Mapping: $scope.Mapping,
+          Name: $scope.Name,
+          Logpath: $scope.LogPath,
+          ConfigName:$scope.ConfigName,
+          Sender: $scope.Sender,
           Fields: $scope.fields_array,
           Delimiters: $scope.Delimiters,
-          FilterExpr: $scope.FilterExpr,
+          Keywords: $scope.Keywords,
           LogFormat: $scope.LogFormat,
         },
       }).then(function successCallback(response) {
@@ -738,17 +881,52 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       console.log(response['data']['_source'])
       $scope.Name=response['data']['_source']['Name'];
       $scope.LogPath=response['data']['_source']['LogPath'];
-      $scope.Hosts=response['data']['_source']['ESConfig']['Hosts'].toString();
-      $scope.Index=response['data']['_source']['ESConfig']['Index'];
-      $scope.Type=response['data']['_source']['ESConfig']['Type'];
-      $scope.Mapping=JSON.stringify(response['data']['_source']['ESConfig']['Mapping'],null,4);
-      if($scope.Mapping=='null'){
-        $scope.Mapping="";
+      $scope.ConfigName=response['data']['_source']['SenderConfig']['SenderName']
+
+      console.log();
+      if($scope.ConfigName=="ElasticSearchConfig")
+      {
+        $scope.elasticsearch=true;
+        $scope.influxdb=false;
+
+        $scope.influxHosts = "127.0.0.1:8086";
+        $scope.influxInterval = 30;
+        $scope.influxFieldsKey = "FieldsKey";
+        $scope.influxDBName = "DBname";
+        $scope.influxdb_array=[];
+
+        $scope.esHosts=response['data']['_source']['SenderConfig']['Config']['Hosts'].toString();
+        $scope.esIndex=response['data']['_source']['SenderConfig']['Config']['Index'];
+        $scope.esType=response['data']['_source']['SenderConfig']['Config']['Type'];
+        $scope.esMapping=JSON.stringify(response['data']['_source']['SenderConfig']['Config']['Mapping'],null,4);
+        if($scope.esMapping=='null'){
+          $scope.esMapping="";
+        }
+      }else if($scope.ConfigName=="InfluxDbConfig") {
+        $scope.elasticsearch=false;
+        $scope.influxdb=true;
+
+        $scope.esHosts = "127.0.0.1:9200";
+        $scope.esIndex = "my_index-%{+2006.01.02}";
+        $scope.esType = "MyType";
+        $scope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
+
+
+        $scope.influxHosts = response['data']['_source']['SenderConfig']['Config']['Hosts'].toString();
+        $scope.influxInterval = response['data']['_source']['SenderConfig']['Config']['Interval'];
+        $scope.influxFieldsKey = response['data']['_source']['SenderConfig']['Config']['FieldsKey'];
+        $scope.influxDBName = response['data']['_source']['SenderConfig']['Config']['DBName'];
+        $scope.influxdb_array=response['data']['_source']['SenderConfig']['Config']['Aggregators'];
       }
       $scope.fields_array=response['data']['_source']['Fields'];
       $scope.Delimiters=response['data']['_source']['Delimiters'];
-      $scope.FilterExpr=response['data']['_source']['FilterExpr'];
+      $scope.Keywords=response['data']['_source']['Keywords'];
       $scope.LogFormat=response['data']['_source']['LogFormat'];
+      if($scope.LogFormat=="text"){
+        $scope.type=true;
+      }else if($scope.LogFormat=="json"){
+        $scope.type=false;
+      }
     }, function errorCallback() {
     });
   };
@@ -757,7 +935,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $http({
         method: 'POST',
         url: '../api/logpeck/key_up',
-        data: {path: $scope.LogPath,
+        data: {LogPath: $scope.LogPath,
           ip: $rootScope.T_ip,
         },
       }).then(function successCallback(response) {
@@ -772,10 +950,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         }
       }, function errorCallback() {
       });
-  };
-
-  $scope.optionChange = function(){
-    $scope.keyUp();
   };
 
   $scope.testTask = function () {
@@ -795,6 +969,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         }
       }
     }
+
     if(T){
       $scope.addTaskResult = "fields is not complete";
       $scope.testArea=true;
@@ -807,7 +982,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $scope.testResults = $scope.addTaskResult;
       $scope.error={"color":"#ff0000"};
     }
-    else if($scope.Name==""||$scope.LogPath==""||$scope.Hosts==""||$scope.Index==""||$scope.Type==""){
+    else if($scope.Name==""||$scope.LogPath==""){
       $scope.addTaskResult = "filed is not complete";
       $scope.testArea=true;
       $scope.testResults = $scope.addTaskResult;
@@ -818,15 +993,12 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         method: 'POST',
         url: '../api/logpeck/testTask',
         data: {
-          name: $scope.Name,
-          logpath: $scope.LogPath,
-          hosts: $scope.Hosts,
-          index: $scope.Index,
-          type: $scope.Type,
-          Mapping: $scope.Mapping,
+          Name: $scope.Name,
+          Logpath: $scope.LogPath,
+          ConfigName:$scope.ConfigName,
           Fields: $scope.fields_array,
           Delimiters: $scope.Delimiters,
-          FilterExpr: $scope.FilterExpr,
+          Keywords: $scope.Keywords,
           LogFormat: $scope.LogFormat,
           TestNum: $scope.TestNum,
           Timeout:    $scope.Time,
