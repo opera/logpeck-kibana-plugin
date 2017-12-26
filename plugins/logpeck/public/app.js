@@ -454,6 +454,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   };
 
   $scope.addTask = function () {
+    console.log($scope.ConfigName);
     var T=false;
     var influxaggregations={};
     if($scope.fields_array==null){

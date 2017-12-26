@@ -341,7 +341,7 @@ export default function (server) {
         };
         try {
           if(req.payload.ConfigName=="ElasticSearchConfig"){
-            ElasticSeach();
+            ElasticSearch();
           }else if(req.payload.ConfigName=="InfluxDbConfig"){
             InfluxDb();
           }
@@ -480,7 +480,7 @@ export default function (server) {
         const Wreck = require('wreck');
         //console.log(req.payload.Fields);
         var res;
-        const ElasticSeach = async function () {
+        const ElasticSearch = async function () {
           var name=req.payload.Name;
           var logpath=req.payload.Logpath;
           var configName=req.payload.ConfigName;
@@ -633,7 +633,7 @@ export default function (server) {
         };
         try {
           if(req.payload.ConfigName=="ElasticSearchConfig"){
-            ElasticSeach();
+            ElasticSearch();
           }else if(req.payload.ConfigName=="InfluxDbConfig"){
             InfluxDb();
           }
@@ -692,7 +692,7 @@ export default function (server) {
       handler(req, reply) {
         var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
-        const ElasticSeach = async function () {
+        const ElasticSearch = async function () {
           var template_name=req.payload.template_name;
           var name=req.payload.Name;
           var logpath=req.payload.Logpath;
@@ -807,7 +807,7 @@ export default function (server) {
         }
         try {
           if(req.payload.ConfigName=="ElasticSearchConfig"){
-            ElasticSeach();
+            ElasticSearch();
           }else if(req.payload.ConfigName=="InfluxDbConfig"){
             InfluxDb();
           }
@@ -934,8 +934,8 @@ export default function (server) {
         const example = async function () {
           var name=req.payload.Name;
           var logpath=req.payload.Logpath;
-          var configName=req.payload.ConfigName;
-          var hosts='';
+          var configName='ElasticSearchConfig';
+          var hosts='127.0.0.1:7117';
           var index='';
           var type='';
           var Fields=array;
@@ -957,7 +957,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Interval":0,"FieldsKey":"","Aggregators":{}}' +
+            '"Config":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Interval":0,"FieldsKey":"","Aggregators":{}}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat + '" ,'+
             '"Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'

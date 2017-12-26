@@ -326,9 +326,9 @@
       </div>
       <div class="table_2">
         <div style="padding-bottom: 10px">
-          <select ng-model="ConfigName" style="width: 160px" ng-change="configChange(ConfigName)">
-            <option value="ElasticSearchConfig">ElasticSearchConfig</option>
-            <option value="InfluxDbConfig">InfluxDbConfig</option>
+          <select ng-model="ConfigName" style="width: 130px" ng-change="configChange(ConfigName)">
+            <option value="ElasticSearchConfig">ElasticSearch</option>
+            <option value="InfluxDbConfig">InfluxDb</option>
           </select>
         </div>
         <div ng-show="elasticsearch">
@@ -407,7 +407,7 @@
                 <input type="text" ng-model="influxInterval" style="width: 80%"  ng-focus="focus(30,'influxInterval','mycolor9')" ng-blur="blur(30,'influxInterval','mycolor9')" ng-style="mycolor9">
               </div>
               <div style="width: 50%;float: left">
-                <select  ng-model="influxFieldsKey" style="width: 70px">
+                <select  ng-model="influxFieldsKey" style="width: 100px">
                   <option ng-repeat="option in fields_array" value="{{option.Name}}">{{option.Name}}</option>
                 </select>
               </div>
@@ -438,7 +438,7 @@
                   <div  class="table_title">
                     <div style="float: left;width: 50%;">
                       <div style="float:left;color:#6EADC1;">{{Name}}_</div>
-                      <div style="float:left;"><input type="text" ng-model="value.measurment" style="width: 70%;"></div>
+                      <div style="float:left;"><input type="text" ng-model="value.measurment" style="width: 180px;"></div>
                     </div>
                     <div style="float: left;width: 50%;">
                       <input type="checkbox" ng-checked="value.value.Aggregations.cnt" ng-click='selectOne("cnt",key)' style="float:left"/> <div style="margin-right:8px;float:left">cnt</div>
@@ -456,7 +456,6 @@
                   <div  class="table_title">
                     <div style="width: 50%;float: left">
                       <div style="float: left">Timestamp</div>
-                      <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
                     </div>
                     <div style="width: 25%;float: left">
                       <div style="float: left">TargetAggregations</div>
@@ -468,17 +467,17 @@
                   </div>
                   <div class="table_title">
                     <div style="float: left;width: 50%;">
-                      <select  ng-model="value.value.Timestamp" style="width: 70px">
+                      <select  ng-model="value.value.Timestamp" style="width: 100px">
                         <option ng-repeat="option in fields_array" value="{{option.Name}}">{{option.Name}}</option>
                       </select>
                     </div>
                     <div style="float: left;width: 25%;">
-                      <select  ng-model="value.value.Target" style="width: 70px;float:left;">
+                      <select  ng-model="value.value.Target" style="width: 100px;float:left;">
                         <option ng-repeat="option in fields_array" value="{{option.Name}}">{{option.Name}}</option>
                       </select>
                     </div>
                     <div style="float: right;width: 105px;">
-                      <select  ng-model="value.value.PreFields" style="width: 70px">
+                      <select  ng-model="value.value.PreFields" style="width: 100px">
                         <option ng-repeat="option in fields_array" value="{{option.Name}}">{{option.Name}}</option>
                       </select>
                     </div>
