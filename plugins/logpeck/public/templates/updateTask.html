@@ -273,11 +273,11 @@
             <div class="table_title">
               <div style="width: 12%;float: left">LogFormat</div>
               <div ng-show="type">
-                <div style="width: 31%;float: left">
+                <div style="width: 31%;float: left">Keywords</div>
+                <div style="width: 45%;float: left">
                   <div style="width: 80px;float: left">Delimiters</div>
                   <div style="width: 25px;float: left"><a class="kuiButton kuiButton--primary Button--small " ng-click="addDefault()" >":{} ,[]</a></div>
                 </div>
-                <div style="width: 45%;float: left">Keywords</div>
               </div>
             </div>
             <div  class="table_title">
@@ -287,13 +287,11 @@
                   <option value ="text">text</option>
                 </select>
               </div>
-              <div ng-show="type">
-                <div style="width: 31%;float: left">
-                  <input style="width: 84%;" type="text" ng-model="Delimiters" >
-                </div>
-                <div style="width: 45%;float: left">
-                  <input style="width: 100%;" type="text" ng-model="Keywords" >
-                </div>
+              <div style="width: 31%;float: left">
+                <input style="width: 84%;" type="text" ng-model="Keywords" >
+              </div>
+              <div style="width: 45%;float: left;" ng-show="type">
+                <input style="width: 100%;" type="text" ng-model="Delimiters" >
               </div>
             </div>
           </div>
@@ -312,7 +310,7 @@
                 name
                 <input type="text" ng-model="value.Name" >
               </div>
-              <div ng-show="type" style="width: auto;float: left">
+              <div  style="width: auto;float: left">
                 value
                 <input type="text" ng-model="value.Value">
               </div>
@@ -443,7 +441,14 @@
                       <div style="float:left;"><input type="text" ng-model="value.measurment" style="width: 70%;"></div>
                     </div>
                     <div style="float: left;width: 50%;">
-                      <input type="text" ng-model="value.value.Aggregations" style="width: 100%;">
+                      <input type="checkbox" ng-checked="value.value.Aggregations.cnt" ng-click='selectOne("cnt",key)' style="float:left"/> <div style="margin-right:8px;float:left">cnt</div>
+                      <input type="checkbox" ng-checked="value.value.Aggregations.sum" ng-click='selectOne("sum",key)' style="float:left"/> <div style="margin-right:8px;float:left">sum</div>
+                      <input type="checkbox" ng-checked="value.value.Aggregations.avg" ng-click='selectOne("avg",key)' style="float:left"/> <div style="margin-right:8px;float:left">avg</div>
+                      <input type="checkbox" ng-checked="value.value.Aggregations.p99" ng-click='selectOne("p99",key)' style="float:left"/> <div style="margin-right:8px;float:left">p99</div>
+                      <input type="checkbox" ng-checked="value.value.Aggregations.p90" ng-click='selectOne("p90",key)' style="float:left"/> <div style="margin-right:8px;float:left">p90</div>
+                      <input type="checkbox" ng-checked="value.value.Aggregations.p50" ng-click='selectOne("p50",key)' style="float:left"/> <div style="margin-right:8px;float:left">p50</div>
+                      <div style="float:right">all</div>
+                      <input type="checkbox"  style="float:right;" ng-click="selectAll(key)"/>
                     </div>
                   </div>
                 </div>

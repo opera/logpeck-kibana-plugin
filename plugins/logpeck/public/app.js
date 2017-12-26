@@ -87,6 +87,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     method: 'POST',
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
+    $scope.select_all=[];
+
     $scope.llength=640;
     var new_arr = [];
     $scope.T_IpList=[];
@@ -151,16 +153,13 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         $scope.influxDBName = update_ip['data']['SenderConfig']['Config']['DBName'];
         $scope.influxdb_array=[];
         var tmp=update_ip['data']['SenderConfig']['Config']['Aggregators'];
-        console.log(tmp);
         for (var key in tmp) {
-          var aggregations='';
+          var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false};
           for(var key2 in tmp[key]["Aggregations"]){
-            aggregations+=tmp[key]["Aggregations"][key2];
-            if(key2+1<tmp[key]["Aggregations"].length){
-              aggregations+=",";
-            }
+            Aggregations[tmp[key]["Aggregations"][key2]]=true;
           }
-          $scope.influxdb_array.push({measurment:key,value:{"PreFields":tmp[key]["PreFields"],"Target":tmp[key]["Target"],"Aggregations":aggregations,"Tags":tmp[key]["Tags"],"Timestamp":tmp[key]["Timestamp"]}});
+          console.log(Aggregations);
+          $scope.influxdb_array.push({measurment:key,value:{"PreFields":tmp[key]["PreFields"],"Target":tmp[key]["Target"],"Aggregations":Aggregations,"Tags":tmp[key]["Tags"],"Timestamp":tmp[key]["Timestamp"]}});
         }
         console.log($scope.influxdb_array);
       }
@@ -202,7 +201,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $scope.influxdb=false;
       $scope.type=true;
     }
-
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
@@ -226,6 +224,25 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     console.log('err');
   });
 
+  $scope.selectOne=function(string,key){
+    console.log(string);
+    console.log(key);
+    if($scope.influxdb_array[key]['value']['Aggregations'][string]==false){
+      $scope.influxdb_array[key]['value']['Aggregations'][string]=true;
+    }else{
+      $scope.influxdb_array[key]['value']['Aggregations'][string]=false;
+    }
+  }
+
+  $scope.selectAll=function(key){
+    if($scope.select_all.hasOwnProperty(key)==false||$scope.select_all[key]==false){
+        $scope.select_all[key]=true;
+        $scope.influxdb_array[key]['value']['Aggregations']={"cnt":true,"sum":true,"avg":true,"p99":true,"p90":true,"p50":true};
+      }else{
+        $scope.select_all[key]=false;
+        $scope.influxdb_array[key]['value']['Aggregations']={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false};
+      }
+  }
 
   $scope.focus = function (string,target,mycolor) {
     if ($scope[target]) {
@@ -271,7 +288,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   }
 
   $scope.plusinfluxdb=function () {
-    $scope.influxdb_array.push({measurment:"",value:{"PreFields":"","Target":"","Aggregations":[],"Tags":[],"Timestamp":""}});
+    $scope.influxdb_array.push({measurment:"",value:{"PreFields":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false},"Tags":[],"Timestamp":""}});
   }
   $scope.minusinfluxdb=function () {
     $scope.influxdb_array.pop();
@@ -460,13 +477,18 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           break;
         }
 
-        var Aggregationsarray=$scope.influxdb_array[i].value.Aggregations.split(',');
-        $scope.influxdb_array[i].value.Aggregations=[];
-        for(var id=0;id<Aggregationsarray.length;id++)
-        {
-          $scope.influxdb_array[i].value.Aggregations.push(Aggregationsarray[id]);
+        var tmp=[];
+        for(var key2 in $scope.influxdb_array[i].value.Aggregations){
+          console.log(key2);
+          console.log($scope.influxdb_array[i].value.Aggregations[key2]);
+          if($scope.influxdb_array[i].value.Aggregations[key2]==true){
+            tmp.push(key2);
+          }
         }
+        console.log(tmp);
+        $scope.influxdb_array[i].value.Aggregations=tmp;
         influxaggregations[$scope.influxdb_array[i].measurment]=$scope.influxdb_array[i].value;
+        console.log(influxaggregations);
       }
     }
     if(T){
@@ -657,14 +679,14 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           T = true;
           break;
         }
-        var Aggregationsarray=$scope.influxdb_array[i].value.Aggregations.split(',');
-        $scope.influxdb_array[i].value.Aggregations=[];
-        for(var id=0;id<Aggregationsarray.length;id++)
-        {
-          $scope.influxdb_array[i].value.Aggregations.push(Aggregationsarray[id]);
+        var tmp=[];
+        for(var key2 in $scope.influxdb_array[i].value.Aggregations){
+          if($scope.influxdb_array[i].value.Aggregations[key2]==true){
+            tmp.push(key2);
+          }
         }
+        $scope.influxdb_array[i].value.Aggregations=tmp;
         influxaggregations[$scope.influxdb_array[i].measurment]=$scope.influxdb_array[i].value;
-        console.log(influxaggregations)
       }
     }
     if(T){
