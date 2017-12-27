@@ -209,7 +209,7 @@ export default function (server) {
               '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
                   '"SenderConfig":{'+
                          '"SenderName":"'+configName+'",'+
-                         '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"FieldsKey":"","Aggregators":{}}' +
+                         '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":{}}' +
                    '},'+
                   '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
               '" }'
@@ -267,13 +267,12 @@ export default function (server) {
           var ConfigName=req.payload.ConfigName;
           var Hosts=req.payload.Sender.Hosts;
           var Interval=req.payload.Sender.Interval;
-          var FieldsKey=req.payload.Sender.FieldsKey;
           var DBName=req.payload.Sender.DBName;
-          var Aggregators=JSON.stringify(req.payload.Sender.Aggregators);
+          var AggregatorConfigs=JSON.stringify(req.payload.Sender.AggregatorConfigs);
           var Fields=array;
           var tmp=req.payload.Delimiters;
           var Delimiters='';
-          console.log(Aggregators);
+          console.log(AggregatorConfigs);
           for(var id=0;id<tmp.length;id++)
           {
             if(tmp[id]=='"'){
@@ -288,7 +287,7 @@ export default function (server) {
             '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+ConfigName+'",'+
-            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","Aggregators":'+Aggregators+'}' +
+            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"DBName":"' + DBName + '","AggregatorConfigs":'+AggregatorConfigs+'}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
             '" }'
@@ -516,7 +515,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"FieldsKey":"","Aggregators":{}}' +
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":{}}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
             '" }'
@@ -566,13 +565,12 @@ export default function (server) {
           var ConfigName=req.payload.ConfigName;
           var Hosts=req.payload.Sender.Hosts;
           var Interval=req.payload.Sender.Interval;
-          var FieldsKey=req.payload.Sender.FieldsKey;
           var DBName=req.payload.Sender.DBName;
-          var Aggregators=JSON.stringify(req.payload.Sender.Aggregators);
+          var AggregatorConfigs=JSON.stringify(req.payload.Sender.AggregatorConfigs);
           var Fields=array;
           var tmp=req.payload.Delimiters;
           var Delimiters='';
-          console.log(Aggregators);
+          console.log(AggregatorConfigs);
           for(var id=0;id<tmp.length;id++)
           {
             if(tmp[id]=='"'){
@@ -587,7 +585,7 @@ export default function (server) {
             '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+ConfigName+'",'+
-            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","Aggregators":'+Aggregators+'}' +
+            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"DBName":"' + DBName + '","AggregatorConfigs":'+AggregatorConfigs+'}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
             '" }'
@@ -730,7 +728,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"Name":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"FieldsKey":"","Aggregators":{}}' +
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":{}}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
             '" }'
@@ -762,11 +760,11 @@ export default function (server) {
           var Interval=req.payload.Sender.Interval;
           var FieldsKey=req.payload.Sender.FieldsKey;
           var DBName=req.payload.Sender.DBName;
-          var Aggregators=JSON.stringify(req.payload.Sender.Aggregators);
+          var AggregatorConfigs=JSON.stringify(req.payload.Sender.AggregatorConfigs);
           var Fields=array;
           var tmp=req.payload.Delimiters;
           var Delimiters='';
-          console.log(Aggregators);
+          console.log(AggregatorConfigs);
           for(var id=0;id<tmp.length;id++)
           {
             if(tmp[id]=='"'){
@@ -782,7 +780,7 @@ export default function (server) {
           '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
           '"SenderConfig":{'+
           '"SenderName":"'+ConfigName+'",'+
-          '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","Aggregators":'+Aggregators+'}' +
+          '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","AggregatorConfigs":'+AggregatorConfigs+'}' +
           '},'+
           '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
           '" }'
@@ -957,7 +955,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Interval":0,"FieldsKey":"","Aggregators":{}}' +
+            '"Config":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Interval":0,"AggregatorConfigs":{}}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat + '" ,'+
             '"Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'
