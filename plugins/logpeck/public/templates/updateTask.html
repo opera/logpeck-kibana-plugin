@@ -271,15 +271,15 @@
       <div class="table_3">
           <div class="table_line">
             <div class="table_title">
-              <div style="width: 12%;float: left">LogFormat</div>
+              <div style="width: 30%;float: left">LogFormat</div>
               <div style="width: 31%;float: left">Keywords</div>
-              <div style="width: 45%;float: left">
+              <div style="width: 27%;float: left">
                 <div style="width: 80px;float: left" ng-show="type">Delimiters</div>
-                <div style="width: 25px;float: left"><a class="kuiButton kuiButton--primary Button--small " ng-click="addDefault()" >":{} ,[]</a></div>
+                <div style="width: 25px;float: left" ng-show="type"><a class="kuiButton kuiButton--primary Button--small " ng-click="addDefault()" >":{} ,[]</a></div>
               </div>
             </div>
             <div  class="table_title">
-              <div style="width: 12%;float: left">
+              <div style="width: 30%;float: left">
                 <select ng-model="LogFormat" style="width: 70px;" ng-change="typeChange(LogFormat)">
                   <option value="json">json</option>
                   <option value ="text">text</option>
@@ -288,7 +288,7 @@
               <div style="width: 31%;float: left">
                 <input style="width: 84%;" type="text" ng-model="Keywords" >
               </div>
-              <div style="width: 45%;float: left;" ng-show="type">
+              <div style="width: 27%;float: left;" ng-show="type">
                 <input style="width: 100%;" type="text" ng-model="Delimiters" >
               </div>
             </div>
@@ -307,7 +307,7 @@
                 name
                 <input type="text" ng-model="value.Name" >
               </div>
-              <div  style="width: auto;float: left">
+              <div  style="width: auto;float: left" ng-show="type">
                 value
                 <input type="text" ng-model="value.Value">
               </div>
@@ -322,7 +322,7 @@
       </div>
       <div class="table_2">
         <div style="padding-bottom: 10px">
-          <select ng-model="ConfigName" style="width: 130px" ng-change="configChange(ConfigName)">
+          <select ng-model="ConfigName" style="width: 150px;font-size:17px" ng-change="configChange(ConfigName)">
             <option value="ElasticSearchConfig">ElasticSearch</option>
             <option value="InfluxDbConfig">InfluxDb</option>
           </select>
@@ -387,94 +387,111 @@
                 <input type="text" ng-model="influxHosts" style="width: 80%"  ng-focus="focus('127.0.0.1:8086','influxHosts','mycolor7')" ng-blur="blur('127.0.0.1:8086','influxHosts','mycolor7')" ng-style="mycolor7">
               </div>
               <div style="width: 35%;float: left">
-                <input type="text" ng-model="influxDBName" style="width: 80%"  ng-focus="focus('DBname','influxDBName','mycolor8')" ng-blur="blur('DBname','influxDBName','mycolor8')" ng-style="mycolor8">
+                <input type="text" ng-model="influxDBName" style="width: 60%"  ng-focus="focus('DBname','influxDBName','mycolor8')" ng-blur="blur('DBname','influxDBName','mycolor8')" ng-style="mycolor8">
               </div>
               <div style="width: 30%;float: left">
-                <input type="text" ng-model="influxInterval" style="width: 100%"  ng-focus="focus(30,'influxInterval','mycolor9')" ng-blur="blur(30,'influxInterval','mycolor9')" ng-style="mycolor9">
+                <input type="text" ng-model="influxInterval" style="width: 70%"  ng-focus="focus(30,'influxInterval','mycolor9')" ng-blur="blur(30,'influxInterval','mycolor9')" ng-style="mycolor9">
               </div>
             </div>
+          </div>
+          <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px;font-size:15px">
+            Aggregators
+            <a  ng-click="plusinfluxdb()" class="kuiButton kuiButton--primary ">
+              <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
+              </span>
+            </a>
           </div>
 
-          <div style="width: 100%;float: left">
-            <div style="padding-top: 10px;height: 180px;">
-              <div class="table_line">
-                <div  class="table_title">
-                  <div style="width: 35%;float: left">
-                    <div style="float: left">Measurment</div>
-                    <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+          <li ng-repeat="(key,value) in influxdb_array track by $index">
+              <div style="padding-top: 10px;height: 240px;width: 100%;float: left;margin-bottom:10px;border-bottom:1px solid #6EADC1;">
+                <div class="table_line">
+                  <div  class="table_title">
+                    <div style="width: 35%;float: left">
+                      <div style="float: left">Measurment</div>
+                      <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+                    </div>
+                    <div style="width: 35%;float: left">
+                      <div style="float: left">AggregationTarget</div>
+                      <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+                    </div>
+                    <div style="width: 30%;float: left">
+                      <div style="float: left">Timestamp</div>
+                    </div>
                   </div>
-                  <div style="width: 35%;float: left">
-                    <div style="float: left">TargetAggregations</div>
-                    <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
-                  </div>
-                  <div style="width: 30%;float: left">
-                    <div style="float: left">Timestamp</div>
-                  </div>
-                </div>
-                <div  class="table_title">
-                  <div style="float: left;width: 35%;">
-                    <div style="float:left;"><input type="text" ng-model="influxdb_array.PreMeasurment" style="width: 100px;">&nbsp__&nbsp</div>
-                    <select  ng-model="influxdb_array.Measurment" style="width: 100px">
-                      <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
-                    </select>
-                  </div>
-                  <div style="float: left;width: 35%;">
-                    <select  ng-model="influxdb_array.Target" style="width: 80%;float:left;">
-                      <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
-                    </select>
-                  </div>
-                  <div style="float: left;width: 30%;">
-                    <select  ng-model="influxdb_array.Timestamp" style="width: 100%">
-                      <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="table_line">
-                <div  class="table_title">
-                  <div style="width: 50%;float: left;margin-top:5px;">
-                    <div style="float: left;margin-right:15px;">Aggregations</div>
-                    <input type="checkbox"  style="float:left;" ng-click="selectAll()"/>
-                    <div style="float:left">all</div>
+                  <div  class="table_title">
+                    <div style="float: left;width: 35%;">
+                      <div style="float:left;width: 44%;">
+                        <input type="text" ng-model="influxdb_array[key].PreMeasurment" style="width: 94%;float:left;">
+                        <div style="width: 6%;float:left;margin-top:6px">_</div>
+                      </div>
+                      <select  ng-model="influxdb_array[key].Measurment" style="width: 36%">
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                    </div>
+                    <div style="float: left;width: 35%;">
+                      <select  ng-model="influxdb_array[key].Target" style="width: 60%;float:left;">
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                    </div>
+                    <div style="float: left;width: 30%;">
+                      <select  ng-model="influxdb_array[key].Timestamp" style="width: 70%">
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-                <div class="table_title">
-                  <div style="float: left;width: 100%;margin-top:10px;">
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.cnt" ng-click='selectOne("cnt")' style="float:left"/> <div style="margin-right:8px;float:left">cnt</div>
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.sum" ng-click='selectOne("sum")' style="float:left"/> <div style="margin-right:8px;float:left">sum</div>
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.avg" ng-click='selectOne("avg")' style="float:left"/> <div style="margin-right:8px;float:left">avg</div>
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.p99" ng-click='selectOne("p99")' style="float:left"/> <div style="margin-right:8px;float:left">p99</div>
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.p90" ng-click='selectOne("p90")' style="float:left"/> <div style="margin-right:8px;float:left">p90</div>
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.p50" ng-click='selectOne("p50")' style="float:left"/> <div style="margin-right:8px;float:left">p50</div>
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.max" ng-click='selectOne("max")' style="float:left"/> <div style="margin-right:8px;float:left">max</div>
-                    <input type="checkbox" ng-checked="influxdb_array.Aggregations.min" ng-click='selectOne("min")' style="float:left"/> <div style="margin-right:8px;float:left">min</div>
+                <div class="table_line">
+                  <div  class="table_title">
+                    <div style="width: 50%;float: left;margin-top:5px;">
+                      <div style="float: left;margin-right:15px;">Aggregations</div>
+                      <input type="checkbox"  style="float:left;" ng-click="selectAll(key)"/>
+                      <div style="float:left">all</div>
+                    </div>
+                  </div>
+                  <div class="table_title">
+                    <div style="float: left;width: 100%;margin-top:10px;">
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.cnt" ng-click='selectOne("cnt",key)' style="float:left"/> <div style="margin-right:8px;float:left">cnt</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.sum" ng-click='selectOne("sum",key)' style="float:left"/> <div style="margin-right:8px;float:left">sum</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.avg" ng-click='selectOne("avg",key)' style="float:left"/> <div style="margin-right:8px;float:left">avg</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p99" ng-click='selectOne("p99",key)' style="float:left"/> <div style="margin-right:8px;float:left">p99</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p90" ng-click='selectOne("p90",key)' style="float:left"/> <div style="margin-right:8px;float:left">p90</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p50" ng-click='selectOne("p50",key)' style="float:left"/> <div style="margin-right:8px;float:left">p50</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.max" ng-click='selectOne("max",key)' style="float:left"/> <div style="margin-right:8px;float:left">max</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.min" ng-click='selectOne("min",key)' style="float:left"/> <div style="margin-right:8px;float:left">min</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="table_line" style="margin-top:10px;">
-                <div  class="table_title">
-                  <div style="float:left;width:50px">
-                    Tags
-                  </div>
-                  <a  ng-click="plusTags()" class=" kuiButton--primary Button--tag ">
+                <div class="table_line" style="margin-top:10px;">
+                  <div  class="table_title">
+                    <div style="float:left;width:50px">
+                      Tags
+                    </div>
+                    <a  ng-click="plusTags(key)" class=" kuiButton--primary Button--tag ">
                       <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
                       </span>
-                  </a>
-                  <a  ng-click="minusTags()" class=" kuiButton--primary--del Button--tag ">
+                    </a>
+                    <a  ng-click="minusTags(key)" class=" kuiButton--primary--del Button--tag ">
                       <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
                       </span>
-                  </a>
-                </div>
-                <div  class="table_title" style="margin-top:10px;">
-                  <div ng-repeat="(key2,value2) in influxdb_array.Tags track by $index" style="float: left;margin-left:5px">
-                    <select  ng-model="influxdb_array['Tags'][key2]" style="width: 70px">
-                      <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
-                    </select>
+                    </a>
+                  </div>
+                  <div  class="table_title" style="margin-top:10px;">
+                    <div ng-repeat="(key2,value2) in influxdb_array[key].Tags track by $index" style="float: left;margin-left:5px">
+                      <select  ng-model="influxdb_array[key]['Tags'][key2]" style="width: 70px">
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
+                <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px;padding-left: 48%;">
+                  <a  ng-click="minusinfluxdb($index)" class="kuiButton kuiButton--primary--del ">
+                     <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
+                     </span>
+                  </a>
+                </div>
               </div>
-            </div>
-          </div>
+          </li>
+
         </div>
       </div>
       <div class="table_4">

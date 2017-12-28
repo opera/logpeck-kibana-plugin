@@ -87,7 +87,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     method: 'POST',
     url: '../api/logpeck/init',
   }).then(function successCallback(response) {
-    $scope.select_all=false;
+    $scope.influxdb_array=[];
+    $scope.select_all=[];
 
     $scope.llength=640;
     var new_arr = [];
@@ -128,7 +129,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         $scope.influxHosts = "127.0.0.1:8086";
         $scope.influxInterval = 30;
         $scope.influxDBName = "DBname";
-        $scope.influxdb_array={"preMeasurment":"","measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""};
+        $scope.influxdb_array.push({"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""});
 
         $scope.esHosts=update_ip['data']['SenderConfig']['Config']['Hosts'].toString();
         $scope.esIndex=update_ip['data']['SenderConfig']['Config']['Index'];
@@ -149,15 +150,18 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         $scope.influxHosts = update_ip['data']['SenderConfig']['Config']['Hosts'].toString();
         $scope.influxInterval = update_ip['data']['SenderConfig']['Config']['Interval'];
         $scope.influxDBName = update_ip['data']['SenderConfig']['Config']['DBName'];
-        $scope.influxdb_array={};
         $scope.influxdb_array=update_ip['data']['SenderConfig']['Config']['AggregatorConfigs'];
-        var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
-        for(var key in $scope.influxdb_array["Aggregations"]){
-          Aggregations[$scope.influxdb_array["Aggregations"][key]]=true;
-        }
-        $scope.influxdb_array["Aggregations"]=Aggregations;
         console.log($scope.influxdb_array);
+        for(var key in $scope.influxdb_array)
+        {
+          var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
+          for(var key2 in $scope.influxdb_array[key]["Aggregations"]){
+            Aggregations[$scope.influxdb_array[key]["Aggregations"][key2]]=true;
+          }
+          $scope.influxdb_array[key]["Aggregations"]=Aggregations;
+        }
       }
+
       $scope.fields_array=update_ip['data']['Fields'];
       $scope.Delimiters=update_ip['data']['Delimiters'];
       $scope.Keywords=update_ip['data']['Keywords'];
@@ -185,7 +189,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $scope.influxHosts = "127.0.0.1:8086";
       $scope.influxInterval = 30;
       $scope.influxDBName = "DBname";
-      $scope.influxdb_array={"preMeasurment":"","measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""};
+      $scope.influxdb_array.push({"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""});
 
       $scope.fields_array=[];
       $scope.Delimiters = "";
@@ -218,23 +222,24 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     console.log('err');
   });
 
-  $scope.selectOne=function(string){
-    console.log(string);
-    if($scope.influxdb_array['Aggregations'][string]==false){
-      $scope.influxdb_array['Aggregations'][string]=true;
+  $scope.selectOne=function(string,key){
+    console.log(string,key);
+    if($scope.influxdb_array[key]['Aggregations'][string]==false){
+      $scope.influxdb_array[key]['Aggregations'][string]=true;
     }else{
-      $scope.influxdb_array['Aggregations'][string]=false;
+      $scope.influxdb_array[key]['Aggregations'][string]=false;
     }
   }
 
-  $scope.selectAll=function(){
-    if($scope.select_all==false){
-        $scope.select_all=true;
-        $scope.influxdb_array['Aggregations']={"cnt":true,"sum":true,"avg":true,"p99":true,"p90":true,"p50":true,"max":true,"min":true};
-      }else{
-        $scope.select_all=false;
-        $scope.influxdb_array['Aggregations']={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
-      }
+  $scope.selectAll=function(key){
+    console.log(key);
+    if($scope.select_all.hasOwnProperty(key)==false||$scope.select_all[key]==false){
+      $scope.select_all[key]=true;
+      $scope.influxdb_array[key]['Aggregations']={"cnt":true,"sum":true,"avg":true,"p99":true,"p90":true,"p50":true,"max":true,"min":true};
+    }else{
+      $scope.select_all[key]=false;
+      $scope.influxdb_array[key]['Aggregations']={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
+    }
   }
 
   $scope.focus = function (string,target,mycolor) {
@@ -272,12 +277,19 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     }
   }
 
-  $scope.plusTags=function () {
-    $scope.influxdb_array['Tags'].push("");
+  $scope.plusinfluxdb=function () {
+    $scope.influxdb_array.push({"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""});
+  }
+  $scope.minusinfluxdb=function (idx) {
+    $scope.influxdb_array.splice(idx,1);
+  }
+
+  $scope.plusTags=function (key) {
+    $scope.influxdb_array[key]['Tags'].push("");
     console.log($scope.influxdb_array['Tags']);
   }
-  $scope.minusTags=function () {
-    $scope.influxdb_array['Tags'].pop();
+  $scope.minusTags=function (key) {
+    $scope.influxdb_array[key]['Tags'].pop();
   }
   $scope.plusfields=function () {
     $scope.fields_array.push({Name:"",Value:""});
@@ -485,19 +497,20 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       if($scope.ConfigName=="ElasticSearchConfig"){
         $scope.Sender={Hosts: $scope.esHosts, Index: $scope.esIndex, Type: $scope.esType, Mapping: $scope.esMapping,}
       }else if($scope.ConfigName=="InfluxDbConfig"){
-        var tmp=[];
-        for(var key2 in $scope.influxdb_array.Aggregations){
-          console.log(key2);
-          console.log($scope.influxdb_array.Aggregations[key2]);
-          if($scope.influxdb_array.Aggregations[key2]==true){
-            tmp.push(key2);
+        for(var key in $scope.influxdb_array){
+          var tmp=[];
+          for(var key2 in $scope.influxdb_array[key].Aggregations){
+            if($scope.influxdb_array[key].Aggregations[key2]==true){
+              tmp.push(key2);
+            }
           }
+          if(tmp.length==0){
+            tmp.push("cnt");
+          }
+          console.log("tmp");
+          console.log(tmp);
+          $scope.influxdb_array[key].Aggregations=tmp;
         }
-        if(tmp.length==0){
-          tmp.push("cnt");
-        }
-        console.log(tmp);
-        $scope.influxdb_array.Aggregations=tmp;
 
         $scope.Sender={Hosts: $scope.influxHosts, Interval: $scope.influxInterval, DBName: $scope.influxDBName,AggregatorConfigs:$scope.influxdb_array}
         console.log($scope.Sender);
@@ -688,19 +701,21 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       if($scope.ConfigName=="ElasticSearchConfig"){
         $scope.Sender={Hosts: $scope.esHosts, Index: $scope.esIndex, Type: $scope.esType, Mapping: $scope.esMapping,}
       }else if($scope.ConfigName=="InfluxDbConfig"){
-        var tmp=[];
-        for(var key2 in $scope.influxdb_array.Aggregations){
-          console.log(key2);
-          console.log($scope.influxdb_array.Aggregations[key2]);
-          if($scope.influxdb_array.Aggregations[key2]==true){
-            tmp.push(key2);
+        for(var key in $scope.influxdb_array){
+          var tmp=[];
+          for(var key2 in $scope.influxdb_array[key].Aggregations){
+            console.log(key2);
+            console.log($scope.influxdb_array[key].Aggregations[key2]);
+            if($scope.influxdb_array[key].Aggregations[key2]==true){
+              tmp.push(key2);
+            }
           }
+          if(tmp.length==0){
+            tmp.push("cnt");
+          }
+          console.log(tmp);
+          $scope.influxdb_array[key].Aggregations=tmp;
         }
-        if(tmp.length==0){
-          tmp.push("cnt");
-        }
-        console.log(tmp);
-        $scope.influxdb_array.Aggregations=tmp;
 
         $scope.Sender={Hosts: $scope.influxHosts, Interval: $scope.influxInterval, DBName: $scope.influxDBName,AggregatorConfigs:$scope.influxdb_array}
         console.log($scope.Sender);
@@ -905,7 +920,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         $scope.influxHosts = "127.0.0.1:8086";
         $scope.influxInterval = 30;
         $scope.influxDBName = "DBname";
-        $scope.influxdb_array={"preMeasurment":"","measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""};
+        $scope.influxdb_array={"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""};
 
         $scope.esHosts=response['data']['_source']['SenderConfig']['Config']['Hosts'].toString();
         $scope.esIndex=response['data']['_source']['SenderConfig']['Config']['Index'];
@@ -1017,8 +1032,11 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         },
       }).then(function successCallback(response) {
         if(response['data'][0]['result']==undefined) {
-          var obj = angular.fromJson(response['data'])
-          $scope.testResults=JSON.stringify(obj,null,4);
+          console.log(response['data']);
+          var obj = angular.fromJson(response['data']);
+          console.log(obj);
+          $scope.testResults=JSON.stringify(response['data'],null,4);
+          console.log($scope.testResults.Log);
           $scope.error={"color":"#2d2d2d"};
         }
         else {

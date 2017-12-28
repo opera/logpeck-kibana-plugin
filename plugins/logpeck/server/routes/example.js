@@ -209,7 +209,7 @@ export default function (server) {
               '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
                   '"SenderConfig":{'+
                          '"SenderName":"'+configName+'",'+
-                         '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":{}}' +
+                         '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":[]}' +
                    '},'+
                   '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
               '" }'
@@ -515,7 +515,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":{}}' +
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":[]}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
             '" }'
@@ -728,7 +728,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"Name":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":{}}' +
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":[]}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
             '" }'
@@ -955,7 +955,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Interval":0,"AggregatorConfigs":{}}' +
+            '"Config":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Interval":0,"AggregatorConfigs":[]}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat + '" ,'+
             '"Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'
