@@ -458,7 +458,11 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     }
     else {
       for (var id = 0; id < $scope.fields_array.length; id++) {
-        if ($scope.fields_array[id].Name == '' || $scope.fields_array[id].Value == '') {
+        if ($scope.fields_array[id].Name == '' ) {
+          T = true;
+          break;
+        }
+        if($scope.LogFormat=="text" && $scope.fields_array[id].Value == ''){
           T = true;
           break;
         }
@@ -662,7 +666,11 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     }
     else {
       for (var id = 0; id < $scope.fields_array.length; id++) {
-        if ($scope.fields_array[id].Name == '' || $scope.fields_array[id].Value == '') {
+        if ($scope.fields_array[id].Name == '' ) {
+          T = true;
+          break;
+        }
+        if($scope.LogFormat=="text" && $scope.fields_array[id].Value == ''){
           T = true;
           break;
         }
@@ -989,7 +997,11 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     }
     else {
       for (var id = 0; id < $scope.fields_array.length; id++) {
-        if ($scope.fields_array[id].Name == '' || $scope.fields_array[id].Value == '') {
+        if ($scope.fields_array[id].Name == '' ) {
+          T = true;
+          break;
+        }
+        if($scope.LogFormat=="text" && $scope.fields_array[id].Value == ''){
           T = true;
           break;
         }
