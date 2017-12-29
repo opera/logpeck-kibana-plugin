@@ -118,21 +118,27 @@
   }
   .table_2{
     width: 86%;
-    height: 255px;
     padding-top: 20px;
     margin-top: 20px;
+    padding-bottom: 20px;
     margin-bottom: 20px;
     border-top:3px solid #e4e4e4;
     border-bottom:3px solid #e4e4e4;
     float: left;
   }
   .table_3{
+    margin-top: 20px;
     width: 98%;
     float: left;
   }
   .table_4{
     margin-top: 25px;
     margin-bottom: 20px;
+    width: 98%;
+    float: left;
+  }
+  .table_test{
+    margin-top: 25px;
     width: 98%;
     float: left;
   }
@@ -164,6 +170,27 @@
     padding: 3px 20px;
     width: 80px;
     height: 35px;
+  }
+  .Button--tag{
+    height: 24px;
+    width: 24px;
+    padding-bottom: 10px;
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    padding: 2px 6px 2px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+  }
+  .kuiButton--primary--del {
+    color: #FFF;
+    background-color: #e8488b;
   }
 </style>
 
@@ -203,7 +230,7 @@
         </div>
       </div>
       <div class="model_list">
-        <li ng-repeat="index in TemplateList | orderBy:index">
+        <li ng-repeat="index in TemplateList | orderBy:index ">
           <div class="name_list">
             <div style="width: 70%;float: left;" >
               <a ng-click="applyTemplate($event)" name="{{ index }}">
@@ -211,7 +238,7 @@
               </a>
             </div>
             <div style="width: 30%;float: right">
-              <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeTemplate($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: red">
+              <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeTemplate($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: #e8488b">
                 remove
               </a>
             </div>
@@ -237,25 +264,89 @@
                 <input type="text" ng-model="Name" style="width: 97%" ng-focus="focus('TestLog','Name','mycolor1')" ng-blur="blur('TestLog','Name','mycolor1')" ng-style="mycolor1">
               </div>
               <div style="width: 70%;float: left">
-                <input list="Path" ng-keyup="keyUp()" ng-change="optionChange()" type="text" ng-model="LogPath" style="width: 80%" ng-focus="focus('test.log','LogPath','mycolor2')" ng-blur="blur('test.log','LogPath','mycolor2')" ng-style="mycolor2">
+                <input list="Path" ng-keyup="keyUp()" ng-change="optionChange()" type="text" ng-model="LogPath" style="width: 83%" ng-focus="focus('test.log','LogPath','mycolor2')" ng-blur="blur('test.log','LogPath','mycolor2')" ng-style="mycolor2">
                 <datalist id="Path">
-                    <option ng-repeat="index in path_array">{{LogPath}}{{index}}</option>
+                    <option ng-repeat="index in path_array track by $index">{{LogPath}}{{index}}</option>
                 </datalist>
               </div>
             </div>
           </div>
       </div>
-        <div class="table_2">
-          <div  class="table_title" style="margin-bottom: 20px;font-size: 16px">
-            Elasticsearch Config
+      <div class="table_3">
+        <div class="table_line">
+          <div class="table_title">
+            <div style="width: 30%;float: left">LogFormat</div>
+            <div style="width: 31%;float: left">Keywords</div>
+            <div style="width: 27%;float: left">
+              <div style="width: 80px;float: left" ng-show="type">Delimiters</div>
+              <div style="width: 25px;float: left" ng-show="type"><a class="kuiButton kuiButton--primary Button--small " ng-click="addDefault()" >":{} ,[]</a></div>
+            </div>
           </div>
+          <div  class="table_title">
+            <div style="width: 30%;float: left">
+              <select ng-model="LogFormat" style="width: 70px" ng-change="typeChange(LogFormat)">
+                <option value="json">json</option>
+                <option value ="text">text</option>
+              </select>
+            </div>
+            <div style="width: 31%;float: left">
+              <input style="width: 84%;" type="text" ng-model="Keywords" >
+            </div>
+            <div style="width: 27%;float: left" ng-show="type">
+              <input style="width: 100%;" type="text" ng-model="Delimiters" >
+            </div>
+          </div>
+        </div>
+        <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px">
+          Fields
+          <a  ng-click="plusfields()" class="kuiButton kuiButton--primary ">
+              <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
+              </span>
+          </a>
+        </div>
+        <div style="width: 100%;float: left">
+
+          <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
+              <div style="width: auto;float: left">
+                name
+                <input type="text" ng-model="value.Name" style="width: 140px">
+              </div>
+              <div  style="width: auto;float: left" ng-show="type">
+                value
+                <input type="text" ng-model="value.Value" style="width: 140px">
+              </div>
+              <div style="width: auto;float: left;margin-left:10px">
+                <a  ng-click="minusfields($index)" class="Button--tag kuiButton--primary--del ">
+                   <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
+                   </span>
+                </a>
+              </div>
+          </li>
+        </div>
+        <div class="table_test">
+          <div style="width: 100%;float: left;margin-bottom: 20px" ng-show="testArea">
+             <textarea rows="10" ng-model="testResults" style="border: 1px solid gainsboro;width: 88%;" ng-style="error">
+               {{testResults}}
+             </textarea>
+          </div>
+          <a class="kuiButton kuiButton--primary Button--big " ng-click="testTask()" >test</a>
+        </div>
+      </div>
+      <div class="table_2">
+        <div style="padding-bottom: 20px">
+          <select ng-model="ConfigName" style="width: 150px;font-size:17px" ng-change="configChange(ConfigName)">
+            <option value="ElasticSearchConfig">ElasticSearch</option>
+            <option value="InfluxDbConfig">InfluxDb</option>
+          </select>
+        </div>
+        <div ng-show="elasticsearch">
           <div class="table_line">
             <div  class="table_title">
               <div style="float: left">Hosts</div>
               <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
             </div>
             <div  class="table_title">
-              <input type="text" ng-model="Hosts" style="width: 100%"  ng-focus="focus('127.0.0.1:9200','Hosts','mycolor3')" ng-blur="blur('127.0.0.1:9200','Hosts','mycolor3')" ng-style="mycolor3">
+              <input type="text" ng-model="esHosts" style="width: 100%"  ng-focus="focus('127.0.0.1:9200','esHosts','mycolor3')" ng-blur="blur('127.0.0.1:9200','esHosts','mycolor3')" ng-style="mycolor3">
             </div>
           </div>
           <div style="width: 100%;float: left">
@@ -265,14 +356,14 @@
                 <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
               </div>
               <div style="width: 100%;float: left">
-                <input style="width: 93%;" type="text" ng-model="Index" ng-focus="focus('my_index-%{+2006.01.02}','Index','mycolor4')" ng-blur="blur('my_index-%{+2006.01.02}','Index','mycolor4')" ng-style="mycolor4">
+                <input style="width: 93%;" type="text" ng-model="esIndex" ng-focus="focus('my_index-%{+2006.01.02}','esIndex','mycolor4')" ng-blur="blur('my_index-%{+2006.01.02}','esIndex','mycolor4')" ng-style="mycolor4">
               </div>
               <div style="width: 100%;float: left;margin-top: 15px">
                 <div style="float: left">Type</div>
                 <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
               </div>
               <div style="width: 100%;float: left">
-                <input style="width: 93%;" type="text" ng-model="Type" ng-focus="focus('MyType','Type','mycolor5')" ng-blur="blur('MyType','Type','mycolor5')" ng-style="mycolor5">
+                <input style="width: 93%;" type="text" ng-model="esType" ng-focus="focus('MyType','esType','mycolor5')" ng-blur="blur('MyType','esType','mycolor5')" ng-style="mycolor5">
               </div>
             </div>
             <div style="width: 50%;float: left">
@@ -280,68 +371,145 @@
                 Mapping
               </div>
               <div style="width: 100%;float: left">
-                <textarea rows="4" cols="56" ng-model="Mapping" style="border: 1px solid gainsboro" ng-focus="focus3('Mapping','mycolor6')" ng-focus="blur3('Mapping','mycolor6')" ng-style="mycolor6">
+                <textarea rows="4" cols="56" ng-model="esMapping" style="border: 1px solid gainsboro" ng-focus="focus3('Mapping','mycolor6')" ng-focus="blur3('Mapping','mycolor6')" ng-style="mycolor6">
                    {{Mapping}}
                 </textarea>
               </div>
             </div>
           </div>
         </div>
-        <div class="table_3">
+        <div ng-show="influxdb">
           <div class="table_line">
-            <div class="table_title">
-              <div style="width: 12%;float: left">LogFormat</div>
-              <div style="width: 38%;float: left">
-                <div style="width: 80px;float: left">Delimiters</div>
-                <div style="width: 25px;float: left"><a class="kuiButton kuiButton--primary Button--small " ng-click="addDefault()" >":{} ,[]</a></div>
+            <div  class="table_title">
+              <div style="width: 35%;float: left">
+                <div style="float: left">Host</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
               </div>
-              <div style="width: 38%;float: left">Keywords</div>
+              <div style="width: 35%;float: left">
+                <div style="float: left">DBName</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+              <div style="width: 30%;float: left">
+                <div style="float: left">Interval</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
             </div>
             <div  class="table_title">
-              <div style="width: 12%;float: left">
-                <select ng-model="LogFormat" style="width: 70px">
-                  <option value="json">json</option>
-                  <option value ="text">text</option>
-                </select>
+              <div style="width: 35%;float: left">
+                <input type="text" ng-model="influxHosts" style="width: 80%"  ng-focus="focus('127.0.0.1:8086','influxHosts','mycolor7')" ng-blur="blur('127.0.0.1:8086','influxHosts','mycolor7')" ng-style="mycolor7">
               </div>
-              <div style="width: 38%;float: left">
-                <input style="width: 84%;" type="text" ng-model="Delimiters" >
+              <div style="width: 35%;float: left">
+                <input type="text" ng-model="influxDBName" style="width: 60%"  ng-focus="focus('DBname','influxDBName','mycolor8')" ng-blur="blur('DBname','influxDBName','mycolor8')" ng-style="mycolor8">
               </div>
-              <div style="width: 38%;float: left">
-                <input style="width: 100%;" type="text" ng-model="FilterExpr" >
+              <div style="width: 30%;float: left">
+                <input type="text" ng-model="influxInterval" style="width: 70%"  ng-focus="focus(30,'influxInterval','mycolor9')" ng-blur="blur(30,'influxInterval','mycolor9')" ng-style="mycolor9">
               </div>
             </div>
           </div>
-          <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px">
-            Fields
-            <a  ng-click="plusfields()" class="kuiButton kuiButton--primary ng-scope ">
+          <div  class="table_title" style="margin-top: 10px;margin-bottom: 25px;font-size:15px">
+            Measurments
+            <a  ng-click="plusinfluxdb()" class="kuiButton kuiButton--primary ">
               <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
               </span>
             </a>
-            <a  ng-click="minusfields()" class="kuiButton kuiButton--primary ng-scope ">
-              <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
-              </span>
-            </a>
           </div>
-          <div style="width: 100%;float: left">
 
-            <li ng-repeat="(key,value) in fields_array">
-              name
-              <input type="text" ng-model="value.Name" >
-              value
-              <input type="text" ng-model="value.Value">
-            </li>
-          </div>
+          <li ng-repeat="(key,value) in influxdb_array track by $index">
+              <div style="padding-top: 15px;padding-bottom:15px;width: 100%;height:auto;float: left;border-top:1px solid #6EADC1;">
+                <div class="table_line">
+                  <div  class="table_title">
+                    <div style="width: 35%;float: left">
+                      <div style="float: left">Measurment</div>
+                      <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+                    </div>
+                    <div style="width: 35%;float: left">
+                      <div style="float: left">AggregationTarget</div>
+                      <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+                    </div>
+                    <div style="width: 30%;float: left">
+                      <div style="float: left">Timestamp</div>
+                      <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(optional)</div>
+                    </div>
+                  </div>
+                  <div  class="table_title">
+                    <div style="float: left;width: 70%;">
+                      <div style="float:left;width: 25%;">
+                        <input type="text" ng-model="influxdb_array[key].PreMeasurment" style="width: 94%;float:left;">
+                        <div style="width: 6%;float:left;margin-top:6px">_</div>
+                      </div>
+                      <div style="width: 25%;float:left">
+                        <select  ng-model="influxdb_array[key].Measurment" style="width: 94%;float:left">
+                          <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                        </select>
+                        <div style="width: 6%;float:left;margin-top:6px">_</div>
+                      </div>
+                      <select  ng-model="influxdb_array[key].Target" style="width: 25%;float:left;">
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                    </div>
+                    <div style="float: left;width: 30%;">
+                      <select  ng-model="influxdb_array[key].Timestamp" style="width: 70%">
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="width: 100%;float: left;margin-bottom: 5px;">
+                  <div  style="float: left;width: 100%;">
+                    <div style="width: 50%;float: left;padding-top:20px;">
+                      <div style="float: left;margin-right:15px;">Aggregations</div>
+                      <input type="checkbox"  style="float:left;" ng-click="selectAll(key)"/>
+                      <div style="float:left">all</div>
+                    </div>
+                    <div style="width: 45%;float: left;padding-top:20px;">
+                      <div style="float:left;width:50px">
+                        Tags
+                      </div>
+                      <a  ng-click="plusTags(key)" class=" kuiButton--primary Button--tag ">
+                        <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
+                        </span>
+                      </a>
+                      <a  ng-click="minusTags(key)" class=" kuiButton--primary--del Button--tag ">
+                        <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
+                        </span>
+                      </a>
+                    </div>
+                    <div style="float: left;width: 5%;margin-bottom:20px;">
+                      <a  ng-click="minusinfluxdb($index)" class="kuiButton kuiButton--primary--del ">
+                     <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
+                     </span>
+                      </a>
+                    </div>
+                  </div>
+                  <div style="float: left;width: 100%;">
+                    <div style="float: left;width: 50%;margin-top:5px;">
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.cnt" ng-click='selectOne("cnt",key)' style="float:left"/> <div style="margin-right:8px;float:left">cnt</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.sum" ng-click='selectOne("sum",key)' style="float:left"/> <div style="margin-right:8px;float:left">sum</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.avg" ng-click='selectOne("avg",key)' style="float:left"/> <div style="margin-right:8px;float:left">avg</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p99" ng-click='selectOne("p99",key)' style="float:left"/> <div style="margin-right:8px;float:left">p99</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p90" ng-click='selectOne("p90",key)' style="float:left"/> <div style="margin-right:8px;float:left">p90</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p50" ng-click='selectOne("p50",key)' style="float:left"/> <div style="margin-right:8px;float:left">p50</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.max" ng-click='selectOne("max",key)' style="float:left"/> <div style="margin-right:8px;float:left">max</div>
+                      <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.min" ng-click='selectOne("min",key)' style="float:left"/> <div style="margin-right:8px;float:left">min</div>
+                    </div>
+                    <div style="float: left;width: 50%;">
+                      <div ng-repeat="(key2,value2) in influxdb_array[key].Tags track by $index" style="float: left;margin-left:1%;margin-top:2px;width:32%">
+                        <select  ng-model="influxdb_array[key]['Tags'][key2]" style="width: 100%">
+                          <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </li>
+
         </div>
-        <div class="table_4">
-          <div style="width: 100%;float: left;margin-bottom: 20px" ng-show="testArea">
-             <textarea rows="10" ng-model="testResults" style="border: 1px solid gainsboro;width: 88%;" ng-style="error">
-               {{testResults}}
-             </textarea>
-          </div>
-          <a class="kuiButton kuiButton--primary Button--big " ng-click="addTask()" >add</a>
-          <a class="kuiButton kuiButton--primary Button--big " ng-click="testTask()" >test</a>
-        </div>
+      </div>
+      <div class="table_4">
+        <a class="kuiButton kuiButton--primary Button--big " ng-click="addTask()" >add</a>
+      </div>
     </div>
   </div>
 </div>
