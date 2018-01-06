@@ -36,31 +36,31 @@ export default function (server) {
           var ip=req.payload.ip;
           var  res;
           Wreck.post('http://'+ip+'/peck_task/liststats',
-          (err, xyResponse, payload) => {
-            var patt=new RegExp(/^List TaskStatus failed,/);
-            if (err) {
-              res = '[{"result":"'+err+'"}]';
-              reply(res);
-            }
-            else if(payload==undefined){
-              res='[{"result":"undefined"}]';
-              reply(res);
-            }
-            else if(patt.test(res))
-            {
-              res='[{"result":"'+payload.toString()+'"}]';
-              reply(res);
-            }
-            else{
-              if(payload.toString()=="null"){
-                res='[{"null":"true"}]';
+            (err, xyResponse, payload) => {
+              var patt=new RegExp(/^List TaskStatus failed,/);
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else if(payload==undefined){
+                res='[{"result":"undefined"}]';
+                reply(res);
+              }
+              else if(patt.test(res))
+              {
+                res='[{"result":"'+payload.toString()+'"}]';
                 reply(res);
               }
               else{
-                reply(payload.toString());
+                if(payload.toString()=="null"){
+                  res='[{"null":"true"}]';
+                  reply(res);
+                }
+                else{
+                  reply(payload.toString());
+                }
               }
-            }
-          });
+            });
         };
         try {
           example();
@@ -173,92 +173,92 @@ export default function (server) {
         var array=JSON.stringify(req.payload.Fields);
         const Wreck = require('wreck');
         var res;
+        console.log(req.payload);
         const ElasticSearch = async function () {
-            var name=req.payload.Name;
-            var logpath=req.payload.Logpath;
-            var configName=req.payload.ConfigName;
-            var hostsarray=req.payload.Sender.Hosts.split(',');
-            var hosts='';
-            for(var id=0;id<hostsarray.length;id++)
-            {
-              hosts+='"'+hostsarray[id]+'"';
-              if(id+1<hostsarray.length){
-                hosts+=",";
-              }
+          var name=req.payload.Name;
+          var logpath=req.payload.Logpath;
+          var configName=req.payload.ConfigName;
+          var hostsarray=req.payload.Sender.Hosts.split(',');
+          var hosts='';
+          for(var id=0;id<hostsarray.length;id++)
+          {
+            hosts+='"'+hostsarray[id]+'"';
+            if(id+1<hostsarray.length){
+              hosts+=",";
             }
-            var index=req.payload.Sender.Index;
-            var type=req.payload.Sender.Type;
-            var Mapping=req.payload.Sender.Mapping;
-            var Fields=array;
-            var tmp=req.payload.Delimiters;
-            var Delimiters='';
-            for(var id=0;id<tmp.length;id++)
-            {
-              if(tmp[id]=='"'){
-                Delimiters+="\\";
-              }
-              Delimiters+=tmp[id];
+          }
+          var index=req.payload.Sender.Index;
+          var type=req.payload.Sender.Type;
+          var Mapping=req.payload.Sender.Mapping;
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
             }
-            var Keywords=req.payload.Keywords;
-            var LogFormat=req.payload.LogFormat;
-            var ip=req.payload.ip;
-            if(Mapping==""||Mapping==null){
-              Mapping='""';
-            }
-            Wreck.post('http://'+ip+'/peck_task/add', {payload:
-              '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
-                  '"SenderConfig":{'+
-                         '"SenderName":"'+configName+'",'+
-                         '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":[]}' +
-                   '},'+
-                  '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
-              '" }'
-              },
-              (err, xyResponse, payload) => {
+            Delimiters+=tmp[id];
+          }
+          var Keywords=req.payload.Keywords;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          if(Mapping==""||Mapping==null){
+            Mapping='""';
+          }
+          Wreck.post('http://'+ip+'/peck_task/add', {payload:
+            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+configName+'",'+
+            '"Config":{"Hosts":[' + hosts + '],"Index":"' + index + '","Type":"' + type + '","Mapping":' + Mapping + ',"Interval":0,"AggregatorConfigs":[]}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
+            (err, xyResponse, payload) => {
               //console.log(payload.toString());
-                if (err) {
-                  console.log(err)
-                  res = '[{"result":"'+err+'"}]';
-                  reply(res);
-                  return;
-                }
-                else if(payload.toString()=="Add Success") {
-                  Wreck.post('http://' + ip + '/peck_task/liststats',
-                    (err, xyResponse, payload) => {
-                     console.log(payload.toString())
-                      var patt=new RegExp(/^List TaskStatus failed,/);
-                      if (err) {
-                        res = '[{"result":"'+err+'"}]';
-                        reply(res);
-                      }
-                      else if(payload==undefined){
-                        res='[{"result":"undefined"}]';
-                        reply(res);
-                      }
-                      else if(patt.test(res))
-                      {
-                        res='[{"result":"'+payload.toString()+'"}]';
+              if (err) {
+                console.log(err)
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+                return;
+              }
+              else if(payload.toString()=="Add Success") {
+                Wreck.post('http://' + ip + '/peck_task/liststats',
+                  (err, xyResponse, payload) => {
+                    var patt=new RegExp(/^List TaskStatus failed,/);
+                    if (err) {
+                      res = '[{"result":"'+err+'"}]';
+                      reply(res);
+                    }
+                    else if(payload==undefined){
+                      res='[{"result":"undefined"}]';
+                      reply(res);
+                    }
+                    else if(patt.test(res))
+                    {
+                      res='[{"result":"'+payload.toString()+'"}]';
+                      reply(res);
+                    }
+                    else {
+                      if (payload.toString() == "null") {
+                        res = '[{"result":"null"}]';
                         reply(res);
                       }
                       else {
-                        if (payload.toString() == "null") {
-                          res = '[{"result":"null"}]';
-                          reply(res);
-                        }
-                        else {
-                          console.log(payload.toString());
-                          res = payload.toString();
-                          reply(res);
-                        }
+                        console.log(payload.toString());
+                        res = payload.toString();
+                        reply(res);
                       }
-                    });
-                }
-                else{
-                  res = '[{"result":"'+payload.toString()+'"},{"result":"err"}]';
-                  console.log(payload.toString());
-                  reply(res);
-                }
-              });
+                    }
+                  });
+              }
+              else{
+                res = '[{"result":"'+payload.toString()+'"},{"result":"err"}]';
+                console.log(payload.toString());
+                reply(res);
+              }
+            });
         };
 
         const InfluxDb = async function () {
@@ -338,11 +338,107 @@ export default function (server) {
               }
             });
         };
+
+        const Kafka = async function () {
+          var name=req.payload.Name;
+          var logpath=req.payload.Logpath;
+          var configName=req.payload.ConfigName;
+          var hostsarray=req.payload.Sender.Hosts.split(',');
+          var hosts='';
+          for(var id=0;id<hostsarray.length;id++)
+          {
+            hosts+='"'+hostsarray[id]+'"';
+            if(id+1<hostsarray.length){
+              hosts+=",";
+            }
+          }
+          var Topic=req.payload.Sender.Topic;
+          var MaxMessageBytes=req.payload.Sender.MaxMessageBytes;
+          var RequiredAcks=req.payload.Sender.RequiredAcks;
+          var Timeout=req.payload.Sender.Timeout;
+          var Compression=req.payload.Sender.Compression;
+          var Partitioner=req.payload.Sender.Partitioner;
+          var ReturnErrors=req.payload.Sender.ReturnErrors;
+          var Flush=JSON.stringify(req.payload.Sender.Flush);
+          var Retry=JSON.stringify(req.payload.Sender.Retry);
+
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var Keywords=req.payload.Keywords;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          Wreck.post('http://'+ip+'/peck_task/add', {payload:
+            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+configName+'",'+
+            '"Config":{"Hosts":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
+            ',"Timeout":'+Timeout+',"Compression":'+Compression+',"Partitioner":"'+Partitioner+'","ReturnErrors":'+ReturnErrors+
+            ',"Flush":'+Flush+',"Retry":'+Retry+',"Interval":0,"AggregatorConfigs":[]}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
+            (err, xyResponse, payload) => {
+              //console.log(payload.toString());
+              if (err) {
+                console.log(err)
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+                return;
+              }
+              else if(payload.toString()=="Add Success") {
+                Wreck.post('http://' + ip + '/peck_task/liststats',
+                  (err, xyResponse, payload) => {
+                    var patt=new RegExp(/^List TaskStatus failed,/);
+                    if (err) {
+                      res = '[{"result":"'+err+'"}]';
+                      reply(res);
+                    }
+                    else if(payload==undefined){
+                      res='[{"result":"undefined"}]';
+                      reply(res);
+                    }
+                    else if(patt.test(res))
+                    {
+                      res='[{"result":"'+payload.toString()+'"}]';
+                      reply(res);
+                    }
+                    else {
+                      if (payload.toString() == "null") {
+                        res = '[{"result":"null"}]';
+                        reply(res);
+                      }
+                      else {
+                        console.log(payload.toString());
+                        res = payload.toString();
+                        reply(res);
+                      }
+                    }
+                  });
+              }
+              else{
+                res = '[{"result":"'+payload.toString()+'"},{"result":"err"}]';
+                console.log(payload.toString());
+                reply(res);
+              }
+            });
+        };
+
         try {
           if(req.payload.ConfigName=="ElasticSearchConfig"){
             ElasticSearch();
           }else if(req.payload.ConfigName=="InfluxDbConfig"){
             InfluxDb();
+          }else if(req.payload.ConfigName=="KafkaConfig"){
+            Kafka();
           }
         }
         catch (err) {
@@ -432,7 +528,7 @@ export default function (server) {
           var  res;
           Wreck.post('http://'+ip+'/peck_task/list',
             (err, xyResponse, payload) => {
-            console.log("[updateList] ",payload.toString())
+              console.log("[updateList] ",payload.toString())
               var patt=new RegExp(/^List PeckTask failed,/);
               if (err) {
                 res = '[{"result":"'+err+'"}]';
@@ -454,7 +550,9 @@ export default function (server) {
                 }
                 else{
                   var list=JSON.parse(payload.toString());
+                  console.log(list.length);
                   for(var id=0;id<list.length;id++){
+                    console.log(name);
                     if(list[id]['Name']==name){
                       reply(list[id]);
                     }
@@ -629,11 +727,101 @@ export default function (server) {
               }
             });
         };
+
+        const Kafka = async function () {
+          var name=req.payload.Name;
+          var logpath=req.payload.Logpath;
+          var configName=req.payload.ConfigName;
+          var hostsarray=req.payload.Sender.Hosts.split(',');
+          var hosts='';
+          for(var id=0;id<hostsarray.length;id++)
+          {
+            hosts+='"'+hostsarray[id]+'"';
+            if(id+1<hostsarray.length){
+              hosts+=",";
+            }
+          }
+          var Topic=req.payload.Sender.Topic;
+          var MaxMessageBytes=req.payload.Sender.MaxMessageBytes;
+          var RequiredAcks=req.payload.Sender.RequiredAcks;
+          var Timeout=req.payload.Sender.Timeout;
+          var Compression=req.payload.Sender.Compression;
+          var Partitioner=req.payload.Sender.Partitioner;
+          var ReturnErrors=req.payload.Sender.ReturnErrors;
+          var Flush=JSON.stringify(req.payload.Sender.Flush);
+          var Retry=JSON.stringify(req.payload.Sender.Retry);
+
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var Keywords=req.payload.Keywords;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          Wreck.post('http://'+ip+'/peck_task/update', {payload:
+            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+configName+'",'+
+            '"Config":{"Hosts":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
+            ',"Timeout":'+Timeout+',"Compression":'+Compression+',"Partitioner":"'+Partitioner+'","ReturnErrors":'+ReturnErrors+
+            ',"Flush":'+Flush+',"Retry":'+Retry+',"Interval":0,"AggregatorConfigs":[]}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else if(payload.toString()=="Update Success") {
+                Wreck.post('http://' + ip + '/peck_task/liststats',
+                  (err, xyResponse, payload) => {
+                    var patt=new RegExp(/^List TaskStatus failed,/);
+                    if (err) {
+                      res = '[{"result":"'+err+'"}]';
+                      reply(res);
+                    }
+                    else if(payload==undefined){
+                      res='[{"result":"undefined"}]';
+                      reply(res);
+                    }
+                    else if(patt.test(res))
+                    {
+                      res='[{"result":"'+payload.toString()+'"}]';
+                      reply(res);
+                    }
+                    else {
+                      if (payload.toString() == "null") {
+                        res = '[{"null":"true"}]';
+                        reply(res);
+                      }
+                      else {
+                        reply(payload.toString());
+                      }
+                    }
+                  });
+              }
+              else{
+                res = '[{"result":"'+payload.toString()+'"}]';
+                reply(res);
+              }
+            });
+        };
+
         try {
           if(req.payload.ConfigName=="ElasticSearchConfig"){
             ElasticSearch();
           }else if(req.payload.ConfigName=="InfluxDbConfig"){
             InfluxDb();
+          }else if(req.payload.ConfigName=="KafkaConfig"){
+            Kafka();
           }
         }
         catch (err) {
@@ -734,7 +922,7 @@ export default function (server) {
             '" }'
             },
             (err, xyResponse, payload) => {
-            console.log(xyResponse.statusMessage);
+              console.log(xyResponse.statusMessage);
               if (err) {
                 res='[{"result":"'+err+'"}]';
                 reply(res);
@@ -750,7 +938,7 @@ export default function (server) {
                 }
               }
             });
-        }
+        };
         const InfluxDb = async function () {
           var template_name=req.payload.template_name;
           var Name=req.payload.Name;
@@ -777,14 +965,14 @@ export default function (server) {
           var ip=req.payload.ip;
           var res;
           Wreck.post('http://localhost:9200/.logpeck/template/'+template_name,{payload:
-          '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
-          '"SenderConfig":{'+
-          '"SenderName":"'+ConfigName+'",'+
-          '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","AggregatorConfigs":'+AggregatorConfigs+'}' +
-          '},'+
-          '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
-          '" }'
-          },
+            '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+ConfigName+'",'+
+            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"FieldsKey":"' + FieldsKey + '","DBName":"' + DBName + '","AggregatorConfigs":'+AggregatorConfigs+'}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
             (err, xyResponse, payload) => {
               console.log(xyResponse.statusMessage);
               if (err) {
@@ -802,12 +990,84 @@ export default function (server) {
                 }
               }
             });
-        }
+        };
+
+        const Kafka = async function () {
+          var template_name=req.payload.template_name;
+          var name=req.payload.Name;
+          var logpath=req.payload.Logpath;
+          var configName=req.payload.ConfigName;
+          var hostsarray=req.payload.Sender.Hosts.split(',');
+          var hosts='';
+          for(var id=0;id<hostsarray.length;id++)
+          {
+            hosts+='"'+hostsarray[id]+'"';
+            if(id+1<hostsarray.length){
+              hosts+=",";
+            }
+          }
+          var Topic=req.payload.Sender.Topic;
+          var MaxMessageBytes=req.payload.Sender.MaxMessageBytes;
+          var RequiredAcks=req.payload.Sender.RequiredAcks;
+          var Timeout=req.payload.Sender.Timeout;
+          var Compression=req.payload.Sender.Compression;
+          var Partitioner=req.payload.Sender.Partitioner;
+          var ReturnErrors=req.payload.Sender.ReturnErrors;
+          var Flush=JSON.stringify(req.payload.Sender.Flush);
+          var Retry=JSON.stringify(req.payload.Sender.Retry);
+
+          var Fields=array;
+          var tmp=req.payload.Delimiters;
+          var Delimiters='';
+          for(var id=0;id<tmp.length;id++)
+          {
+            if(tmp[id]=='"'){
+              Delimiters+="\\";
+            }
+            Delimiters+=tmp[id];
+          }
+          var Keywords=req.payload.Keywords;
+          var LogFormat=req.payload.LogFormat;
+          var ip=req.payload.ip;
+          var res;
+          Wreck.post('http://localhost:9200/.logpeck/template/'+template_name,{payload:
+            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
+            '"SenderConfig":{'+
+            '"SenderName":"'+configName+'",'+
+            '"Config":{"Hosts":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
+            ',"Timeout":'+Timeout+',"Compression":'+Compression+',"Partitioner":"'+Partitioner+'","ReturnErrors":'+ReturnErrors+
+            ',"Flush":'+Flush+',"Retry":'+Retry+',"Interval":0,"AggregatorConfigs":[]}' +
+            '},'+
+            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
+            '" }'
+            },
+            (err, xyResponse, payload) => {
+              console.log(xyResponse.statusMessage);
+              if (err) {
+                res='[{"result":"'+err+'"}]';
+                reply(res);
+              }
+              else {
+                if( xyResponse.statusMessage=='OK'|| xyResponse.statusMessage=='Created' ){
+                  console.log("kjgjh");
+                  res = '[{"result":"Add success"}]';
+                  reply(res);
+                }
+                else{
+                  res = '[{"result":"'+payload.toString()+'"}]';
+                  reply(res);
+                }
+              }
+            });
+        };
+
         try {
           if(req.payload.ConfigName=="ElasticSearchConfig"){
             ElasticSearch();
           }else if(req.payload.ConfigName=="InfluxDbConfig"){
             InfluxDb();
+          }else if(req.payload.ConfigName=="KafkaConfig"){
+            Kafka();
           }
         }
         catch (err) {
@@ -961,7 +1221,7 @@ export default function (server) {
             '"Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'
             },
             (err, xyResponse, payload) => {
-            console.log(payload.toString());
+              console.log(payload.toString());
               if (err) {
                 res = '[{"result":"'+err+'"}]';
                 reply(res);
