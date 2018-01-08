@@ -389,9 +389,9 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
   $rootScope.influxHosts = "127.0.0.1:8086";
   $rootScope.influxInterval = 30;
   $rootScope.influxDBName = "DBname";
-  $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""});
+  $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
 
-  $rootScope.kafkaHosts = "127.0.0.1:9202";
+  $rootScope.kafkaBrokers = "127.0.0.1:9092";
   $rootScope.kafkaTopic = "";
   $rootScope.kafkaMaxMessageBytes = 1000000;
   $rootScope.kafkaRequiredAcks = "1";
@@ -426,11 +426,15 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
   $scope.addTask = function () {
     console.log($rootScope.ConfigName);
     var T=false;
+    var measurementTargetNull = false;
     if($rootScope.fields_array==null){
       ;
     }
     else {
+      console.log($rootScope.fields_array.length);
       for (var id = 0; id < $rootScope.fields_array.length; id++) {
+        console.log($rootScope.fields_array[id].Name);
+        console.log($rootScope.fields_array[id].Value);
         if ($rootScope.fields_array[id].Name == '' ) {
           T = true;
           break;
@@ -441,11 +445,25 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
         }
       }
     }
+    if ($rootScope.ConfigName=="InfluxDbConfig")
+    {
+      for (var id = 0; id < $rootScope.influxdb_array.length; id++) {
+        if ($rootScope.influxdb_array[id].Target == '' ) {
+          measurementTargetNull = true;
+          break;
+        }
+      }
+    }
 
     if(T){
       $rootScope.addTaskResult = "fields is not complete";
       $rootScope.testArea=true;
       $rootScope.testResults = $rootScope.addTaskResult;
+      $rootScope.error={"color":"#ff0000"};
+    }
+    else if (measurementTargetNull) {
+      $rootScope.testArea=true;
+      $rootScope.testResults = "Target is not complete";
       $rootScope.error={"color":"#ff0000"};
     }
     else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
@@ -464,7 +482,7 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
       $rootScope.testArea=true;
       $rootScope.testResults = $rootScope.addTaskResult;
       $rootScope.error={"color":"#ff0000"};
-    }else if($rootScope.ConfigName=="InfluxDbConfig"&&($rootScope.influxdb_array.Measurment == ''||$rootScope.influxdb_array.Target==''||$rootScope.influxHosts==''||$rootScope.influxDBName==''||$rootScope.influxInterval=='')){
+    }else if($rootScope.ConfigName=="InfluxDbConfig"&&($rootScope.influxHosts==''||$rootScope.influxDBName==''||$rootScope.influxInterval=='')){
       $rootScope.addTaskResult = "InfluxDbConfig is not complete";
       $rootScope.testArea=true;
       $rootScope.testResults = $rootScope.addTaskResult;
@@ -493,7 +511,7 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
         console.log($rootScope.Sender);
       }else if ($rootScope.ConfigName="KafkaConfig"){
         $rootScope.Sender={
-          Hosts: $rootScope.kafkaHosts,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
+          Brokers: $rootScope.kafkaBrokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
           Timeout:$rootScope.kafkaTimeout,Compression:$rootScope.kafkaCompression,Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
           Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
         };
@@ -568,9 +586,9 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   $rootScope.influxHosts = "127.0.0.1:8086";
   $rootScope.influxInterval = 30;
   $rootScope.influxDBName = "DBname";
-  $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""});
+  $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
 
-  $rootScope.kafkaHosts = "127.0.0.1:9202";
+  $rootScope.kafkaBrokers = "127.0.0.1:9092";
   $rootScope.kafkaTopic = "";
   $rootScope.kafkaMaxMessageBytes = 1000000;
   $rootScope.kafkaRequiredAcks = "1";
@@ -616,7 +634,7 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
     $rootScope.influxdb=false;
     $rootScope.kafka=true;
 
-    $rootScope.kafkaHosts = update_ip['data']['SenderConfig']['Config']['Hosts'].toString();
+    $rootScope.kafkaBrokers = update_ip['data']['SenderConfig']['Config']['Brokers'].toString();
     $rootScope.kafkaTopic = update_ip['data']['SenderConfig']['Config']['Topic'];
     $rootScope.kafkaMaxMessageBytes = update_ip['data']['SenderConfig']['Config']['MaxMessageBytes'];
     $rootScope.kafkaRequiredAcks = update_ip['data']['SenderConfig']['Config']['RequiredAcks'].toString();
@@ -656,6 +674,7 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   //update
   $scope.updateTask = function () {
     var T=false;
+    var measurementTargetNull=false;
     if($rootScope.fields_array==null){
 
     }
@@ -671,11 +690,25 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
         }
       }
     }
+    if ($rootScope.ConfigName=="InfluxDbConfig")
+    {
+      for (var id = 0; id < $rootScope.influxdb_array.length; id++) {
+        if ($rootScope.influxdb_array[id].Target == '' ) {
+          measurementTargetNull = true;
+          break;
+        }
+      }
+    }
 
     if(T){
-      $rootScope.addTaskResult = "fields is not complete";
+      $rootScope.addTaskResult = "Fields is not complete";
       $rootScope.testArea=true;
       $rootScope.testResults = $rootScope.addTaskResult;
+      $rootScope.error={"color":"#ff0000"};
+    }
+    else if(measurementTargetNull){
+      $rootScope.testArea=true;
+      $rootScope.testResults = "Measurment is not complete";
       $rootScope.error={"color":"#ff0000"};
     }
     else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
@@ -694,7 +727,7 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
       $rootScope.testArea=true;
       $rootScope.testResults = $rootScope.addTaskResult;
       $rootScope.error={"color":"#ff0000"};
-    }else if($rootScope.ConfigName=="InfluxDbConfig"&&($rootScope.influxdb_array.Measurment == ''||$rootScope.influxdb_array.Target==''||$rootScope.influxHosts==''||$rootScope.influxDBName==''||$rootScope.influxInterval=='')){
+    }else if($rootScope.ConfigName=="InfluxDbConfig"&&($rootScope.influxHosts==''||$rootScope.influxDBName==''||$rootScope.influxInterval=='')){
       $rootScope.addTaskResult = "InfluxDbConfig is not complete";
       $rootScope.testArea=true;
       $rootScope.testResults = $rootScope.addTaskResult;
@@ -721,7 +754,7 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
         console.log($rootScope.Sender);
       }else if ($rootScope.ConfigName="KafkaConfig"){
         $rootScope.Sender={
-          Hosts: $rootScope.kafkaHosts,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
+          Brokers: $rootScope.kafkaBrokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
           Timeout:$rootScope.kafkaTimeout,Compression:$rootScope.kafkaCompression,Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
           Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
         };
@@ -827,7 +860,7 @@ app.run(function($rootScope,$route, $http) {
 
   //plus influxdb config
   $rootScope.plusinfluxdb=function () {
-    $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""});
+    $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"default"});
   }
   //minus influxdb config
   $rootScope.minusinfluxdb=function (idx) {
@@ -986,7 +1019,7 @@ app.run(function($rootScope,$route, $http) {
         $rootScope.Sender={Hosts: $rootScope.influxHosts, Interval: $rootScope.influxInterval, DBName: $rootScope.influxDBName,AggregatorConfigs:$rootScope.influxdb_array}
       }else if ($rootScope.ConfigName="KafkaConfig"){
         $rootScope.Sender={
-          Hosts: $rootScope.kafkaHosts,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
+          Brokers: $rootScope.kafkaBrokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
           Timeout:$rootScope.kafkaTimeout,Compression:$rootScope.kafkaCompression,Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
           Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
         };
@@ -1074,9 +1107,9 @@ app.run(function($rootScope,$route, $http) {
       $rootScope.influxHosts = "127.0.0.1:8086";
       $rootScope.influxInterval = 30;
       $rootScope.influxDBName = "DBname";
-      $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":""});
+      $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
 
-      $rootScope.kafkaHosts = "127.0.0.1:9202";
+      $rootScope.kafkaBrokers = "127.0.0.1:9092";
       $rootScope.kafkaTopic = "";
       $rootScope.kafkaMaxMessageBytes = 1000000;
       $rootScope.kafkaRequiredAcks = "1";
@@ -1114,7 +1147,7 @@ app.run(function($rootScope,$route, $http) {
         $rootScope.influxdb=false;
         $rootScope.kafka=true;
 
-        $rootScope.kafkaHosts = response['data']['_source']['SenderConfig']['Config']['Hosts'].toString();
+        $rootScope.kafkaBrokers = response['data']['_source']['SenderConfig']['Config']['Brokers'].toString();
         $rootScope.kafkaTopic = response['data']['_source']['SenderConfig']['Config']['Topic'];
         $rootScope.kafkaMaxMessageBytes = response['data']['_source']['SenderConfig']['Config']['MaxMessageBytes'];
         $rootScope.kafkaRequiredAcks = response['data']['_source']['SenderConfig']['Config']['RequiredAcks'].toString();

@@ -343,7 +343,7 @@ export default function (server) {
           var name=req.payload.Name;
           var logpath=req.payload.Logpath;
           var configName=req.payload.ConfigName;
-          var hostsarray=req.payload.Sender.Hosts.split(',');
+          var hostsarray=req.payload.Sender.Brokers.split(',');
           var hosts='';
           for(var id=0;id<hostsarray.length;id++)
           {
@@ -379,7 +379,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
+            '"Config":{"Brokers":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
             ',"Timeout":'+Timeout+',"Compression":'+Compression+',"Partitioner":"'+Partitioner+'","ReturnErrors":'+ReturnErrors+
             ',"Flush":'+Flush+',"Retry":'+Retry+',"Interval":0,"AggregatorConfigs":[]}' +
             '},'+
@@ -732,7 +732,7 @@ export default function (server) {
           var name=req.payload.Name;
           var logpath=req.payload.Logpath;
           var configName=req.payload.ConfigName;
-          var hostsarray=req.payload.Sender.Hosts.split(',');
+          var hostsarray=req.payload.Sender.Brokers.split(',');
           var hosts='';
           for(var id=0;id<hostsarray.length;id++)
           {
@@ -768,7 +768,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
+            '"Config":{"Brokers":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
             ',"Timeout":'+Timeout+',"Compression":'+Compression+',"Partitioner":"'+Partitioner+'","ReturnErrors":'+ReturnErrors+
             ',"Flush":'+Flush+',"Retry":'+Retry+',"Interval":0,"AggregatorConfigs":[]}' +
             '},'+
@@ -997,7 +997,7 @@ export default function (server) {
           var name=req.payload.Name;
           var logpath=req.payload.Logpath;
           var configName=req.payload.ConfigName;
-          var hostsarray=req.payload.Sender.Hosts.split(',');
+          var hostsarray=req.payload.Sender.Brokers.split(',');
           var hosts='';
           for(var id=0;id<hostsarray.length;id++)
           {
@@ -1034,7 +1034,7 @@ export default function (server) {
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
             '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
+            '"Config":{"Brokers":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
             ',"Timeout":'+Timeout+',"Compression":'+Compression+',"Partitioner":"'+Partitioner+'","ReturnErrors":'+ReturnErrors+
             ',"Flush":'+Flush+',"Retry":'+Retry+',"Interval":0,"AggregatorConfigs":[]}' +
             '},'+
@@ -1214,8 +1214,8 @@ export default function (server) {
           Wreck.post('http://'+ip+'/peck_task/test', {payload:
             '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
             '"SenderConfig":{'+
-            '"SenderName":"'+configName+'",'+
-            '"Config":{"Hosts":["' + hosts + '"],"Index":"' + index + '","Type":"' + type + '","Interval":0,"AggregatorConfigs":[]}' +
+            '"SenderName":"ElasticSearchConfig",'+
+            '"Config":{}' +
             '},'+
             '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat + '" ,'+
             '"Test":{"TestNum":' + TestNum +',"Timeout":'+Timeout+'}}'
