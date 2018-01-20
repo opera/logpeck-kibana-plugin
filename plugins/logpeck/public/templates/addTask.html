@@ -117,6 +117,11 @@
     float: left;
   }
   .table_2{
+    margin-top: 20px;
+    width: 98%;
+    float: left;
+  }
+  .table_3{
     width: 86%;
     padding-top: 20px;
     margin-top: 20px;
@@ -124,11 +129,6 @@
     margin-bottom: 20px;
     border-top:3px solid #e4e4e4;
     border-bottom:3px solid #e4e4e4;
-    float: left;
-  }
-  .table_3{
-    margin-top: 20px;
-    width: 98%;
     float: left;
   }
   .table_4{
@@ -164,6 +164,12 @@
     padding: 2px 15px 3px;
     height: 22px;
     width: 58px;
+  }
+  .Button--big--test {
+    font-size: 18px;
+    padding: 3px 20px;
+    width: 80px;
+    height: 35px;
   }
   .Button--big {
     font-size: 18px;
@@ -272,7 +278,7 @@
             </div>
           </div>
       </div>
-      <div class="table_3">
+      <div class="table_2">
         <div class="table_line">
           <div class="table_title">
             <div style="width: 30%;float: left">LogFormat</div>
@@ -284,9 +290,10 @@
           </div>
           <div  class="table_title">
             <div style="width: 30%;float: left">
-              <select ng-model="$root.LogFormat" style="width: 70px" ng-change="typeChange(LogFormat)">
+              <select ng-model="$root.LogFormat" style="width: 150px;font-size:17px" ng-change="typeChange(LogFormat)">
                 <option value="json">json</option>
                 <option value ="text">text</option>
+                <option value ="luo">luo</option>
               </select>
             </div>
             <div style="width: 31%;float: left">
@@ -297,16 +304,17 @@
             </div>
           </div>
         </div>
-        <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px">
-          Fields
-          <a  ng-click="plusfields()" class="kuiButton kuiButton--primary ">
+        <div ng-show="type_text_json">
+          <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px">
+            Fields
+            <a  ng-click="plusfields()" class="kuiButton kuiButton--primary ">
               <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
               </span>
-          </a>
-        </div>
-        <div style="width: 100%;float: left">
+            </a>
+          </div>
+          <div style="width: 100%;float: left">
 
-          <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
+            <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
               <div style="width: auto;float: left">
                 name
                 <input type="text" ng-model="$root.fields_array[key].Name" style="width: 140px">
@@ -321,21 +329,34 @@
                    </span>
                 </a>
               </div>
-          </li>
+            </li>
+          </div>
         </div>
+
+        <div ng-show="type_luo" style="margin-top: 10px;float: left;width: 100%">
+          <div class="table_title" style="margin-bottom:2px;">
+            LuaString
+          </div>
+          <div style="width: 100%;float: left">
+                <textarea rows="4"  ng-model="$root.LuaString" style="border: 1px solid gainsboro;width: 56%" ng-focus="focus2('Mapping','mycolor6')" ng-focus="blur2('Mapping','mycolor6')" ng-style="mycolor6">
+                   {{LuaString}}
+                </textarea>
+          </div>
+        </div>
+
         <div class="table_test">
           <div style="width: 100%;float: left;margin-bottom: 20px" ng-show="testArea">
              <textarea rows="10" ng-model="$root.testResults" style="border: 1px solid gainsboro;width: 88%;" ng-style="error">
                {{testResults}}
              </textarea>
           </div>
-          <a class="kuiButton kuiButton--primary Button--big " ng-click="testTask()" >test</a>
+          <a class="kuiButton kuiButton--primary Button--big--test " ng-click="testTask()" >test</a>
         </div>
       </div>
-      <div class="table_2">
+      <div class="table_3">
         <div style="padding-bottom: 20px">
           <select ng-model="$root.ConfigName" style="width: 150px;font-size:17px" ng-change="configChange(ConfigName)">
-            <option value="ElasticSearchConfig">ElasticSearch</option>
+            <option value="ElasticsearchConfig">Elasticsearch</option>
             <option value="InfluxDbConfig">InfluxDb</option>
             <option value="KafkaConfig">Kafka</option>
           </select>
@@ -372,7 +393,7 @@
                 Mapping
               </div>
               <div style="width: 100%;float: left">
-                <textarea rows="4" cols="56" ng-model="$root.esMapping" style="border: 1px solid gainsboro" ng-focus="focus2('Mapping','mycolor6')" ng-focus="blur2('Mapping','mycolor6')" ng-style="mycolor6">
+                <textarea rows="4"  ng-model="$root.esMapping" style="border: 1px solid gainsboro;width: 100%" ng-focus="focus2('Mapping','mycolor6')" ng-focus="blur2('Mapping','mycolor6')" ng-style="mycolor6">
                    {{Mapping}}
                 </textarea>
               </div>
@@ -583,17 +604,17 @@
             <div  class="table_title">
               <div style="width:25%;float: left;">
                 <select ng-model="$root.kafkaRequiredAcks" style="width: 80%;">
-                  <option value="0">NoResponse</option>
-                  <option value="1">WaitForLocal</option>
-                  <option value="-1">WaitForAll</option>
+                  <option value=0>NoResponse</option>
+                  <option value=1>WaitForLocal</option>
+                  <option value=-1>WaitForAll</option>
                 </select>
               </div>
               <div style="width:25%;float:left">
                 <select ng-model="$root.kafkaCompression" style="width: 80%;">
-                  <option value="0">CompressionNone</option>
-                  <option value="1">CompressionGZIP</option>
-                  <option value="2">CompressionSnappy</option>
-                  <option value="3">CompressionLZ4</option>
+                  <option value=0>CompressionNone</option>
+                  <option value=1>CompressionGZIP</option>
+                  <option value=2>CompressionSnappy</option>
+                  <option value=3>CompressionLZ4</option>
                 </select>
               </div>
               <div style="width:25%;float: left;">
