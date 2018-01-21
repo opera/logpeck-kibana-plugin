@@ -35,29 +35,39 @@ export default function (server) {
                 const example = async function () {
                     var ip=req.payload.ip;
                     var  res;
-                    Wreck.post('http://'+ip+'/peck_task/liststats',
+                    Wreck.post('http://'+ip+'/peck_task/list',
                         (err, xyResponse, payload) => {
-                        var patt=new RegExp(/^List TaskStatus failed,/);
+                        var patt=new RegExp(/^List PeckTask failed,/);
                     if (err) {
-                        res = '[{"result":"'+err+'"}]';
+                        res = '{"result":"'+err+'"}';
                         reply(res);
                     }
                     else if(payload==undefined){
-                        res='[{"result":"undefined"}]';
+                        res='{"result":"undefined"}';
                         reply(res);
                     }
                     else if(patt.test(res))
                     {
-                        res='[{"result":"'+payload.toString()+'"}]';
+                        res='{"result":"'+payload.toString()+'"}';
                         reply(res);
                     }
                     else{
-                        if(payload.toString()=="null"){
-                            res='[{"null":"true"}]';
-                            reply(res);
-                        }
-                        else{
-                            reply(payload.toString());
+                        var list=JSON.parse(payload.toString());
+                        //console.log(list["configs"]);
+                        var task={"configs":[],"stats":[]};
+                        if(list["configs"]==null){
+                            reply(task);
+                        }else {
+                            var configs = {};
+                            var stats={};
+                            for(var id=0;id<list["configs"].length;id++){
+                                configs[list["configs"][id]['Name']]=list["configs"][id];
+                            }
+                            for(var id=0;id<list["stats"].length;id++){
+                                stats[list["stats"][id]['Name']]=list["stats"][id];
+                            }
+                            task={"configs":configs,"stats":stats};
+                            reply(task);
                         }
                     }
                 });
@@ -135,28 +145,14 @@ export default function (server) {
                     var ip=req.payload.ip;
                     Wreck.post('http://'+ip+'/peck_task/remove',{ payload: '{ "Name" : "'+name+'" }' },
                         (err, xyResponse, payload) => {
+                        var res;
                         if (err) {
-                            res = '[{"result":"'+err+'"}]';
+                            res = '{"result":"'+err+'"}';
                             reply(res);
-                        }
-                        else if(payload.toString()=="Remove Success") {
-                        Wreck.post('http://' + ip + '/peck_task/liststats',
-                            (err, xyResponse, payload) => {
-                            if (err) {
-                                console.log(err);
-                            }
-                            var res = payload.toString();
-                        if ((payload.toString() == "null")) {
-                            res = '[{"null":"true"}]';
-                        }
-                        reply(res);
-                    }
-                    );
-                    }
-                else{
-                        res = '[{"result":"'+payload.toString()+'"}]';
-                        reply(res);
-                    }
+                        }else{
+                            res = '{"result":"'+payload.toString()+'"}';
+                    reply(res);
+                }
                 });
                 };
                 try {
@@ -193,47 +189,15 @@ export default function (server) {
                         (err, xyResponse, payload) => {
                         if(err) {
                             console.log(err)
-                            res = '[{"result":"' + err + '"}]';
+                            res = '{"result":"' + err + '"}';
                             reply(res);
                             return;
-                        }
-                        else if(payload.toString() == "Add Success")
-                    {
-                        Wreck.post('http://' + ip + '/peck_task/liststats',
-                            (err, xyResponse, payload) => {
-                            var patt = new RegExp(/^List TaskStatus failed,/);
-                        if (err) {
-                            res = '[{"result":"' + err + '"}]';
-                            reply(res);
-                        }
-                        else if (payload == undefined) {
-                            res = '[{"result":"undefined"}]';
-                            reply(res);
-                        }
-                        else if (patt.test(res)) {
-                            res = '[{"result":"' + payload.toString() + '"}]';
-                            reply(res);
-                        }
-                        else {
-                            if (payload.toString() == "null") {
-                                res = '[{"result":"null"}]';
-                                reply(res);
-                            }
-                            else {
-                                console.log(payload.toString());
-                                res = payload.toString();
-                                reply(res);
-                            }
-                        }
-                    });
-                    }
-                else{
-                        res = '[{"result":"' + payload.toString() + '"},{"result":"err"}]';
-                        console.log(payload.toString());
+                        }else{
+                        res = '{"result":"' + payload.toString() + '"}';
                         reply(res);
                     }
                 });
-                }
+                };
 
                 try {
                     Add();
@@ -315,57 +279,6 @@ export default function (server) {
             }
         },
         {
-            path: '/api/logpeck/updateList',
-            method: 'POST',
-            handler(req, reply) {
-                const Wreck = require('wreck');
-                const example = async function () {
-                    var ip=req.payload.ip;
-                    var name=req.payload.Name;
-                    var  res;
-                    Wreck.post('http://'+ip+'/peck_task/list',
-                        (err, xyResponse, payload) => {
-                        console.log("[updateList] ",payload.toString())
-                    var patt=new RegExp(/^List PeckTask failed,/);
-                    if (err) {
-                        res = '[{"result":"'+err+'"}]';
-                        reply(res);
-                    }
-                    else if(payload==undefined){
-                        res='[{"result":"undefined"}]';
-                        reply(res);
-                    }
-                    else if(patt.test(res))
-                    {
-                        res='[{"result":"'+payload.toString()+'"}]';
-                        reply(res);
-                    }
-                    else{
-                        if(payload.toString()=="null"){
-                            res='[{"null":"true"}]';
-                            reply(res);
-                        }
-                        else{
-                            var list=JSON.parse(payload.toString());
-                            console.log(list.length);
-                            for(var id=0;id<list.length;id++){
-                                console.log(name);
-                                if(list[id]['Name']==name){
-                                    reply(list[id]);
-                                }
-                            }
-                        }
-                    }
-                });
-                };
-                try {
-                    example();
-                }
-                catch (err) {
-                }
-            }
-        },
-        {
             path: '/api/logpeck/updateTask',
             method: 'POST',
             handler(req, reply) {
@@ -421,9 +334,9 @@ export default function (server) {
                             reply(res);
                         }
                         else if(payload.toString()=="Update Success") {
-                        Wreck.post('http://' + ip + '/peck_task/liststats',
+                        Wreck.post('http://' + ip + '/peck_task/list',
                             (err, xyResponse, payload) => {
-                            var patt=new RegExp(/^List TaskStatus failed,/);
+                            var patt=new RegExp(/^List PeckTask failed,/);
                         if (err) {
                             res = '[{"result":"'+err+'"}]';
                             reply(res);
@@ -447,140 +360,41 @@ export default function (server) {
                             }
                         }
                     });
-                    }
-                else{
-                        res = '[{"result":"'+payload.toString()+'"}]';
-                        reply(res);
-                    }
-                });
-                };
-                const InfluxDb = async function () {
-                    var Name=req.payload.Name;
-                    var Logpath=req.payload.Logpath;
-                    var ConfigName=req.payload.ConfigName;
-                    var Hosts=req.payload.Sender.Hosts;
-                    var Interval=req.payload.Sender.Interval;
-                    var DBName=req.payload.Sender.DBName;
-                    var AggregatorConfigs=JSON.stringify(req.payload.Sender.AggregatorConfigs);
-                    var Fields=array;
-                    var tmp=req.payload.Delimiters;
-                    var Delimiters='';
-                    console.log(AggregatorConfigs);
-                    for(var id=0;id<tmp.length;id++)
-                    {
-                        if(tmp[id]=='"'){
-                            Delimiters+="\\";
-                        }
-                        Delimiters+=tmp[id];
-                    }
-                    var Keywords=req.payload.Keywords;
-                    var LogFormat=req.payload.LogFormat;
-                    var ip=req.payload.ip;
-                    Wreck.post('http://'+ip+'/peck_task/update', {payload:
-                            '{' + '"Name" : "' + Name + '","LogPath":"' + Logpath + '",' +
-                            '"SenderConfig":{'+
-                            '"SenderName":"'+ConfigName+'",'+
-                            '"Config":{"Hosts":"' + Hosts + '","Interval":' + Interval + ',"DBName":"' + DBName + '","AggregatorConfigs":'+AggregatorConfigs+'}' +
-                            '},'+
-                            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
-                            '" }'
-                        },
-                        (err, xyResponse, payload) => {
-                        if (err) {
-                            res = '[{"result":"'+err+'"}]';
-                            reply(res);
-                        }
-                        else if(payload.toString()=="Update Success") {
-                        Wreck.post('http://' + ip + '/peck_task/liststats',
-                            (err, xyResponse, payload) => {
-                            var patt=new RegExp(/^List TaskStatus failed,/);
-                        if (err) {
-                            res = '[{"result":"'+err+'"}]';
-                            reply(res);
-                        }
-                        else if(payload==undefined){
-                            res='[{"result":"undefined"}]';
-                            reply(res);
-                        }
-                        else if(patt.test(res))
-                        {
-                            res='[{"result":"'+payload.toString()+'"}]';
-                            reply(res);
-                        }
-                        else {
-                            if (payload.toString() == "null") {
-                                res = '[{"null":"true"}]';
-                                reply(res);
-                            }
-                            else {
-                                reply(payload.toString());
-                            }
-                        }
-                    });
-                    }
-                else{
+                    }else{
                         res = '[{"result":"'+payload.toString()+'"}]';
                         reply(res);
                     }
                 });
                 };
 
-                const Kafka = async function () {
-                    var name=req.payload.Name;
-                    var logpath=req.payload.Logpath;
-                    var configName=req.payload.ConfigName;
-                    var hostsarray=req.payload.Sender.Brokers.split(',');
-                    var hosts='';
-                    for(var id=0;id<hostsarray.length;id++)
-                    {
-                        hosts+='"'+hostsarray[id]+'"';
-                        if(id+1<hostsarray.length){
-                            hosts+=",";
-                        }
-                    }
-                    var Topic=req.payload.Sender.Topic;
-                    var MaxMessageBytes=req.payload.Sender.MaxMessageBytes;
-                    var RequiredAcks=req.payload.Sender.RequiredAcks;
-                    var Timeout=req.payload.Sender.Timeout;
-                    var Compression=req.payload.Sender.Compression;
-                    var Partitioner=req.payload.Sender.Partitioner;
-                    var ReturnErrors=req.payload.Sender.ReturnErrors;
-                    var Flush=JSON.stringify(req.payload.Sender.Flush);
-                    var Retry=JSON.stringify(req.payload.Sender.Retry);
-
-                    var Fields=array;
-                    var tmp=req.payload.Delimiters;
-                    var Delimiters='';
-                    for(var id=0;id<tmp.length;id++)
-                    {
-                        if(tmp[id]=='"'){
-                            Delimiters+="\\";
-                        }
-                        Delimiters+=tmp[id];
-                    }
-                    var Keywords=req.payload.Keywords;
-                    var LogFormat=req.payload.LogFormat;
-                    var ip=req.payload.ip;
-                    Wreck.post('http://'+ip+'/peck_task/update', {payload:
-                            '{' + '"Name" : "' + name + '","LogPath":"' + logpath + '",' +
-                            '"SenderConfig":{'+
-                            '"SenderName":"'+configName+'",'+
-                            '"Config":{"Brokers":[' + hosts + '],"Topic":"' + Topic + '","MaxMessageBytes":'+MaxMessageBytes+',"RequiredAcks":'+RequiredAcks+
-                            ',"Timeout":'+Timeout+',"Compression":'+Compression+',"Partitioner":"'+Partitioner+'","ReturnErrors":'+ReturnErrors+
-                            ',"Flush":'+Flush+',"Retry":'+Retry+',"Interval":0,"AggregatorConfigs":[]}' +
-                            '},'+
-                            '"Fields":'+array+',"Delimiters":"' + Delimiters + '","Keywords":"' + Keywords + '","LogFormat":"' + LogFormat +
-                            '" }'
-                        },
+                const Update = async function () {
+                    var name = req.payload.Name;
+                    var logpath = req.payload.Logpath;
+                    var ExtractorConfig = req.payload.ExtractorConfig;
+                    var SenderConfig = req.payload.SenderConfig;
+                    var AggregatorConfig = req.payload.AggregatorConfig;
+                    var Keywords = req.payload.Keywords;
+                    var ip = req.payload.ip;
+                    var esLog = {
+                        Name: name,
+                        LogPath: logpath,
+                        ExtractorConfig: ExtractorConfig,
+                        SenderConfig: SenderConfig,
+                        AggregatorConfig: AggregatorConfig,
+                        Keywords: Keywords
+                    };
+                    console.log(JSON.stringify(esLog));
+                    Wreck.post('http://' + ip + '/peck_task/update', {payload: JSON.stringify(esLog)},
                         (err, xyResponse, payload) => {
-                        if (err) {
-                            res = '[{"result":"'+err+'"}]';
+                        if(err) {
+                            console.log(err)
+                            res = '[{"result":"' + err + '"}]';
                             reply(res);
-                        }
-                        else if(payload.toString()=="Update Success") {
-                        Wreck.post('http://' + ip + '/peck_task/liststats',
+                            return;
+                        }else if(payload.toString()=="Update Success") {
+                        Wreck.post('http://' + ip + '/peck_task/list',
                             (err, xyResponse, payload) => {
-                            var patt=new RegExp(/^List TaskStatus failed,/);
+                            var patt=new RegExp(/^List PeckTask failed,/);
                         if (err) {
                             res = '[{"result":"'+err+'"}]';
                             reply(res);
@@ -604,8 +418,7 @@ export default function (server) {
                             }
                         }
                     });
-                    }
-                else{
+                    }else{
                         res = '[{"result":"'+payload.toString()+'"}]';
                         reply(res);
                     }
@@ -613,13 +426,7 @@ export default function (server) {
                 };
 
                 try {
-                    if(req.payload.ConfigName=="ElasticsearchConfig"){
-                        ElasticSearch();
-                    }else if(req.payload.ConfigName=="InfluxDbConfig"){
-                        InfluxDb();
-                    }else if(req.payload.ConfigName=="KafkaConfig"){
-                        Kafka();
-                    }
+                    Update();
                 }
                 catch (err) {
                 }
@@ -634,9 +441,9 @@ export default function (server) {
                 var res;
                 const example = async function () {
                     var ip=req.payload.ip;
-                    Wreck.post('http://' + ip + '/peck_task/liststats',
+                    Wreck.post('http://' + ip + '/peck_task/list',
                         (err, xyResponse, payload) => {
-                        var patt=new RegExp(/^List TaskStatus failed,/);
+                        var patt=new RegExp(/^List PeckTask failed,/);
                     if (err) {
                         res = '[{"result":"'+err+'"}]';
                         reply(res);

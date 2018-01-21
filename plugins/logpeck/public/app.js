@@ -146,42 +146,24 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     }
 
     //A host task list
-    $scope.listTask = function ($event) {
+    $scope.listTask = function ($event,list) {
         $rootScope.T_ip=event.target.getAttribute('name');
         localStorage.setItem("T_ip",event.target.getAttribute('name'));
-        $http({
-            method: 'POST',
-            url: '../api/logpeck/list',
-            data: {ip: event.target.getAttribute('name')},
-        }).then(function successCallback(response) {
-            $scope.indexLog ='';
-            if(response['data'][0]['result']==undefined) {
-                $scope.visible = true;
-                if (response['data'][0]['null'] != "true") {
-                    var name;
-                    var stat;
-                    var start;
-                    var logpath;
-                    $scope.T_array=[];
-                    for (var id = 0; id < response['data'].length; id++) {
-                        name=response['data'][id]['Name'];
-                        logpath=response['data'][id]['LogPath'];
-                        stat=response['data'][id]['Stop'];
-                        start=!stat;
-                        $scope.T_array.push({name:name,logpath:logpath,stop:stat,start:start});
-                    }
-                }
-            }
-            else{
-                $scope.logstat1=true;
-                $scope.logstat2=false;
-                $scope.indexLog =response['data'][0]['result'];
-                $scope.T_array = [];
-            }
-        }, function errorCallback(err) {
-            console.log('err');
-        });
-    };
+        $scope.indexLog ='';
+        $scope.list(callback_listTask);
+    }
+    function callback_listTask(response) {
+        if(response["err"]==null){
+            $scope.visible = true;
+            $scope.T_array=response["result"];
+        }else {
+            $scope.logstat1=true;
+            $scope.logstat2=false;
+            $scope.indexLog =response["err"];
+            $scope.T_array = [];
+        }
+    }
+
 
     //Start Task
     $scope.startTask = function ($event) {
@@ -237,7 +219,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 
 
     //Remove Task
-    $scope.removeTask = function ($event) {
+    $scope.removeTask = function ($event,list) {
         if(!confirm("Remove a task")){
             return;
         }
@@ -246,27 +228,12 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             url: '../api/logpeck/remove',
             data: {Name: event.target.getAttribute('name'),ip: $rootScope.T_ip},
         }).then(function successCallback(response) {
-            $scope.indexLog ='';
-            $scope.visible=true;
-            if(response['data'][0]['result']==undefined) {
-                var new_arr = [];
-                if (response['data'][0]['null'] != "true") {
-                    var name;
-                    var stat;
-                    var start;
-                    var logpath;
-                    for (var id = 0; id < response['data'].length; id++) {
-                        name=response['data'][id]['Name'];
-                        logpath=response['data'][id]['LogPath'];
-                        stat=response['data'][id]['Stop'];
-                        start=!stat;
-                        new_arr.push({name:name,logpath:logpath,stop:stat,start:start});
-                    }
-                }
-                $scope.T_array = new_arr;
-            }
-            else{
-                $scope.indexLog =response['data'][0]['result'];
+            if(response['data']['result']=="Remove Success") {
+                $scope.list(Callback);
+            }else {
+                $scope.logstat1=true;
+                $scope.logstat2=false;
+                $scope.indexLog=response['data']['result'];
             }
         }, function errorCallback() {
         });
@@ -350,17 +317,25 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         var name=event.target.getAttribute('name');
         $http({
             method: 'POST',
-            url: '../api/logpeck/updateList',
-            data: {ip: $rootScope.T_ip,Name: name},
+            url: '../api/logpeck/list',
+            data: {ip: $rootScope.T_ip},
         }).then(function successCallback(response) {
-            if(response['data']['LogFormat']==""){
-                response['data']['LogFormat']=="json";
+            if(response['data']["result"]==undefined) {
+                console.log(name);
+                localStorage.setItem("update_ip", angular.toJson(response['data']["configs"][name]));
+                window.location.href = "#/updateTask";
             }
-            //update_ip=response;
-            localStorage.setItem("update_ip", angular.toJson(response));
-            window.location.href = "#/updateTask";
+            else{
+                $scope.logstat1=true;
+                $scope.logstat2=false;
+                $scope.indexLog =response['data']['result'];
+
+            }
         }, function errorCallback(err) {
             console.log('err');
+            $scope.logstat1=true;
+            $scope.logstat2=false;
+            $scope.indexLog =err;
         });
     };
 
@@ -556,30 +531,12 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
                     ip: $rootScope.T_ip
                 },
             }).then(function successCallback(response) {
-                if(response['data'][0]['result']==undefined) {
-                    var new_arr = [];
-                    if (response['data'][0]['result'] != "null") {
-                        var name;
-                        var stat;
-                        var start;
-                        var logpath;
-                        for (var id = 0; id < response['data'].length; id++) {
-                            name=response['data'][id]['Name'];
-                            logpath=response['data'][id]['LogPath'];
-                            stat=response['data'][id]['Stop'];
-                            start=!stat;
-                            new_arr.push({name:name,logpath:logpath,stop:stat,start:start});
-                        }
-                    }
-                    $rootScope.T_array = new_arr;
-                    task_ip = new_arr;
-                    task_ip_exist = true;
-                    window.location.href = "#/";
+                if(response['data']['result']=="Add Success") {
+                    $rootScope.list(Callback);
                 }
                 else {
-                    $rootScope.addTaskResult =response['data'][0]['result'];
                     $rootScope.testArea=true;
-                    $rootScope.testResults = $rootScope.addTaskResult;
+                    $rootScope.testResults = response['data']['result'];
                     $rootScope.error={"color":"#ff0000"};
                 }
             }, function errorCallback() {
@@ -587,6 +544,19 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
             });
         }
     };
+
+    function Callback(response) {
+        if(response["err"]==null){
+            $scope.visible = true;
+            task_ip = response["result"];
+            task_ip_exist = true;
+            window.location.href = "#/";
+        }else {
+            $rootScope.testArea=true;
+            $rootScope.testResults = response["err"];
+            $rootScope.error={"color":"#ff0000"};
+        }
+    }
 
 });
 
@@ -598,10 +568,6 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
     $rootScope.select_all=[];
     var update_ip=angular.fromJson(localStorage.getItem("update_ip"));
     $rootScope.T_ip=localStorage.getItem("T_ip");
-
-    $rootScope.Name=update_ip['data']['Name'];
-    $rootScope.LogPath=update_ip['data']['LogPath'];
-    $rootScope.ConfigName=update_ip['data']['SenderConfig']['SenderName'];
 
     $rootScope.esHosts = "127.0.0.1:9200";
     $rootScope.esIndex = "my_index-%{+2006.01.02}";
@@ -624,28 +590,27 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
     $rootScope.kafkaFlush={FlushBytes : 0,FlushMessages : 0,FlushFrequency : 0,FlushMaxMessages:0};
     $rootScope.kafkaRetry = {RetryMax : 3,RetryBackoff : 100};
 
-    if($rootScope.ConfigName=="ElasticsearchConfig")
-    {
-        $rootScope.elasticsearch=true;
-        $rootScope.influxdb=false;
-        $rootScope.kafka=false;
 
-        $rootScope.esHosts=update_ip['data']['SenderConfig']['Config']['Hosts'].toString();
-        $rootScope.esIndex=update_ip['data']['SenderConfig']['Config']['Index'];
-        $rootScope.esType=update_ip['data']['SenderConfig']['Config']['Type'];
-        $rootScope.esMapping=JSON.stringify(update_ip['data']['SenderConfig']['Config']['Mapping'],null,4);
-        if($rootScope.esMapping=='null'){
-            $rootScope.esMapping="";
-        }
-    }else if($rootScope.ConfigName=="InfluxDbConfig") {
-        $rootScope.elasticsearch=false;
-        $rootScope.influxdb=true;
-        $rootScope.kafka=false;
+    $rootScope.Name=update_ip['Name'];
+    $rootScope.LogPath=update_ip['LogPath'];
 
-        $rootScope.influxHosts = update_ip['data']['SenderConfig']['Config']['Hosts'].toString();
-        $rootScope.influxInterval = update_ip['data']['SenderConfig']['Config']['Interval'];
-        $rootScope.influxDBName = update_ip['data']['SenderConfig']['Config']['DBName'];
-        $rootScope.influxdb_array=update_ip['data']['SenderConfig']['Config']['AggregatorConfigs'];
+    $rootScope.LogFormat=update_ip['ExtractorConfig']['Name'];
+    $rootScope.typeChange($rootScope.LogFormat);
+    if($rootScope.LogFormat=="text"){
+        $rootScope.fields_array=update_ip['ExtractorConfig']['Config']['Fields'];
+        $rootScope.Delimiters=update_ip['ExtractorConfig']['Config']['Delimiters'];
+    }else if($rootScope.LogFormat=="json"){
+        $rootScope.fields_array=update_ip['ExtractorConfig']['Config']['Fields'];
+    }else if($rootScope.LogFormat=="luo"){
+        $rootScope.LuaString=update_ip['ExtractorConfig']['Config']['LuaString'];
+    }
+    if($rootScope.fields_array==null){
+        $rootScope.fields_array=[];
+    }
+
+    if(update_ip['AggregatorConfig']['Enable']==true){
+        $rootScope.influxInterval = update_ip['AggregatorConfig']['Interval'];
+        $rootScope.influxdb_array=update_ip['AggregatorConfig']['AggregatorOptions'];
         for(var key in $rootScope.influxdb_array)
         {
             var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
@@ -654,31 +619,47 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
             }
             $rootScope.influxdb_array[key]["Aggregations"]=Aggregations;
         }
+    }
+
+    $rootScope.ConfigName=update_ip['SenderConfig']['SenderName'];
+    if($rootScope.ConfigName=="ElasticsearchConfig")
+    {
+        $rootScope.elasticsearch=true;
+        $rootScope.influxdb=false;
+        $rootScope.kafka=false;
+
+        $rootScope.esHosts=update_ip['SenderConfig']['Config']['Hosts'].toString();
+        $rootScope.esIndex=update_ip['SenderConfig']['Config']['Index'];
+        $rootScope.esType=update_ip['SenderConfig']['Config']['Type'];
+        $rootScope.esMapping=JSON.stringify(update_ip['SenderConfig']['Config']['Mapping'],null,4);
+        if($rootScope.esMapping=='null'){
+            console.log("Mapping is null")
+            $rootScope.esMapping="";
+        }
+    }else if($rootScope.ConfigName=="InfluxDbConfig") {
+        $rootScope.elasticsearch=false;
+        $rootScope.influxdb=true;
+        $rootScope.kafka=false;
+
+        $rootScope.influxHosts = update_ip['SenderConfig']['Config']['Hosts'].toString();
+        $rootScope.influxDBName = update_ip['SenderConfig']['Config']['DBName'];
     }else if($rootScope.ConfigName=="KafkaConfig") {
         $rootScope.elasticsearch=false;
         $rootScope.influxdb=false;
         $rootScope.kafka=true;
 
-        $rootScope.kafkaBrokers = update_ip['data']['SenderConfig']['Config']['Brokers'].toString();
-        $rootScope.kafkaTopic = update_ip['data']['SenderConfig']['Config']['Topic'];
-        $rootScope.kafkaMaxMessageBytes = update_ip['data']['SenderConfig']['Config']['MaxMessageBytes'];
-        $rootScope.kafkaRequiredAcks = update_ip['data']['SenderConfig']['Config']['RequiredAcks'].toString();
-        $rootScope.kafkaTimeout= update_ip['data']['SenderConfig']['Config']['Timeout'];
-        $rootScope.kafkaCompression = update_ip['data']['SenderConfig']['Config']['Compression'].toString();
-        $rootScope.kafkaPartitioner = update_ip['data']['SenderConfig']['Config']['Partitioner'];
-        $rootScope.kafkaReturnErrors = update_ip['data']['SenderConfig']['Config']['ReturnErrors'];
-        $rootScope.kafkaFlush=update_ip['data']['SenderConfig']['Config']['Flush'];
-        $rootScope.kafkaRetry = update_ip['data']['SenderConfig']['Config']['Retry'];
+        $rootScope.kafkaBrokers = update_ip['SenderConfig']['Config']['Brokers'].toString();
+        $rootScope.kafkaTopic = update_ip['SenderConfig']['Config']['Topic'];
+        $rootScope.kafkaMaxMessageBytes = update_ip['SenderConfig']['Config']['MaxMessageBytes'];
+        $rootScope.kafkaRequiredAcks = update_ip['SenderConfig']['Config']['RequiredAcks'].toString();
+        $rootScope.kafkaTimeout= update_ip['SenderConfig']['Config']['Timeout'];
+        $rootScope.kafkaCompression = update_ip['SenderConfig']['Config']['Compression'].toString();
+        $rootScope.kafkaPartitioner = update_ip['SenderConfig']['Config']['Partitioner'];
+        $rootScope.kafkaReturnErrors = update_ip['SenderConfig']['Config']['ReturnErrors'];
+        $rootScope.kafkaFlush=update_ip['SenderConfig']['Config']['Flush'];
+        $rootScope.kafkaRetry = update_ip['SenderConfig']['Config']['Retry'];
     }
-
-    $rootScope.fields_array=update_ip['data']['Fields'];
-    $rootScope.Delimiters=update_ip['data']['Delimiters'];
-    $rootScope.Keywords=update_ip['data']['Keywords'];
-    $rootScope.LogFormat=update_ip['data']['LogFormat'];
-    $rootScope.typeChange($rootScope.LogFormat);
-    if($rootScope.fields_array==null){
-        $rootScope.fields_array=[];
-    }
+    $rootScope.Keywords=update_ip['Keywords'];
 
     $http({
         method: 'POST',
@@ -755,8 +736,25 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
             $rootScope.error={"color":"#ff0000"};
         }
         else {
+            var SenderConfig;
+            var ExtractorConfig;
+            var AggregatorConfig;
+            if($rootScope.LogFormat=="text"){
+                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Delimiters: $rootScope.Delimiters,Fields:$rootScope.fields_array}};
+            }else if(($rootScope.LogFormat=="json")){
+                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
+            }else if(($rootScope.LogFormat=="luo")){
+                ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
+            }
+
             if($rootScope.ConfigName=="ElasticsearchConfig"){
-                $rootScope.Sender={Hosts: $rootScope.esHosts, Index: $rootScope.esIndex, Type: $rootScope.esType, Mapping: $rootScope.esMapping,}
+                var hostsarray = $rootScope.esHosts.split(',');
+                var hosts = [];
+                for (var id = 0; id < hostsarray.length; id++) {
+                    hosts.push(hostsarray[id]);
+                }
+                SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: hosts, Index: $rootScope.esIndex, Type: $rootScope.esType, Mapping: JSON.parse($rootScope.esMapping)}};
+                AggregatorConfig={Enable:false};
             }else if($rootScope.ConfigName=="InfluxDbConfig"){
                 for(var key in $rootScope.influxdb_array){
                     var tmp=[];
@@ -768,30 +766,39 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
                     if(tmp.length==0){
                         tmp.push("cnt");
                     }
+                    console.log("tmp");
+                    console.log(tmp);
                     $rootScope.influxdb_array[key].Aggregations=tmp;
                 }
 
-                $rootScope.Sender={Hosts: $rootScope.influxHosts, Interval: $rootScope.influxInterval, DBName: $rootScope.influxDBName,AggregatorConfigs:$rootScope.influxdb_array}
-                console.log($rootScope.Sender);
+                SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: $rootScope.influxHosts,  DBName: $rootScope.influxDBName}};
+                AggregatorConfig={Enable:true,Interval: $rootScope.influxInterval,AggregatorOptions:$rootScope.influxdb_array};
             }else if ($rootScope.ConfigName="KafkaConfig"){
-                $rootScope.Sender={
-                    Brokers: $rootScope.kafkaBrokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
-                    Timeout:$rootScope.kafkaTimeout,Compression:$rootScope.kafkaCompression,Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
-                    Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
-                };
+                var brokersarray = $rootScope.kafkaBrokers.split(',');
+                var brokers = [];
+                for (var id = 0; id < brokersarray.length; id++) {
+                    brokers.push(brokersarray[id]);
+                }
+                SenderConfig={SenderName:$rootScope.ConfigName,Config:{
+                        Brokers: brokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:Number($rootScope.kafkaRequiredAcks),
+                        Timeout:$rootScope.kafkaTimeout,Compression:Number($rootScope.kafkaCompression),Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
+                        Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
+                    }};
+                AggregatorConfig={Enable:false};
             }
+
             $http({
                 method: 'POST',
                 url: '../api/logpeck/updateTask',
                 data: {
                     Name: $rootScope.Name,
                     Logpath: $rootScope.LogPath,
-                    ConfigName:$rootScope.ConfigName,
-                    Sender: $rootScope.Sender,
-                    Fields: $rootScope.fields_array,
-                    Delimiters: $rootScope.Delimiters,
+
+                    ExtractorConfig: ExtractorConfig,
+                    SenderConfig: SenderConfig,
+                    AggregatorConfig: AggregatorConfig,
+
                     Keywords: $rootScope.Keywords,
-                    LogFormat: $rootScope.LogFormat,
                     ip: $rootScope.T_ip
                 },
             }).then(function successCallback(response) {
@@ -830,7 +837,39 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
 
 
 //*************the share function of 'Add' and 'Update'******************
+
 app.run(function($rootScope,$route, $http) {
+    $rootScope.list=function (Callback) {
+        $http({
+            method: 'POST',
+            url: '../api/logpeck/list',
+            data: {ip: $rootScope.T_ip},
+        }).then(function successCallback(response) {
+            if(response['data']["result"]==undefined) {
+                //$scope.visible = true;
+                var name;
+                var stat;
+                var start;
+                var logpath;
+                var array=[];
+                for (var Name in response['data']['configs']) {
+                    name=Name;
+                    logpath=response['data']['configs'][Name]['LogPath'];
+                    stat=response['data']['stats'][Name]['Stop'];
+                    start=!stat;
+                    array.push({name:name,logpath:logpath,stop:stat,start:start});
+                }
+                Callback({result:array,err:null});
+            }
+            else{
+                Callback({result:null,err:response['data']['result']});
+            }
+        }, function errorCallback(err) {
+            console.log('err');
+            Callback({result:null,err:err});
+        });
+    };
+
     //Change configName (Elasticsearch InfluxDb Kafka)
     $rootScope.configChange = function(configName){
         if(configName=="ElasticsearchConfig"){
