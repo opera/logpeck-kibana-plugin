@@ -518,8 +518,8 @@
                     <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.min" ng-click='selectOne("min",key)' style="float:left"/> <div style="margin-right:8px;float:left">min</div>
                   </div>
                   <div style="float: left;width: 50%;">
-                    <div ng-repeat="(key2,value2) in influxdb_array[key].Tags track by $index" style="float: left;margin-left:1%;margin-top:2px;width:32%">
-                      <select  ng-model="$root.influxdb_array[key]['Tags'].key2" style="width: 100%">
+                    <div ng-repeat="(key2,value2) in influxdb_array[key]['Tags'] track by $index" style="float: left;margin-left:1%;margin-top:2px;width:32%">
+                      <select  ng-model="value2" style="width: 100%">
                         <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
                       </select>
                     </div>

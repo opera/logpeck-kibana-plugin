@@ -545,7 +545,6 @@ app.run(function($rootScope,$route, $http) {
     //plus influxdb tags
     $rootScope.plusTags=function (key) {
         $rootScope.influxdb_array[key]['Tags'].push("");
-        console.log($rootScope.influxdb_array['Tags']);
     };
     //minus influxdb tags
     $rootScope.minusTags=function (key) {
@@ -981,6 +980,9 @@ app.run(function($rootScope,$route, $http) {
                 }
                 $rootScope.influxdb_array[key]["Aggregations"]=Aggregations;
             }
+
+            console.log("--------------");
+            console.log($rootScope.influxdb_array);
         }
         $rootScope.ConfigName=task['SenderConfig']['SenderName'];
         if($rootScope.ConfigName=="ElasticsearchConfig")
