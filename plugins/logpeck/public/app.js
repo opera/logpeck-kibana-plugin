@@ -150,7 +150,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         $rootScope.T_ip=event.target.getAttribute('name');
         localStorage.setItem("T_ip",event.target.getAttribute('name'));
         $scope.indexLog ='';
-        $scope.list(callback_listTask);
+        $rootScope.list(callback_listTask);
     }
     function callback_listTask(response) {
         if(response["err"]==null){
@@ -174,8 +174,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             data: {Name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
         }).then(function successCallback(response) {
             $scope.indexLog ='';
-            if(response['data'][0]['result']!="Start Success"){
-                $scope.indexLog =response['data'][0]['result'];
+            if(response['data']['result']!="Start Success"){
+                $scope.indexLog =response['data']['result'];
                 $scope.logstat1=true;
                 $scope.logstat2=false;
                 // $scope.T_array[]
@@ -201,8 +201,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             data: {Name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
         }).then(function successCallback(response) {
             $scope.indexLog ='';
-            if(response['data'][0]['result']!="Stop Success"){
-                $scope.indexLog =response['data'][0]['result'];
+            if(response['data']['result']!="Stop Success"){
+                $scope.indexLog =response['data']['result'];
                 $scope.logstat1=true;
                 $scope.logstat2=false;
             }
@@ -229,7 +229,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             data: {Name: event.target.getAttribute('name'),ip: $rootScope.T_ip},
         }).then(function successCallback(response) {
             if(response['data']['result']=="Remove Success") {
-                $scope.list(Callback);
+                $scope.list(callback_listTask);
             }else {
                 $scope.logstat1=true;
                 $scope.logstat2=false;
@@ -250,7 +250,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
                 url: '../api/logpeck/addHost',
                 data: {ip: $scope.IP},
             }).then(function successCallback(response) {
-                if (response['data'][0]['result'] == "Add success") {
+                if (response['data']['result'] == "Add success") {
                     $scope.T_IpList.push($scope.IP);
                     $scope.T_array=[];
                     $scope.logstat1=false;
@@ -276,7 +276,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
                 else{
                     $scope.logstat1=true;
                     $scope.logstat2=false;
-                    $scope.indexLog=response['data'][0]['result'];
+                    $scope.indexLog=response['data']['result'];
                 }
             }, function errorCallback() {
                 console.log('err');
@@ -295,10 +295,10 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             data:{ip: event.target.getAttribute('name')},
         }).then(function successCallback(response) {
             $scope.indexLog ='';
-            if(response['data'][0]['result'] != "err"&&response['data'][0]['result']!="Ip not exist"){
+            if(response['data']['result'] != "err"&&response['data']['result']!="Ip not exist"){
                 var new_arr = [];
                 for (var id=0 ; id<$scope.T_IpList.length ; id++) {
-                    if(response['data'][0]['result']!=$scope.T_IpList[id]) {
+                    if(response['data']['result']!=$scope.T_IpList[id]) {
                         new_arr.push($scope.T_IpList[id]);
                     }
                 }
@@ -306,7 +306,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
                 $scope.T_array=[];
             }
             else{
-                $scope.indexLog=response['data'][0]['result'];
+                $scope.indexLog=response['data']['result'];
             }
         }, function errorCallback() {
         });
@@ -345,46 +345,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 //************************controller "logpeckAdd"******************************
 app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interval) {
     //init
-    $rootScope.testArea=false;
     $rootScope.T_ip=localStorage.getItem("T_ip");
-
-    $rootScope.influxdb_array=[];
-    $rootScope.select_all=[];
-    $rootScope.fields_array=[];
-
-    $rootScope.Name = "TestLog";
-    $rootScope.LogPath = "test.log";
-    $rootScope.ConfigName = "ElasticsearchConfig";
-
-    $rootScope.esHosts = "127.0.0.1:9200";
-    $rootScope.esIndex = "my_index-%{+2006.01.02}";
-    $rootScope.esType = "MyType";
-    $rootScope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
-
-    $rootScope.influxHosts = "127.0.0.1:8086";
-    $rootScope.influxInterval = 30;
-    $rootScope.influxDBName = "DBname";
-    $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
-
-    $rootScope.kafkaBrokers = "127.0.0.1:9092";
-    $rootScope.kafkaTopic = "";
-    $rootScope.kafkaMaxMessageBytes = 1000000;
-    $rootScope.kafkaRequiredAcks = "1";
-    $rootScope.kafkaTimeout= 10;
-    $rootScope.kafkaCompression = "0";
-    $rootScope.kafkaPartitioner = "RandomPartitioner";
-    $rootScope.kafkaReturnErrors = true;
-    $rootScope.kafkaFlush={FlushBytes : 0,FlushMessages : 0,FlushFrequency : 0,FlushMaxMessages:0};
-    $rootScope.kafkaRetry = {RetryMax : 3,RetryBackoff : 100};
-
-    $rootScope.Delimiters = "";
-    $rootScope.Keywords = "";
-    $rootScope.LogFormat = "text";
-    $rootScope.typeChange($rootScope.LogFormat);
-    $rootScope.elasticsearch = true;
-    $rootScope.influxdb = false;
-    $rootScope.kafka = false;
-    $rootScope.type=true;
+    $rootScope.init_task();
 
     $http({
         method: 'POST',
@@ -400,133 +362,17 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
 
     //Add task
     $scope.addTask = function () {
-        console.log($rootScope.ConfigName);
-        var T=false;
-        var measurementTargetNull = false;
-        if($rootScope.fields_array==null){
-            ;
-        }
-        else {
-            console.log($rootScope.fields_array.length);
-            for (var id = 0; id < $rootScope.fields_array.length; id++) {
-                console.log($rootScope.fields_array[id].Name);
-                console.log($rootScope.fields_array[id].Value);
-                if ($rootScope.fields_array[id].Name == '' ) {
-                    T = true;
-                    break;
-                }
-                if($rootScope.LogFormat=="text" && $rootScope.fields_array[id].Value == ''){
-                    T = true;
-                    break;
-                }
-            }
-        }
-        if ($rootScope.ConfigName=="InfluxDbConfig")
-        {
-            for (var id = 0; id < $rootScope.influxdb_array.length; id++) {
-                if ($rootScope.influxdb_array[id].Target == '' ) {
-                    measurementTargetNull = true;
-                    break;
-                }
-            }
-        }
-
-        if(T){
-            $rootScope.addTaskResult = "fields is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else if (measurementTargetNull) {
-            $rootScope.testArea=true;
-            $rootScope.testResults = "Target is not complete";
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
-            $rootScope.addTaskResult = "IP is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else if($rootScope.Name==""||$rootScope.LogPath==""){
-            $rootScope.addTaskResult = "Name or LogPath is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }else if ($rootScope.ConfigName=="ElasticsearchConfig"&&($rootScope.esHosts==""||$rootScope.esIndex==""||$rootScope.esType=="")){
-            $rootScope.addTaskResult = "ElasticsearchConfig is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }else if($rootScope.ConfigName=="InfluxDbConfig"&&($rootScope.influxHosts==''||$rootScope.influxDBName==''||$rootScope.influxInterval=='')){
-            $rootScope.addTaskResult = "InfluxDbConfig is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else {
-            var SenderConfig;
-            var ExtractorConfig;
-            var AggregatorConfig;
-            if($rootScope.LogFormat=="text"){
-                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Delimiters: $rootScope.Delimiters,Fields:$rootScope.fields_array}};
-            }else if(($rootScope.LogFormat=="json")){
-                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
-            }else if(($rootScope.LogFormat=="luo")){
-                ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
-            }
-
-            if($rootScope.ConfigName=="ElasticsearchConfig"){
-                var hostsarray = $rootScope.esHosts.split(',');
-                var hosts = [];
-                for (var id = 0; id < hostsarray.length; id++) {
-                    hosts.push(hostsarray[id]);
-                }
-                SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: hosts, Index: $rootScope.esIndex, Type: $rootScope.esType, Mapping: JSON.parse($rootScope.esMapping)}};
-                AggregatorConfig={Enable:false};
-            }else if($rootScope.ConfigName=="InfluxDbConfig"){
-                for(var key in $rootScope.influxdb_array){
-                    var tmp=[];
-                    for(var key2 in $rootScope.influxdb_array[key].Aggregations){
-                        if($rootScope.influxdb_array[key].Aggregations[key2]==true){
-                            tmp.push(key2);
-                        }
-                    }
-                    if(tmp.length==0){
-                        tmp.push("cnt");
-                    }
-                    console.log("tmp");
-                    console.log(tmp);
-                    $rootScope.influxdb_array[key].Aggregations=tmp;
-                }
-
-                SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: $rootScope.influxHosts,  DBName: $rootScope.influxDBName}};
-                AggregatorConfig={Enable:true,Interval: $rootScope.influxInterval,AggregatorOptions:$rootScope.influxdb_array};
-            }else if ($rootScope.ConfigName="KafkaConfig"){
-                var brokersarray = $rootScope.kafkaBrokers.split(',');
-                var brokers = [];
-                for (var id = 0; id < brokersarray.length; id++) {
-                    brokers.push(brokersarray[id]);
-                }
-                SenderConfig={SenderName:$rootScope.ConfigName,Config:{
-                        Brokers: brokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:Number($rootScope.kafkaRequiredAcks),
-                        Timeout:$rootScope.kafkaTimeout,Compression:Number($rootScope.kafkaCompression),Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
-                        Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
-                    }};
-                AggregatorConfig={Enable:false};
-            }
-
+        if($rootScope.init_add_or_update()==true){
+            var config=$rootScope.get_configs()
             $http({
                 method: 'POST',
                 url: '../api/logpeck/addTask',
                 data: {
                     Name: $rootScope.Name,
                     Logpath: $rootScope.LogPath,
-
-                    ExtractorConfig: ExtractorConfig,
-                    SenderConfig: SenderConfig,
-                    AggregatorConfig: AggregatorConfig,
-
+                    ExtractorConfig: config.ExtractorConfig,
+                    SenderConfig: config.SenderConfig,
+                    AggregatorConfig: config.AggregatorConfig,
                     Keywords: $rootScope.Keywords,
                     ip: $rootScope.T_ip
                 },
@@ -563,103 +409,13 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
 //********************controller "logpeckUpdate"***************************
 app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
     //init
-    $rootScope.testArea=false;
-    $rootScope.influxdb_array=[];
-    $rootScope.select_all=[];
     var update_ip=angular.fromJson(localStorage.getItem("update_ip"));
     $rootScope.T_ip=localStorage.getItem("T_ip");
 
-    $rootScope.esHosts = "127.0.0.1:9200";
-    $rootScope.esIndex = "my_index-%{+2006.01.02}";
-    $rootScope.esType = "MyType";
-    $rootScope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
-
-    $rootScope.influxHosts = "127.0.0.1:8086";
-    $rootScope.influxInterval = 30;
-    $rootScope.influxDBName = "DBname";
-    $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
-
-    $rootScope.kafkaBrokers = "127.0.0.1:9092";
-    $rootScope.kafkaTopic = "";
-    $rootScope.kafkaMaxMessageBytes = 1000000;
-    $rootScope.kafkaRequiredAcks = "1";
-    $rootScope.kafkaTimeout= 10;
-    $rootScope.kafkaCompression = "0";
-    $rootScope.kafkaPartitioner = "RandomPartitioner";
-    $rootScope.kafkaReturnErrors = true;
-    $rootScope.kafkaFlush={FlushBytes : 0,FlushMessages : 0,FlushFrequency : 0,FlushMaxMessages:0};
-    $rootScope.kafkaRetry = {RetryMax : 3,RetryBackoff : 100};
+    $rootScope.init_task();
 
 
-    $rootScope.Name=update_ip['Name'];
-    $rootScope.LogPath=update_ip['LogPath'];
-
-    $rootScope.LogFormat=update_ip['ExtractorConfig']['Name'];
-    $rootScope.typeChange($rootScope.LogFormat);
-    if($rootScope.LogFormat=="text"){
-        $rootScope.fields_array=update_ip['ExtractorConfig']['Config']['Fields'];
-        $rootScope.Delimiters=update_ip['ExtractorConfig']['Config']['Delimiters'];
-    }else if($rootScope.LogFormat=="json"){
-        $rootScope.fields_array=update_ip['ExtractorConfig']['Config']['Fields'];
-    }else if($rootScope.LogFormat=="luo"){
-        $rootScope.LuaString=update_ip['ExtractorConfig']['Config']['LuaString'];
-    }
-    if($rootScope.fields_array==null){
-        $rootScope.fields_array=[];
-    }
-
-    if(update_ip['AggregatorConfig']['Enable']==true){
-        $rootScope.influxInterval = update_ip['AggregatorConfig']['Interval'];
-        $rootScope.influxdb_array=update_ip['AggregatorConfig']['AggregatorOptions'];
-        for(var key in $rootScope.influxdb_array)
-        {
-            var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
-            for(var key2 in $rootScope.influxdb_array[key]["Aggregations"]){
-                Aggregations[$rootScope.influxdb_array[key]["Aggregations"][key2]]=true;
-            }
-            $rootScope.influxdb_array[key]["Aggregations"]=Aggregations;
-        }
-    }
-
-    $rootScope.ConfigName=update_ip['SenderConfig']['SenderName'];
-    if($rootScope.ConfigName=="ElasticsearchConfig")
-    {
-        $rootScope.elasticsearch=true;
-        $rootScope.influxdb=false;
-        $rootScope.kafka=false;
-
-        $rootScope.esHosts=update_ip['SenderConfig']['Config']['Hosts'].toString();
-        $rootScope.esIndex=update_ip['SenderConfig']['Config']['Index'];
-        $rootScope.esType=update_ip['SenderConfig']['Config']['Type'];
-        $rootScope.esMapping=JSON.stringify(update_ip['SenderConfig']['Config']['Mapping'],null,4);
-        if($rootScope.esMapping=='null'){
-            console.log("Mapping is null")
-            $rootScope.esMapping="";
-        }
-    }else if($rootScope.ConfigName=="InfluxDbConfig") {
-        $rootScope.elasticsearch=false;
-        $rootScope.influxdb=true;
-        $rootScope.kafka=false;
-
-        $rootScope.influxHosts = update_ip['SenderConfig']['Config']['Hosts'].toString();
-        $rootScope.influxDBName = update_ip['SenderConfig']['Config']['DBName'];
-    }else if($rootScope.ConfigName=="KafkaConfig") {
-        $rootScope.elasticsearch=false;
-        $rootScope.influxdb=false;
-        $rootScope.kafka=true;
-
-        $rootScope.kafkaBrokers = update_ip['SenderConfig']['Config']['Brokers'].toString();
-        $rootScope.kafkaTopic = update_ip['SenderConfig']['Config']['Topic'];
-        $rootScope.kafkaMaxMessageBytes = update_ip['SenderConfig']['Config']['MaxMessageBytes'];
-        $rootScope.kafkaRequiredAcks = update_ip['SenderConfig']['Config']['RequiredAcks'].toString();
-        $rootScope.kafkaTimeout= update_ip['SenderConfig']['Config']['Timeout'];
-        $rootScope.kafkaCompression = update_ip['SenderConfig']['Config']['Compression'].toString();
-        $rootScope.kafkaPartitioner = update_ip['SenderConfig']['Config']['Partitioner'];
-        $rootScope.kafkaReturnErrors = update_ip['SenderConfig']['Config']['ReturnErrors'];
-        $rootScope.kafkaFlush=update_ip['SenderConfig']['Config']['Flush'];
-        $rootScope.kafkaRetry = update_ip['SenderConfig']['Config']['Retry'];
-    }
-    $rootScope.Keywords=update_ip['Keywords'];
+    $rootScope.show_task(update_ip);
 
     $http({
         method: 'POST',
@@ -675,163 +431,45 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
 
     //update
     $scope.updateTask = function () {
-        var T=false;
-        var measurementTargetNull=false;
-        if($rootScope.fields_array==null){
-
-        }
-        else {
-            for (var id = 0; id < $rootScope.fields_array.length; id++) {
-                if ($rootScope.fields_array[id].Name == '' ) {
-                    T = true;
-                    break;
-                }
-                if($rootScope.LogFormat=="text" && $rootScope.fields_array[id].Value == ''){
-                    T = true;
-                    break;
-                }
-            }
-        }
-        if ($rootScope.ConfigName=="InfluxDbConfig")
-        {
-            for (var id = 0; id < $rootScope.influxdb_array.length; id++) {
-                if ($rootScope.influxdb_array[id].Target == '' ) {
-                    measurementTargetNull = true;
-                    break;
-                }
-            }
-        }
-
-        if(T){
-            $rootScope.addTaskResult = "Fields is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else if(measurementTargetNull){
-            $rootScope.testArea=true;
-            $rootScope.testResults = "Measurment is not complete";
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
-            $rootScope.addTaskResult = "IP is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else if($rootScope.Name==""||$rootScope.LogPath==""){
-            $rootScope.addTaskResult = "Name or LogPath is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }else if ($rootScope.ConfigName=="ElasticsearchConfig"&&($rootScope.esHosts==""||$rootScope.esIndex==""||$rootScope.esType=="")){
-            $rootScope.addTaskResult = "ElasticsearchConfig is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }else if($rootScope.ConfigName=="InfluxDbConfig"&&($rootScope.influxHosts==''||$rootScope.influxDBName==''||$rootScope.influxInterval=='')){
-            $rootScope.addTaskResult = "InfluxDbConfig is not complete";
-            $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
-            $rootScope.error={"color":"#ff0000"};
-        }
-        else {
-            var SenderConfig;
-            var ExtractorConfig;
-            var AggregatorConfig;
-            if($rootScope.LogFormat=="text"){
-                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Delimiters: $rootScope.Delimiters,Fields:$rootScope.fields_array}};
-            }else if(($rootScope.LogFormat=="json")){
-                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
-            }else if(($rootScope.LogFormat=="luo")){
-                ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
-            }
-
-            if($rootScope.ConfigName=="ElasticsearchConfig"){
-                var hostsarray = $rootScope.esHosts.split(',');
-                var hosts = [];
-                for (var id = 0; id < hostsarray.length; id++) {
-                    hosts.push(hostsarray[id]);
-                }
-                SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: hosts, Index: $rootScope.esIndex, Type: $rootScope.esType, Mapping: JSON.parse($rootScope.esMapping)}};
-                AggregatorConfig={Enable:false};
-            }else if($rootScope.ConfigName=="InfluxDbConfig"){
-                for(var key in $rootScope.influxdb_array){
-                    var tmp=[];
-                    for(var key2 in $rootScope.influxdb_array[key].Aggregations){
-                        if($rootScope.influxdb_array[key].Aggregations[key2]==true){
-                            tmp.push(key2);
-                        }
-                    }
-                    if(tmp.length==0){
-                        tmp.push("cnt");
-                    }
-                    console.log("tmp");
-                    console.log(tmp);
-                    $rootScope.influxdb_array[key].Aggregations=tmp;
-                }
-
-                SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: $rootScope.influxHosts,  DBName: $rootScope.influxDBName}};
-                AggregatorConfig={Enable:true,Interval: $rootScope.influxInterval,AggregatorOptions:$rootScope.influxdb_array};
-            }else if ($rootScope.ConfigName="KafkaConfig"){
-                var brokersarray = $rootScope.kafkaBrokers.split(',');
-                var brokers = [];
-                for (var id = 0; id < brokersarray.length; id++) {
-                    brokers.push(brokersarray[id]);
-                }
-                SenderConfig={SenderName:$rootScope.ConfigName,Config:{
-                        Brokers: brokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:Number($rootScope.kafkaRequiredAcks),
-                        Timeout:$rootScope.kafkaTimeout,Compression:Number($rootScope.kafkaCompression),Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
-                        Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
-                    }};
-                AggregatorConfig={Enable:false};
-            }
-
+        if($rootScope.init_add_or_update()==true){
+            var config=$rootScope.get_configs()
             $http({
                 method: 'POST',
                 url: '../api/logpeck/updateTask',
                 data: {
                     Name: $rootScope.Name,
                     Logpath: $rootScope.LogPath,
-
-                    ExtractorConfig: ExtractorConfig,
-                    SenderConfig: SenderConfig,
-                    AggregatorConfig: AggregatorConfig,
-
+                    ExtractorConfig: config.ExtractorConfig,
+                    SenderConfig: config.SenderConfig,
+                    AggregatorConfig: config.AggregatorConfig,
                     Keywords: $rootScope.Keywords,
                     ip: $rootScope.T_ip
                 },
             }).then(function successCallback(response) {
-                if(response['data'][0]['result']==undefined) {
-                    var new_arr = [];
-                    if (response['data'][0]['null'] != "true") {
-                        var name;
-                        var stat;
-                        var start;
-                        var logpath;
-                        for (var id = 0; id < response['data'].length; id++) {
-                            name=response['data'][id]['Name'];
-                            logpath=response['data'][id]['LogPath'];
-                            stat=response['data'][id]['Stop'];
-                            start=!stat;
-                            new_arr.push({name:name,logpath:logpath,stop:stat,start:start});
-                        }
-                    }
-                    //$rootScope.T_array = new_arr;
-                    task_ip = new_arr;
-                    task_ip_exist = true;
-                    window.location.href = "#/";
+                if(response['data']['result']=="Update Success") {
+                    $rootScope.list(Callback);
                 }
                 else {
-                    $rootScope.addTaskResult =response['data'][0]['result'];
                     $rootScope.testArea=true;
-                    $rootScope.testResults = $rootScope.addTaskResult;
+                    $rootScope.testResults = response['data']['result'];
                     $rootScope.error={"color":"#ff0000"};
                 }
             }, function errorCallback() {
             });
         }
     };
+    function Callback(response) {
+        if(response["err"]==null){
+            $scope.visible = true;
+            task_ip = response["result"];
+            task_ip_exist = true;
+            window.location.href = "#/";
+        }else {
+            $rootScope.testArea=true;
+            $rootScope.testResults = response["err"];
+            $rootScope.error={"color":"#ff0000"};
+        }
+    }
 
 });
 
@@ -839,37 +477,6 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
 //*************the share function of 'Add' and 'Update'******************
 
 app.run(function($rootScope,$route, $http) {
-    $rootScope.list=function (Callback) {
-        $http({
-            method: 'POST',
-            url: '../api/logpeck/list',
-            data: {ip: $rootScope.T_ip},
-        }).then(function successCallback(response) {
-            if(response['data']["result"]==undefined) {
-                //$scope.visible = true;
-                var name;
-                var stat;
-                var start;
-                var logpath;
-                var array=[];
-                for (var Name in response['data']['configs']) {
-                    name=Name;
-                    logpath=response['data']['configs'][Name]['LogPath'];
-                    stat=response['data']['stats'][Name]['Stop'];
-                    start=!stat;
-                    array.push({name:name,logpath:logpath,stop:stat,start:start});
-                }
-                Callback({result:array,err:null});
-            }
-            else{
-                Callback({result:null,err:response['data']['result']});
-            }
-        }, function errorCallback(err) {
-            console.log('err');
-            Callback({result:null,err:err});
-        });
-    };
-
     //Change configName (Elasticsearch InfluxDb Kafka)
     $rootScope.configChange = function(configName){
         if(configName=="ElasticsearchConfig"){
@@ -981,7 +588,6 @@ app.run(function($rootScope,$route, $http) {
 
     //Test task and return some logs
     $rootScope.testTask = function () {
-        $rootScope.addTaskResult="";
         $rootScope.testArea=true;
         $rootScope.TestNum=10;
         $rootScope.Time=2;
@@ -1003,41 +609,47 @@ app.run(function($rootScope,$route, $http) {
         }
 
         if(T){
-            $rootScope.addTaskResult = "fields is not complete";
             $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
+            $rootScope.testResults = "fields is not complete";
             $rootScope.error={"color":"#ff0000"};
         }
         else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
-            $rootScope.addTaskResult = "IP is not complete";
             $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
+            $rootScope.testResults = "IP is not complete";
             $rootScope.error={"color":"#ff0000"};
         }
         else if($rootScope.Name==""||$rootScope.LogPath==""){
-            $rootScope.addTaskResult = "filed is not complete";
             $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
+            $rootScope.testResults = "filed is not complete";
             $rootScope.error={"color":"#ff0000"};
         }
         else {
+            var SenderConfig={SenderName:"ElasticsearchConfig",Config:{Hosts:["127.0.0.1:7117"],Name:"Test"}};
+            var ExtractorConfig={};
+            var AggregatorConfig={};
+            if($rootScope.LogFormat=="text"){
+                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Delimiters: $rootScope.Delimiters,Fields:$rootScope.fields_array}};
+            }else if(($rootScope.LogFormat=="json")){
+                ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
+            }else if(($rootScope.LogFormat=="luo")){
+                ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
+            }
+            var Test={TestNum:$rootScope.TestNum,Timeout:$rootScope.Time};
             $http({
                 method: 'POST',
                 url: '../api/logpeck/testTask',
                 data: {
                     Name: $rootScope.Name,
                     Logpath: $rootScope.LogPath,
-                    ConfigName:$rootScope.ConfigName,
-                    Fields: $rootScope.fields_array,
-                    Delimiters: $rootScope.Delimiters,
+                    ExtractorConfig: ExtractorConfig,
+                    SenderConfig: SenderConfig,
+                    AggregatorConfig: AggregatorConfig,
                     Keywords: $rootScope.Keywords,
-                    LogFormat: $rootScope.LogFormat,
-                    TestNum: $rootScope.TestNum,
-                    Timeout:    $rootScope.Time,
+                    Test: Test,
                     ip: $rootScope.T_ip
                 },
             }).then(function successCallback(response) {
-                if(response['data'][0]['result']==undefined) {
+                if(response['data']['result']==undefined) {
                     console.log(response['data']);
                     var obj = angular.fromJson(response['data']);
                     console.log(obj);
@@ -1046,9 +658,8 @@ app.run(function($rootScope,$route, $http) {
                     $rootScope.error={"color":"#2d2d2d"};
                 }
                 else {
-                    $rootScope.addTaskResult =response['data'][0]['result'];
                     $rootScope.testArea=true;
-                    $rootScope.testResults = $rootScope.addTaskResult;
+                    $rootScope.testResults = response['data']['result'];
                     $rootScope.error={"color":"#ff0000"};
                 }
             }, function errorCallback() {
@@ -1059,12 +670,10 @@ app.run(function($rootScope,$route, $http) {
 
     //Add some template
     $rootScope.addTemplate = function () {
-        $rootScope.addTaskResult="";
         $rootScope.testArea=false;
         if ($rootScope.template_name == ""||$rootScope.template_name ==undefined) {
-            $rootScope.addTaskResult = "template is null";
             $rootScope.testArea=true;
-            $rootScope.testResults = $rootScope.addTaskResult;
+            $rootScope.testResults = "template is null";
             $rootScope.error={"color":"#ff0000"};
         }
         else{
@@ -1081,17 +690,9 @@ app.run(function($rootScope,$route, $http) {
                     return;
                 }
             }
-            if($rootScope.ConfigName=="ElasticsearchConfig"){
-                $rootScope.Sender={Hosts: $rootScope.esHosts, Index: $rootScope.esIndex, Type: $rootScope.esType, Mapping: $rootScope.esMapping,}
-            }else if($rootScope.ConfigName=="InfluxDbConfig"){
-                $rootScope.Sender={Hosts: $rootScope.influxHosts, Interval: $rootScope.influxInterval, DBName: $rootScope.influxDBName,AggregatorConfigs:$rootScope.influxdb_array}
-            }else if ($rootScope.ConfigName="KafkaConfig"){
-                $rootScope.Sender={
-                    Brokers: $rootScope.kafkaBrokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:$rootScope.kafkaRequiredAcks,
-                    Timeout:$rootScope.kafkaTimeout,Compression:$rootScope.kafkaCompression,Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
-                    Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
-                };
-            }
+
+            var config=$rootScope.get_configs()
+
             $http({
                 method: 'POST',
                 url: '../api/logpeck/addTemplate',
@@ -1099,24 +700,21 @@ app.run(function($rootScope,$route, $http) {
                     template_name: $rootScope.template_name,
                     Name: $rootScope.Name,
                     Logpath: $rootScope.LogPath,
-                    ConfigName:$rootScope.ConfigName,
-                    Sender: $rootScope.Sender,
-                    Fields: $rootScope.fields_array,
-                    Delimiters: $rootScope.Delimiters,
+                    ExtractorConfig: config.ExtractorConfig,
+                    SenderConfig: config.SenderConfig,
+                    AggregatorConfig: config.AggregatorConfig,
                     Keywords: $rootScope.Keywords,
-                    LogFormat: $rootScope.LogFormat,
                 },
             }).then(function successCallback(response) {
-                if (response['data'][0]['result'] == "Add success") {
+                if (response['data']['result'] == "Add success") {
                     $rootScope.TemplateList.push($rootScope.template_name);
                     console.log($rootScope.TemplateList);
-                    $rootScope.addTaskResult = response['data'][0]['result'];
+                    $rootScope.testResults = response['data']['result'];
                     $rootScope.template_name ="";
                 }
                 else{
-                    $rootScope.addTaskResult = response['data'][0]['result'];
                     $rootScope.testArea=true;
-                    $rootScope.testResults = $rootScope.addTaskResult;
+                    $rootScope.testResults = response['data']['result'];
                     $rootScope.error={"color":"#ff0000"};
                 }
             }, function errorCallback() {
@@ -1125,28 +723,24 @@ app.run(function($rootScope,$route, $http) {
         }
     };
     $rootScope.removeTemplate = function ($event) {
-        $rootScope.addTaskResult="";
         $rootScope.testArea=false;
         $http({
             method: 'POST',
             url: '../api/logpeck/removeTemplate',
             data:{template_name: event.target.getAttribute('name')},
         }).then(function successCallback(response) {
-            console.log("app")
-            $rootScope.addTaskResult ='';
-            if(response['data'][0]['result'] != "err"){
+            if(response['data']['result'] != "err"){
                 var new_arr = [];
                 for (var id=0 ; id<$rootScope.TemplateList.length ; id++) {
-                    if(response['data'][0]['result']!=$rootScope.TemplateList[id]) {
+                    if(response['data']['result']!=$rootScope.TemplateList[id]) {
                         new_arr.push($rootScope.TemplateList[id]);
                     }
                 }
                 $rootScope.TemplateList=new_arr;
             }
             else{
-                $rootScope.addTaskResult=response['data'][0]['result'];
                 $rootScope.testArea=true;
-                $rootScope.testResults = $rootScope.addTaskResult;
+                $rootScope.testResults = response['data']['result'];
                 $rootScope.error={"color":"#ff0000"};
             }
         }, function errorCallback() {
@@ -1155,133 +749,309 @@ app.run(function($rootScope,$route, $http) {
 
     //Apply a template
     $rootScope.applyTemplate = function ($event){
-        $rootScope.addTaskResult="";
         $rootScope.testArea=false;
         $http({
             method: 'POST',
             url: '../api/logpeck/applyTemplate',
             data:{template_name: event.target.getAttribute('name')},
         }).then(function successCallback(response) {
-            console.log(response['data']['_source'])
-            $rootScope.Name=response['data']['_source']['Name'];
-            $rootScope.LogPath=response['data']['_source']['LogPath'];
-            $rootScope.ConfigName=response['data']['_source']['SenderConfig']['SenderName']
+            console.log(response);
+            if(response['data']['result']==undefined) {
+                $rootScope.init_task();
+                var task=response['data']['_source'];
+                $rootScope.show_task(task);
 
-            $rootScope.esHosts = "127.0.0.1:9200";
-            $rootScope.esIndex = "my_index-%{+2006.01.02}";
-            $rootScope.esType = "MyType";
-            $rootScope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
-
-            $rootScope.influxHosts = "127.0.0.1:8086";
-            $rootScope.influxInterval = 30;
-            $rootScope.influxDBName = "DBname";
-            $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
-
-            $rootScope.kafkaBrokers = "127.0.0.1:9092";
-            $rootScope.kafkaTopic = "";
-            $rootScope.kafkaMaxMessageBytes = 1000000;
-            $rootScope.kafkaRequiredAcks = "1";
-            $rootScope.kafkaTimeout= 10;
-            $rootScope.kafkaCompression = "0";
-            $rootScope.kafkaPartitioner = "RandomPartitioner";
-            $rootScope.kafkaReturnErrors = true;
-            $rootScope.kafkaFlush={FlushBytes : 0,FlushMessages : 0,FlushFrequency : 0,FlushMaxMessages:0};
-            $rootScope.kafkaRetry = {RetryMax : 3,RetryBackoff : 100};
-
-            if($rootScope.ConfigName=="ElasticsearchConfig")
-            {
-                $rootScope.elasticsearch=true;
-                $rootScope.influxdb=false;
-                $rootScope.kafka=false;
-
-                $rootScope.esHosts=response['data']['_source']['SenderConfig']['Config']['Hosts'].toString();
-                $rootScope.esIndex=response['data']['_source']['SenderConfig']['Config']['Index'];
-                $rootScope.esType=response['data']['_source']['SenderConfig']['Config']['Type'];
-                $rootScope.esMapping=JSON.stringify(response['data']['_source']['SenderConfig']['Config']['Mapping'],null,4);
-                if($rootScope.esMapping=='null'){
-                    $rootScope.esMapping="";
-                }
-            }else if($rootScope.ConfigName=="InfluxDbConfig") {
-                $rootScope.elasticsearch=false;
-                $rootScope.influxdb=true;
-                $rootScope.kafka=false;
-
-                $rootScope.influxHosts = response['data']['_source']['SenderConfig']['Config']['Hosts'].toString();
-                $rootScope.influxInterval = response['data']['_source']['SenderConfig']['Config']['Interval'];
-                $rootScope.influxDBName = response['data']['_source']['SenderConfig']['Config']['DBName'];
-                $rootScope.influxdb_array=response['data']['_source']['SenderConfig']['Config']['AggregatorConfigs'];
-            }else if($rootScope.ConfigName=="KafkaConfig") {
-                $rootScope.elasticsearch=false;
-                $rootScope.influxdb=false;
-                $rootScope.kafka=true;
-
-                $rootScope.kafkaBrokers = response['data']['_source']['SenderConfig']['Config']['Brokers'].toString();
-                $rootScope.kafkaTopic = response['data']['_source']['SenderConfig']['Config']['Topic'];
-                $rootScope.kafkaMaxMessageBytes = response['data']['_source']['SenderConfig']['Config']['MaxMessageBytes'];
-                $rootScope.kafkaRequiredAcks = response['data']['_source']['SenderConfig']['Config']['RequiredAcks'].toString();
-                $rootScope.kafkaTimeout= response['data']['_source']['SenderConfig']['Config']['Timeout'];
-                $rootScope.kafkaCompression = response['data']['_source']['SenderConfig']['Config']['Compression'].toString();
-                $rootScope.kafkaPartitioner = response['data']['_source']['SenderConfig']['Config']['Partitioner'];
-                $rootScope.kafkaReturnErrors = response['data']['_source']['SenderConfig']['Config']['ReturnErrors'];
-                $rootScope.kafkaFlush=response['data']['_source']['SenderConfig']['Config']['Flush'];
-                $rootScope.kafkaRetry = response['data']['_source']['SenderConfig']['Config']['Retry'];
+            }else{
+                $rootScope.testArea=true;
+                $rootScope.testResults = response['data']['result'];
+                $rootScope.error={"color":"#ff0000"};
             }
 
-            console.log(response['data']['_source']['Fields']);
-            $rootScope.fields_array=response['data']['_source']['Fields'];
-            $rootScope.Delimiters=response['data']['_source']['Delimiters'];
-            $rootScope.Keywords=response['data']['_source']['Keywords'];
-            $rootScope.LogFormat=response['data']['_source']['LogFormat'];
-            if($rootScope.LogFormat=="text"){
-                $rootScope.type=true;
-            }else if($rootScope.LogFormat=="json"){
-                $rootScope.type=false;
-            }
         }, function errorCallback() {
         });
     };
 
     //Return a page having an exact ip
     $rootScope.jump = function () {
-        $http({
-            method: 'POST',
-            url: '../api/logpeck/jump',
-            data: {
-                ip: $rootScope.T_ip
-            },
-        }).then(function successCallback(response) {
-            if(response['data'][0]['result']==undefined) {
-                var new_arr = [];
-                if (response['data'][0]['null'] != "true") {
-                    var name;
-                    var stat;
-                    var start;
-                    var logpath;
-                    for (var id = 0; id < response['data'].length; id++) {
-                        name=response['data'][id]['Name'];
-                        logpath=response['data'][id]['LogPath'];
-                        stat=response['data'][id]['Stop'];
-                        start=!stat;
-                        new_arr.push({name:name,logpath:logpath,stop:stat,start:start});
-                    }
-                }
-                //$rootScope.T_array = new_arr;
-                task_ip = new_arr;
-                task_ip_exist = true;
-                window.location.href = "#/";
-            }
-            else {
-                $rootScope.addTaskResult =response['data'][0]['result'];
-                $rootScope.testArea=true;
-                $rootScope.testResults = $rootScope.addTaskResult;
-                $rootScope.error={"color":"#ff0000"};
-            }
-        }, function errorCallback() {
-        });
-    };
+        $rootScope.list(Callback);
+    }
+    function Callback(response) {
+        if(response["err"]==null){
+            task_ip = response["result"];
+            task_ip_exist = true;
+            window.location.href = "#/";
+        }else {
+            $rootScope.testArea=true;
+            $rootScope.testResults = response["err"];
+            $rootScope.error={"color":"#ff0000"};
+        }
+    }
 
+    //Add Delimiters
     $rootScope.addDefault=function () {
         $rootScope.Delimiters='":{} ,[]';
+    };
+
+    //init pages variable
+    $rootScope.init_task=function () {
+        $rootScope.influxdb_array=[];
+        $rootScope.select_all=[];
+        $rootScope.fields_array=[];
+
+        $rootScope.Name = "TestLog";
+        $rootScope.LogPath = "test.log";
+        $rootScope.ConfigName = "ElasticsearchConfig";
+
+        $rootScope.esHosts = "127.0.0.1:9200";
+        $rootScope.esIndex = "my_index-%{+2006.01.02}";
+        $rootScope.esType = "MyType";
+        $rootScope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
+
+        $rootScope.influxHosts = "127.0.0.1:8086";
+        $rootScope.influxInterval = 30;
+        $rootScope.influxDBName = "DBname";
+        $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
+
+        $rootScope.kafkaBrokers = "127.0.0.1:9092";
+        $rootScope.kafkaTopic = "";
+        $rootScope.kafkaMaxMessageBytes = 1000000;
+        $rootScope.kafkaRequiredAcks = "1";
+        $rootScope.kafkaTimeout= 10;
+        $rootScope.kafkaCompression = "0";
+        $rootScope.kafkaPartitioner = "RandomPartitioner";
+        $rootScope.kafkaReturnErrors = true;
+        $rootScope.kafkaFlush={FlushBytes : 0,FlushMessages : 0,FlushFrequency : 0,FlushMaxMessages:0};
+        $rootScope.kafkaRetry = {RetryMax : 3,RetryBackoff : 100};
+
+        $rootScope.Delimiters = "";
+        $rootScope.Keywords = "";
+        $rootScope.LogFormat = "text";
+        $rootScope.typeChange($rootScope.LogFormat);
+        $rootScope.elasticsearch = true;
+        $rootScope.influxdb = false;
+        $rootScope.kafka = false;
+        $rootScope.type=true;
+
+        $rootScope.testArea=false;
+    }
+
+    //verify before add or update
+    $rootScope.init_add_or_update=function(){
+        var T=false;
+        var measurementTargetNull=false;
+        if($rootScope.fields_array!=null) {
+            for (var id = 0; id < $rootScope.fields_array.length; id++) {
+                if ($rootScope.fields_array[id].Name == '' ) {
+                    T = true;
+                    break;
+                }
+                if($rootScope.LogFormat=="text" && $rootScope.fields_array[id].Value == ''){
+                    T = true;
+                    break;
+                }
+            }
+        }
+        if ($rootScope.ConfigName=="InfluxDbConfig")
+        {
+            for (var id = 0; id < $rootScope.influxdb_array.length; id++) {
+                if ($rootScope.influxdb_array[id].Target == '' ) {
+                    measurementTargetNull = true;
+                    break;
+                }
+            }
+        }
+
+        if(T){
+            $rootScope.testArea=true;
+            $rootScope.testResults = "Fields is not complete";
+            $rootScope.error={"color":"#ff0000"};
+            return false;
+        } else if(measurementTargetNull){
+            $rootScope.testArea=true;
+            $rootScope.testResults = "Measurment is not complete";
+            $rootScope.error={"color":"#ff0000"};
+            return false;
+        } else if ($rootScope.T_ip == ""||$rootScope.T_ip ==undefined) {
+            $rootScope.testArea=true;
+            $rootScope.testResults = "IP is not complete";
+            $rootScope.error={"color":"#ff0000"};
+            return false;
+        } else if($rootScope.Name==""||$rootScope.LogPath==""){
+            $rootScope.testArea=true;
+            $rootScope.testResults = "Name or LogPath is not complete";
+            $rootScope.error={"color":"#ff0000"};
+            return false;
+        } else if ($rootScope.ConfigName=="ElasticsearchConfig"&&($rootScope.esHosts==""||$rootScope.esIndex==""||$rootScope.esType=="")){
+            $rootScope.testArea=true;
+            $rootScope.testResults = "ElasticsearchConfig is not complete";
+            $rootScope.error={"color":"#ff0000"};
+            return false;
+        } else if($rootScope.ConfigName=="InfluxDbConfig"&&($rootScope.influxHosts==''||$rootScope.influxDBName==''||$rootScope.influxInterval=='')){
+            $rootScope.testArea=true;
+            $rootScope.testResults = "ElasticsearchConfig is not complete";
+            $rootScope.error={"color":"#ff0000"};
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // Get the config
+    $rootScope.get_configs=function(){
+        var SenderConfig;
+        var ExtractorConfig;
+        var AggregatorConfig;
+        if($rootScope.LogFormat=="text"){
+            ExtractorConfig={Name:$rootScope.LogFormat,Config:{Delimiters: $rootScope.Delimiters,Fields:$rootScope.fields_array}};
+        }else if(($rootScope.LogFormat=="json")){
+            ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
+        }else if(($rootScope.LogFormat=="luo")){
+            ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
+        }
+
+        if($rootScope.ConfigName=="ElasticsearchConfig"){
+            var hostsarray = $rootScope.esHosts.split(',');
+            var hosts = [];
+            for (var id = 0; id < hostsarray.length; id++) {
+                hosts.push(hostsarray[id]);
+            }
+            SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: hosts, Index: $rootScope.esIndex, Type: $rootScope.esType, Mapping: JSON.parse($rootScope.esMapping)}};
+            AggregatorConfig={Enable:false};
+        }else if($rootScope.ConfigName=="InfluxDbConfig"){
+            for(var key in $rootScope.influxdb_array){
+                var tmp=[];
+                for(var key2 in $rootScope.influxdb_array[key].Aggregations){
+                    if($rootScope.influxdb_array[key].Aggregations[key2]==true){
+                        tmp.push(key2);
+                    }
+                }
+                if(tmp.length==0){
+                    tmp.push("cnt");
+                }
+                console.log("tmp");
+                console.log(tmp);
+                $rootScope.influxdb_array[key].Aggregations=tmp;
+            }
+
+            SenderConfig={SenderName:$rootScope.ConfigName,Config:{Hosts: $rootScope.influxHosts,  DBName: $rootScope.influxDBName}};
+            AggregatorConfig={Enable:true,Interval: $rootScope.influxInterval,AggregatorOptions:$rootScope.influxdb_array};
+        }else if ($rootScope.ConfigName="KafkaConfig"){
+            var brokersarray = $rootScope.kafkaBrokers.split(',');
+            var brokers = [];
+            for (var id = 0; id < brokersarray.length; id++) {
+                brokers.push(brokersarray[id]);
+            }
+            SenderConfig={SenderName:$rootScope.ConfigName,Config:{
+                    Brokers: brokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:Number($rootScope.kafkaRequiredAcks),
+                    Timeout:$rootScope.kafkaTimeout,Compression:Number($rootScope.kafkaCompression),Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
+                    Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
+                }};
+            AggregatorConfig={Enable:false};
+        }
+        return{SenderConfig:SenderConfig,ExtractorConfig:ExtractorConfig,AggregatorConfig:AggregatorConfig};
+    }
+
+
+    $rootScope.show_task=function (task) {
+        $rootScope.Name=task['Name'];
+        $rootScope.LogPath=task['LogPath'];
+
+        $rootScope.LogFormat=task['ExtractorConfig']['Name'];
+        $rootScope.typeChange($rootScope.LogFormat);
+        if($rootScope.LogFormat=="text"){
+            $rootScope.fields_array=task['ExtractorConfig']['Config']['Fields'];
+            $rootScope.Delimiters=task['ExtractorConfig']['Config']['Delimiters'];
+        }else if($rootScope.LogFormat=="json"){
+            $rootScope.fields_array=task['ExtractorConfig']['Config']['Fields'];
+        }else if($rootScope.LogFormat=="luo"){
+            $rootScope.LuaString=task['ExtractorConfig']['Config']['LuaString'];
+        }
+        if($rootScope.fields_array==null){
+            $rootScope.fields_array=[];
+        }
+
+        if(task['AggregatorConfig']['Enable']==true){
+            $rootScope.influxInterval = task['AggregatorConfig']['Interval'];
+            $rootScope.influxdb_array=task['AggregatorConfig']['AggregatorOptions'];
+            for(var key in $rootScope.influxdb_array)
+            {
+                var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
+                for(var key2 in $rootScope.influxdb_array[key]["Aggregations"]){
+                    Aggregations[$rootScope.influxdb_array[key]["Aggregations"][key2]]=true;
+                }
+                $rootScope.influxdb_array[key]["Aggregations"]=Aggregations;
+            }
+        }
+        $rootScope.ConfigName=task['SenderConfig']['SenderName'];
+        if($rootScope.ConfigName=="ElasticsearchConfig")
+        {
+            $rootScope.elasticsearch=true;
+            $rootScope.influxdb=false;
+            $rootScope.kafka=false;
+
+            $rootScope.esHosts=task['SenderConfig']['Config']['Hosts'].toString();
+            $rootScope.esIndex=task['SenderConfig']['Config']['Index'];
+            $rootScope.esType=task['SenderConfig']['Config']['Type'];
+            $rootScope.esMapping=JSON.stringify(task['SenderConfig']['Config']['Mapping'],null,4);
+            if($rootScope.esMapping=='null'){
+                console.log("Mapping is null")
+                $rootScope.esMapping="";
+            }
+        }else if($rootScope.ConfigName=="InfluxDbConfig") {
+            $rootScope.elasticsearch=false;
+            $rootScope.influxdb=true;
+            $rootScope.kafka=false;
+
+            $rootScope.influxHosts = task['SenderConfig']['Config']['Hosts'].toString();
+            $rootScope.influxDBName = task['SenderConfig']['Config']['DBName'];
+        }else if($rootScope.ConfigName=="KafkaConfig") {
+            $rootScope.elasticsearch=false;
+            $rootScope.influxdb=false;
+            $rootScope.kafka=true;
+
+            $rootScope.kafkaBrokers = task['SenderConfig']['Config']['Brokers'].toString();
+            $rootScope.kafkaTopic = task['SenderConfig']['Config']['Topic'];
+            $rootScope.kafkaMaxMessageBytes = task['SenderConfig']['Config']['MaxMessageBytes'];
+            $rootScope.kafkaRequiredAcks = task['SenderConfig']['Config']['RequiredAcks'].toString();
+            $rootScope.kafkaTimeout= task['SenderConfig']['Config']['Timeout'];
+            $rootScope.kafkaCompression = task['SenderConfig']['Config']['Compression'].toString();
+            $rootScope.kafkaPartitioner = task['SenderConfig']['Config']['Partitioner'];
+            $rootScope.kafkaReturnErrors = task['SenderConfig']['Config']['ReturnErrors'];
+            $rootScope.kafkaFlush=task['SenderConfig']['Config']['Flush'];
+            $rootScope.kafkaRetry = task['SenderConfig']['Config']['Retry'];
+        }
+        $rootScope.Keywords=task['Keywords'];
+    }
+
+    $rootScope.list=function (Callback) {
+        $http({
+            method: 'POST',
+            url: '../api/logpeck/list',
+            data: {ip: $rootScope.T_ip},
+        }).then(function successCallback(response) {
+            if(response['data']["result"]==undefined) {
+                //$scope.visible = true;
+                var name;
+                var stat;
+                var start;
+                var logpath;
+                var array=[];
+                for (var Name in response['data']['configs']) {
+                    name=Name;
+                    logpath=response['data']['configs'][Name]['LogPath'];
+                    stat=response['data']['stats'][Name]['Stop'];
+                    start=!stat;
+                    array.push({name:name,logpath:logpath,stop:stat,start:start});
+                }
+                Callback({result:array,err:null});
+            }
+            else{
+                Callback({result:null,err:response['data']['result']});
+            }
+        }, function errorCallback(err) {
+            console.log('err');
+            Callback({result:null,err:err});
+        });
     };
 
 });

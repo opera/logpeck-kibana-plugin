@@ -17,21 +17,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="init.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="init.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/plugins/logpeck/server/routes/init.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="597">
-              <caret line="63" column="67" lean-forward="true" selection-start-line="63" selection-start-column="67" selection-end-line="63" selection-end-column="67" />
+            <state relative-caret-position="321">
+              <caret line="621" column="25" lean-forward="true" selection-start-line="621" selection-start-column="25" selection-end-line="621" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/plugins/logpeck/public/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="840" column="44" lean-forward="true" selection-start-line="840" selection-start-column="44" selection-end-line="840" selection-end-column="44" />
+            <state relative-caret-position="566">
+              <caret line="953" column="0" lean-forward="false" selection-start-line="953" selection-start-column="0" selection-end-line="953" selection-end-column="0" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -155,7 +155,11 @@
       <find>api/logpeck/remove</find>
       <find>api/logpeck/addTask</find>
       <find>/api/logpeck/updateList'</find>
+      <find>['data']</find>
       <find>/peck_task/list</find>
+      <find>$rootScope.addTaskResult</find>
+      <find>result</find>
+      <find>update_ip</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -166,8 +170,8 @@
       <list>
         <option value="$PROJECT_DIR$/plugins/logpeck/public/templates/updateTask.html" />
         <option value="$PROJECT_DIR$/plugins/logpeck/public/templates/addTask.html" />
-        <option value="$PROJECT_DIR$/plugins/logpeck/server/routes/init.js" />
         <option value="$PROJECT_DIR$/plugins/logpeck/public/app.js" />
+        <option value="$PROJECT_DIR$/plugins/logpeck/server/routes/init.js" />
       </list>
     </option>
   </component>
@@ -327,12 +331,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1516345449379</updated>
-      <workItem from="1516345451308" duration="44649000" />
+      <workItem from="1516345451308" duration="56745000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44649000" />
+    <option name="totallyTimeSpent" value="56745000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -461,21 +465,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plugins/logpeck/server/routes/init.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="597">
-          <caret line="63" column="67" lean-forward="true" selection-start-line="63" selection-start-column="67" selection-end-line="63" selection-end-column="67" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/plugins/logpeck/public/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="840" column="44" lean-forward="true" selection-start-line="840" selection-start-column="44" selection-end-line="840" selection-end-column="44" />
+        <state relative-caret-position="566">
+          <caret line="953" column="0" lean-forward="false" selection-start-line="953" selection-start-column="0" selection-end-line="953" selection-end-column="0" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plugins/logpeck/server/routes/init.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="621" column="25" lean-forward="true" selection-start-line="621" selection-start-column="25" selection-end-line="621" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
