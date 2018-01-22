@@ -57,7 +57,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             method: 'POST',
             url: '../api/logpeck/init',
         }).then(function successCallback(response) {
-            console.log("*******",response['data']['hits']['hits'])
             for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
                 if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
                     t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
@@ -321,7 +320,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             data: {ip: $rootScope.T_ip},
         }).then(function successCallback(response) {
             if(response['data']["result"]==undefined) {
-                console.log(name);
                 localStorage.setItem("update_ip", angular.toJson(response['data']["configs"][name]));
                 window.location.href = "#/updateTask";
             }
@@ -329,7 +327,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
                 $scope.logstat1=true;
                 $scope.logstat2=false;
                 $scope.indexLog =response['data']['result'];
-
             }
         }, function errorCallback(err) {
             console.log('err');
@@ -515,7 +512,6 @@ app.run(function($rootScope,$route, $http) {
 
     //checkbox
     $rootScope.selectOne=function(string,key){
-        console.log(string,key);
         if($rootScope.influxdb_array[key]['Aggregations'][string]==false){
             $rootScope.influxdb_array[key]['Aggregations'][string]=true;
         }else{
@@ -523,7 +519,6 @@ app.run(function($rootScope,$route, $http) {
         }
     };
     $rootScope.selectAll=function(key){
-        console.log(key);
         if($rootScope.select_all.hasOwnProperty(key)==false||$rootScope.select_all[key]==false){
             $rootScope.select_all[key]=true;
             $rootScope.influxdb_array[key]['Aggregations']={"cnt":true,"sum":true,"avg":true,"p99":true,"p90":true,"p50":true,"max":true,"min":true};
@@ -649,11 +644,8 @@ app.run(function($rootScope,$route, $http) {
                 },
             }).then(function successCallback(response) {
                 if(response['data']['result']==undefined) {
-                    console.log(response['data']);
                     var obj = angular.fromJson(response['data']);
-                    console.log(obj);
                     $rootScope.testResults=JSON.stringify(response['data'],null,4);
-                    console.log($rootScope.testResults.Log);
                     $rootScope.error={"color":"#2d2d2d"};
                 }
                 else {
@@ -690,7 +682,7 @@ app.run(function($rootScope,$route, $http) {
                 }
             }
 
-            var config=$rootScope.get_configs()
+            var config=$rootScope.get_configs();
 
             $http({
                 method: 'POST',
@@ -707,7 +699,6 @@ app.run(function($rootScope,$route, $http) {
             }).then(function successCallback(response) {
                 if (response['data']['result'] == "Add success") {
                     $rootScope.TemplateList.push($rootScope.template_name);
-                    console.log($rootScope.TemplateList);
                     $rootScope.testResults = response['data']['result'];
                     $rootScope.template_name ="";
                 }
@@ -715,6 +706,14 @@ app.run(function($rootScope,$route, $http) {
                     $rootScope.testArea=true;
                     $rootScope.testResults = response['data']['result'];
                     $rootScope.error={"color":"#ff0000"};
+                }
+                for(var key in $rootScope.influxdb_array)
+                {
+                    var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
+                    for(var key2 in $rootScope.influxdb_array[key]["Aggregations"]){
+                        Aggregations[$rootScope.influxdb_array[key]["Aggregations"][key2]]=true;
+                    }
+                    $rootScope.influxdb_array[key]["Aggregations"]=Aggregations;
                 }
             }, function errorCallback() {
                 console.log('err');
@@ -754,7 +753,6 @@ app.run(function($rootScope,$route, $http) {
             url: '../api/logpeck/applyTemplate',
             data:{template_name: event.target.getAttribute('name')},
         }).then(function successCallback(response) {
-            console.log(response);
             if(response['data']['result']==undefined) {
                 $rootScope.init_task();
                 var task=response['data']['_source'];
@@ -927,8 +925,6 @@ app.run(function($rootScope,$route, $http) {
                 if(tmp.length==0){
                     tmp.push("cnt");
                 }
-                console.log("tmp");
-                console.log(tmp);
                 $rootScope.influxdb_array[key].Aggregations=tmp;
             }
 
@@ -980,9 +976,6 @@ app.run(function($rootScope,$route, $http) {
                 }
                 $rootScope.influxdb_array[key]["Aggregations"]=Aggregations;
             }
-
-            console.log("--------------");
-            console.log($rootScope.influxdb_array);
         }
         $rootScope.ConfigName=task['SenderConfig']['SenderName'];
         if($rootScope.ConfigName=="ElasticsearchConfig")
