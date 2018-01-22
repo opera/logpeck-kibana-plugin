@@ -498,15 +498,15 @@ app.run(function($rootScope,$route, $http) {
         if(type=="text"){
             $rootScope.type=true;
             $rootScope.type_text_json=true;
-            $rootScope.type_luo=false;
+            $rootScope.type_lua=false;
         }else if(type=="json"){
             $rootScope.type=false;
             $rootScope.type_text_json=true;
-            $rootScope.type_luo=false;
-        }else if(type=="luo"){
+            $rootScope.type_lua=false;
+        }else if(type=="lua"){
             $rootScope.type_text_json=false;
             $rootScope.type=false;
-            $rootScope.type_luo=true;
+            $rootScope.type_lua=true;
         }
     };
 
@@ -625,7 +625,7 @@ app.run(function($rootScope,$route, $http) {
                 ExtractorConfig={Name:$rootScope.LogFormat,Config:{Delimiters: $rootScope.Delimiters,Fields:$rootScope.fields_array}};
             }else if(($rootScope.LogFormat=="json")){
                 ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
-            }else if(($rootScope.LogFormat=="luo")){
+            }else if(($rootScope.LogFormat=="lua")){
                 ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
             }
             var Test={TestNum:$rootScope.TestNum,Timeout:$rootScope.Time};
@@ -902,7 +902,7 @@ app.run(function($rootScope,$route, $http) {
             ExtractorConfig={Name:$rootScope.LogFormat,Config:{Delimiters: $rootScope.Delimiters,Fields:$rootScope.fields_array}};
         }else if(($rootScope.LogFormat=="json")){
             ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
-        }else if(($rootScope.LogFormat=="luo")){
+        }else if(($rootScope.LogFormat=="lua")){
             ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
         }
 
@@ -958,7 +958,7 @@ app.run(function($rootScope,$route, $http) {
             $rootScope.Delimiters=task['ExtractorConfig']['Config']['Delimiters'];
         }else if($rootScope.LogFormat=="json"){
             $rootScope.fields_array=task['ExtractorConfig']['Config']['Fields'];
-        }else if($rootScope.LogFormat=="luo"){
+        }else if($rootScope.LogFormat=="lua"){
             $rootScope.LuaString=task['ExtractorConfig']['Config']['LuaString'];
         }
         if($rootScope.fields_array==null){
