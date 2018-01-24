@@ -117,6 +117,11 @@
     float: left;
   }
   .table_2{
+    margin-top: 20px;
+    width: 98%;
+    float: left;
+  }
+  .table_3{
     width: 86%;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -124,11 +129,6 @@
     margin-bottom: 20px;
     border-top:3px solid #e4e4e4;
     border-bottom:3px solid #e4e4e4;
-    float: left;
-  }
-  .table_3{
-    margin-top: 20px;
-    width: 98%;
     float: left;
   }
   .table_4{
@@ -279,7 +279,7 @@
             </div>
           </div>
       </div>
-      <div class="table_3">
+      <div class="table_2">
         <div class="table_line">
           <div class="table_title">
             <div style="width: 30%;float: left">LogFormat</div>
@@ -291,9 +291,10 @@
           </div>
           <div  class="table_title">
             <div style="width: 30%;float: left">
-              <select ng-model="$root.LogFormat" style="width: 70px;" ng-change="typeChange(LogFormat)">
+              <select ng-model="$root.LogFormat" style="width: 150px;font-size:17px" ng-change="typeChange(LogFormat)">
                 <option value="json">json</option>
                 <option value ="text">text</option>
+                <option value ="lua">lua</option>
               </select>
             </div>
             <div style="width: 31%;float: left">
@@ -304,32 +305,43 @@
             </div>
           </div>
         </div>
-        <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px">
-          Fields
-          <a  ng-click="plusfields()" class="kuiButton kuiButton--primary ng-scope ">
+          <div  class="table_title" style="margin-top: 10px;margin-bottom: 15px" >
+              Fields
+              <a  ng-click="plusfields()" class="kuiButton kuiButton--primary ng-scope ">
               <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
               </span>
-          </a>
-        </div>
-        <div style="width: 100%;float: left">
-
-          <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
-            <div style="width: auto;float: left">
-              name
-              <input type="text" ng-model="$root.value.Name" style="width: 140px">
-            </div>
-            <div  style="width: auto;float: left" ng-show="type">
-              value
-              <input type="text" ng-model="$root.value.Value" style="width: 140px">
-            </div>
-            <div style="width: auto;float: left;margin-left:10px">
-              <a  ng-click="minusfields($index)" class="Button--tag kuiButton--primary--del ">
+              </a>
+          </div>
+          <div style="width: 100%;float: left">
+              <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
+                  <div style="width: auto;float: left">
+                      name
+                      <input type="text" ng-model="$root.fields_array[key].Name" style="width: 140px">
+                  </div>
+                  <div  style="width: auto;float: left" ng-show="type">
+                      value
+                      <input type="text" ng-model="$root.fields_array[key].Value" style="width: 140px">
+                  </div>
+                  <div style="width: auto;float: left;margin-left:10px">
+                      <a  ng-click="minusfields($index)" class="Button--tag kuiButton--primary--del ">
                 <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
                 </span>
-              </a>
-            </div>
-          </li>
+                      </a>
+                  </div>
+              </li>
+          </div>
+
+        <div ng-show="type_lua" style="margin-top: 10px;float: left;width: 100%">
+          <div class="table_title" style="margin-bottom:2px;">
+            LuaString
+          </div>
+          <div style="width: 100%;float: left">
+                <textarea rows="8"  ng-model="$root.LuaString" style="border: 1px solid gainsboro;width: 56%" >
+                   {{LuaString}}
+                </textarea>
+          </div>
         </div>
+
         <div class="table_test">
           <div style="width: 100%;float: left;margin-bottom: 20px" ng-show="testArea">
              <textarea rows="10" ng-model="$root.testResults" style="border: 1px solid gainsboro;width: 88%;" ng-style="error">
@@ -339,10 +351,10 @@
           <a class="kuiButton kuiButton--primary Button--big--test " ng-click="testTask()" >test</a>
         </div>
       </div>
-      <div class="table_2">
+      <div class="table_3">
         <div style="padding-bottom: 10px">
           <select ng-model="$root.ConfigName" style="width: 150px;font-size:17px" ng-change="configChange(ConfigName)">
-            <option value="ElasticSearchConfig">ElasticSearch</option>
+            <option value="ElasticsearchConfig">Elasticsearch</option>
             <option value="InfluxDbConfig">InfluxDb</option>
             <option value="KafkaConfig">Kafka</option>
           </select>
@@ -379,7 +391,7 @@
                 Mapping
               </div>
               <div style="width: 100%;float: left">
-                <textarea rows="4" cols="56" ng-model="$root.esMapping" style="border: 1px solid gainsboro" ng-focus="focus2('Mapping','mycolor6')" ng-focus="blur2('Mapping','mycolor6')" ng-style="mycolor6">
+                <textarea rows="4" ng-model="$root.esMapping" style="border: 1px solid gainsboro;width: 100%" ng-focus="focus2('Mapping','mycolor6')" ng-focus="blur2('Mapping','mycolor6')" ng-style="mycolor6">
                    {{Mapping}}
                 </textarea>
               </div>
@@ -428,7 +440,7 @@
                 <div  class="table_title">
                   <div style="width: 35%;float: left">
                     <div style="float: left">Measurment</div>
-                    <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+                    <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(optional)</div>
                   </div>
                   <div style="width: 35%;float: left">
                     <div style="float: left">AggregationTarget</div>
@@ -447,6 +459,7 @@
                     </div>
                     <div style="width: 25%;float:left">
                       <select  ng-model="$root.influxdb_array[key].Measurment" style="width: 94%;float:left">
+                        <option >_default</option>
                         <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
                       </select>
                       <div style="width: 6%;float:left;margin-top:6px">_</div>
@@ -457,6 +470,7 @@
                   </div>
                   <div style="float: left;width: 30%;">
                     <select  ng-model="$root.influxdb_array[key].Timestamp" style="width: 70%">
+                      <option >_default</option>
                       <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
                     </select>
                   </div>
@@ -502,8 +516,8 @@
                     <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.min" ng-click='selectOne("min",key)' style="float:left"/> <div style="margin-right:8px;float:left">min</div>
                   </div>
                   <div style="float: left;width: 50%;">
-                    <div ng-repeat="(key2,value2) in influxdb_array[key].Tags track by $index" style="float: left;margin-left:1%;margin-top:2px;width:32%">
-                      <select  ng-model="$root.influxdb_array[key]['Tags'][key2]" style="width: 100%">
+                    <div ng-repeat="(key2,value2) in influxdb_array[key]['Tags'] track by $index" style="float: left;margin-left:1%;margin-top:2px;width:32%">
+                      <select  ng-model="influxdb_array[key]['Tags'][key2]" style="width: 100%">
                         <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
                       </select>
                     </div>
@@ -529,7 +543,7 @@
             </div>
             <div  class="table_title">
               <div style="width:70%;float:left">
-                <input type="text" ng-model="$root.kafkaHosts" style="width: 90%"  ng-focus="focus('127.0.0.1:9202','kafkaHosts','mycolor3')" ng-blur="blur('127.0.0.1:9202','kafkaHosts','mycolor3')" ng-style="mycolor3">
+                <input type="text" ng-model="$root.kafkaBrokers" style="width: 90%"  ng-focus="focus('127.0.0.1:9202','kafkaHosts','mycolor3')" ng-blur="blur('127.0.0.1:9202','kafkaHosts','mycolor3')" ng-style="mycolor3">
               </div>
               <div style="width:30%;float: left;">
                 <input type="text" ng-model="$root.kafkaTopic" style="width: 100%" >
