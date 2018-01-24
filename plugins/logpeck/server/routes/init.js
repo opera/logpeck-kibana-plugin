@@ -504,14 +504,12 @@ export default function (server) {
                     };
                     Wreck.post('http://'+ip+'/peck_task/test', {payload: JSON.stringify(esLog)},
                         (err, xyResponse, payload) => {
-                        console.log(payload.toString());
                     if (err) {
                         res = '{"result":"'+err+'"}';
                         reply(res);
                     }
                     else {
                         if(xyResponse.statusMessage=='OK'){
-                            console.log(payload.toString());
                             var res=payload.toString();
                             reply(res);
                         }

@@ -497,14 +497,11 @@ app.run(function($rootScope,$route, $http) {
     $rootScope.typeChange= function(type) {
         if(type=="text"){
             $rootScope.type=true;
-            $rootScope.type_text_json=true;
             $rootScope.type_lua=false;
         }else if(type=="json"){
             $rootScope.type=false;
-            $rootScope.type_text_json=true;
             $rootScope.type_lua=false;
         }else if(type=="lua"){
-            $rootScope.type_text_json=false;
             $rootScope.type=false;
             $rootScope.type_lua=true;
         }
@@ -626,7 +623,7 @@ app.run(function($rootScope,$route, $http) {
             }else if(($rootScope.LogFormat=="json")){
                 ExtractorConfig={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
             }else if(($rootScope.LogFormat=="lua")){
-                ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
+                ExtractorConfig ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString,Fields:$rootScope.fields_array}};
             }
             var Test={TestNum:$rootScope.TestNum,Timeout:$rootScope.Time};
             $http({
