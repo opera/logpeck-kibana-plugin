@@ -320,7 +320,7 @@
                   </div>
                   <div  style="width: auto;float: left" ng-show="type">
                       value
-                      <input type="text" ng-model="$root.fields_array[key].Name" style="width: 140px">
+                      <input type="text" ng-model="$root.fields_array[key].Value" style="width: 140px">
                   </div>
                   <div style="width: auto;float: left;margin-left:10px">
                       <a  ng-click="minusfields($index)" class="Button--tag kuiButton--primary--del ">
@@ -336,7 +336,7 @@
             LuaString
           </div>
           <div style="width: 100%;float: left">
-                <textarea rows="4"  ng-model="$root.LuaString" style="border: 1px solid gainsboro;width: 56%" ng-focus="focus2('Mapping','mycolor6')" ng-focus="blur2('Mapping','mycolor6')" ng-style="mycolor6">
+                <textarea rows="8"  ng-model="$root.LuaString" style="border: 1px solid gainsboro;width: 56%" >
                    {{LuaString}}
                 </textarea>
           </div>
