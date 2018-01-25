@@ -3,6 +3,11 @@ import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
 
 import 'ui/autoload/styles';
+import '../bower_components/ace-builds/src-min-noconflict/ace.js';
+import '../bower_components/ace-builds/src-min-noconflict/mode-lua.js';
+import '../bower_components/ace-builds/src-min-noconflict/theme-chrome.js';
+
+import '../bower_components/angular-ui-ace/ui-ace.js';
 import './less/main.less';
 import index from './templates/index.html';
 import addTask from './templates/addTask.html';
@@ -26,7 +31,8 @@ uiRoutes
 var task_ip_exist=false;
 var task_ip=[];
 var status=[];
-var app=uiModules.get("app", []);
+var app=uiModules.get("app",['ui.ace']);
+
 
 //**************************controller "logpeckInit"****************************
 app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interval) {
@@ -341,7 +347,24 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 
 //************************controller "logpeckAdd"******************************
 app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interval) {
-    //init
+  $scope.aceLoaded1 = function(_editor){
+    var _session = _editor.getSession();
+    var a="--example:client=105.160.71.175 method=GET status=404\n"+
+      "function extract(s)\n" +
+      "ret = {}\n" +
+      "--*********此线下可修改*********\n" +
+      "i,j=string.find(s,'client=.- ')\n" +
+      "ret['client']=string.sub(request,i+7,j-1)\n" +
+      "i,j=string.find(s,'method=.- ')\n" +
+      "ret['method']=string.sub(s,i+7,j-1)\n" +
+      "--*********此线上可修改*********\n" +
+      "return ret\n" +
+      "end";
+    _session.setValue(a);
+    $rootScope.LuaString=_session.getValue()
+    _session.on("change", function(){ $rootScope.LuaString=_session.getValue()});
+  };
+  //init
     $rootScope.T_ip=localStorage.getItem("T_ip");
     $rootScope.init_task();
 
@@ -382,8 +405,10 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
                     $rootScope.testResults = response['data']['result'];
                     $rootScope.error={"color":"#ff0000"};
                 }
-            }, function errorCallback() {
-                console.log('error')
+            }, function errorCallback(err) {
+              $rootScope.testArea=true;
+              $rootScope.testResults = err;
+              $rootScope.error={"color":"#ff0000"};
             });
         }
     };
@@ -406,13 +431,18 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
 //********************controller "logpeckUpdate"***************************
 app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
     //init
-    var update_ip=angular.fromJson(localStorage.getItem("update_ip"));
+  var update_ip=angular.fromJson(localStorage.getItem("update_ip"));
     $rootScope.T_ip=localStorage.getItem("T_ip");
 
     $rootScope.init_task();
 
-
     $rootScope.show_task(update_ip);
+
+  $scope.aceLoaded2 = function(_editor){
+    var _session = _editor.getSession();
+    _session.setValue($rootScope.LuaString);
+    _session.on("change", function(){ $rootScope.LuaString=_session.getValue()});
+  };
 
     $http({
         method: 'POST',
@@ -579,6 +609,7 @@ app.run(function($rootScope,$route, $http) {
 
     //Test task and return some logs
     $rootScope.testTask = function () {
+      console.log($rootScope.LuaString);
         $rootScope.testArea=true;
         $rootScope.TestNum=10;
         $rootScope.Time=2;
@@ -650,8 +681,8 @@ app.run(function($rootScope,$route, $http) {
                     $rootScope.testResults = response['data']['result'];
                     $rootScope.error={"color":"#ff0000"};
                 }
-            }, function errorCallback() {
-                console.log('err');
+            }, function errorCallback(err) {
+              console.log('err');
             });
         }
     };

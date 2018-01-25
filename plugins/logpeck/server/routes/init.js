@@ -12,7 +12,7 @@ export default function (server) {
                     Wreck.post('http://localhost:9200/logpeck/host/_search?q=*&size=1000&pretty',
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
+                            res = '{"result":"'+err.toString()+'"}';
                             reply(res);
                         }
                         var b = JSON.parse(payload.toString());
@@ -38,7 +38,7 @@ export default function (server) {
                         (err, xyResponse, payload) => {
                         var patt=new RegExp(/^List PeckTask failed,/);
                     if (err) {
-                        res = '{"result":"'+err+'"}';
+                        res = '{"result":"'+err.toString()+'"}';
                         reply(res);
                     }
                     else if(payload==undefined){
@@ -89,7 +89,7 @@ export default function (server) {
                     Wreck.post('http://'+ip+'/peck_task/start',{ payload: '{ "Name" : "'+name+'" }' },
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
+                            res = '{"result":"'+err.toString()+'"}';
                             reply(res);
                         }
                         else {
@@ -117,7 +117,7 @@ export default function (server) {
                     Wreck.post('http://'+ip+'/peck_task/stop',{ payload: '{ "Name" : "'+name+'" }' },
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
+                            res = '{"result":"'+err.toString()+'"}';
                             reply(res);
                         }
                         else {
@@ -145,7 +145,7 @@ export default function (server) {
                         (err, xyResponse, payload) => {
                         var res;
                         if (err) {
-                            res = '{"result":"'+err+'"}';
+                            res = '{"result":"'+err.toString()+'"}';
                             reply(res);
                         }else{
                             res = '{"result":"'+payload.toString()+'"}';
@@ -185,7 +185,7 @@ export default function (server) {
                     Wreck.post('http://' + ip + '/peck_task/add', {payload: JSON.stringify(esLog)},
                         (err, xyResponse, payload) => {
                         if(err) {
-                            res = '{"result":"' + err + '"}';
+                            res = '{"result":"' + err.toString() + '"}';
                             reply(res);
                             return;
                         }else{
@@ -216,15 +216,15 @@ export default function (server) {
                         var exist=JSON.parse(payload.toString());
                     var res;
                     if (err) {
-                        res = '{"result":"'+err+'"}';
+                        res = '{"result":"'+err.toString()+'"}';
                         reply(res);
                     }
                     else if(exist['found']==false) {
                         Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "false"}'},
                             (err, xyResponse, payload) => {
                             if (err) {
-                                res='{"result":"err"}';
-                                reply(res);
+                              res = '{"result":"'+err.toString()+'"}';
+                              reply(res);
                             }
                             else {
                                 res = '{"result":"Add success"}';
@@ -257,7 +257,7 @@ export default function (server) {
                     Wreck.delete('http://localhost:9200/logpeck/host/' + ip + '?',
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
+                            res = '{"result":"'+err.toString()+'"}';
                             reply(res);
                         }
                         else {
@@ -300,8 +300,8 @@ export default function (server) {
                         (err, xyResponse, payload) => {
                         if(err) {
                             console.log(err)
-                            res = '{"result":"' + err + '"}';
-                            reply(res);
+                          res = '{"result":"'+err.toString()+'"}';
+                          reply(res);
                             return;
                         }else if(payload.toString()=="Update Success") {
                         res = '{"result":"Update Success"}';
@@ -346,8 +346,8 @@ export default function (server) {
                         (err, xyResponse, payload) => {
                         var res;
                         if (err) {
-                            res='{"result":"'+err+'"}';
-                            reply(res);
+                          res = '{"result":"'+err.toString()+'"}';
+                          reply(res);
                         }
                         else {
                             if( xyResponse.statusMessage=='OK'|| xyResponse.statusMessage=='Created' ){
@@ -382,8 +382,8 @@ export default function (server) {
                     Wreck.delete('http://localhost:9200/.logpeck/template/' + template_name + '?',
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
-                            reply(res);
+                          res = '{"result":"'+err.toString()+'"}';
+                          reply(res);
                         }
                         else {
                             res = '{"result":"' + template_name + '"}';
@@ -411,8 +411,8 @@ export default function (server) {
                     Wreck.get('http://localhost:9200/.logpeck/template/' + template_name ,
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
-                            reply(res);
+                          res = '{"result":"'+err.toString()+'"}';
+                          reply(res);
                         }
                         else {
                             reply(payload.toString());
@@ -437,8 +437,8 @@ export default function (server) {
                     Wreck.post('http://localhost:9200/.logpeck/template/_search?q=*&size=1000&pretty',
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
-                            reply(res);
+                          res = '{"result":"'+err.toString()+'"}';
+                          reply(res);
                         }
                         reply(payload.toString());
                 });
@@ -463,8 +463,8 @@ export default function (server) {
                     Wreck.post('http://'+ip+'/listpath?path='+path,
                         (err, xyResponse, payload) => {
                         if (err) {
-                            res = '{"result":"'+err+'"}';
-                            reply(res);
+                          res = '{"result":"'+err.toString()+'"}';
+                          reply(res);
                         }
                         reply(payload.toString());
                 });
@@ -504,8 +504,9 @@ export default function (server) {
                     };
                     Wreck.post('http://'+ip+'/peck_task/test', {payload: JSON.stringify(esLog)},
                         (err, xyResponse, payload) => {
+                      console.log(xyResponse.statusCode);
                     if (err) {
-                        res = '{"result":"'+err+'"}';
+                        res = '{"result":"'+err.toString()+'"}';
                         reply(res);
                     }
                     else {

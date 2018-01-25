@@ -139,7 +139,7 @@
   }
   .table_test{
     margin-top: 25px;
-    width: 98%;
+    width: 100%;
     float: left;
   }
   .table_line{
@@ -198,8 +198,10 @@
     color: #FFF;
     background-color: #e8488b;
   }
+  .ace_editor {
+    height: 200px;
+  }
 </style>
-
 
 <div>
   <div class="title">
@@ -330,15 +332,25 @@
             </div>
           </li>
         </div>
-
         <div ng-show="type_lua" style="margin-top: 10px;float: left;width: 100%">
           <div class="table_title" style="margin-bottom:2px;">
             LuaString
           </div>
           <div style="width: 100%;float: left">
-                <textarea rows="8"  ng-model="$root.LuaString" style="border: 1px solid gainsboro;width: 56%" >
-                   {{LuaString}}
-                </textarea>
+            <section>
+            <div  ui-ace="{mode: 'lua',theme:'chrome',onLoad:aceLoaded1 ,onChange: aceChanged,useWrapMode : true}"  style="width: 88%;float: left;border: 1px solid gray">--example:client=105.160.71.175 method=GET status=404
+function extract(s)
+ret = {}
+--*********此线下可修改*********
+i,j=string.find(s,'client=.- ')
+ret['client']=string.sub(request,i+7,j-1)
+i,j=string.find(s,'method=.- ')
+ret['method']=string.sub(s,i+7,j-1)
+--*********此线上可修改*********
+return ret
+end
+            </div>
+            </section>
           </div>
         </div>
 

@@ -139,7 +139,7 @@
   }
   .table_test{
     margin-top: 25px;
-    width: 98%;
+    width: 100%;
     float: left;
   }
   .table_line{
@@ -198,6 +198,9 @@
   .kuiButton--primary--del {
     color: #FFF;
     background-color: #e8488b;
+  }
+  .ace_editor {
+    height: 200px;
   }
 </style>
 
@@ -336,9 +339,11 @@
             LuaString
           </div>
           <div style="width: 100%;float: left">
-                <textarea rows="8"  ng-model="$root.LuaString" style="border: 1px solid gainsboro;width: 56%" >
-                   {{LuaString}}
-                </textarea>
+            <section>
+              <div  ui-ace="{mode: 'lua',theme:'chrome',onLoad:aceLoaded2 ,onChange: aceChanged,useWrapMode : true}"  style="width: 88%;float: left;border: 1px solid gray">
+
+              </div>
+            </section>
           </div>
         </div>
 
