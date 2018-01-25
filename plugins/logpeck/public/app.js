@@ -6,7 +6,6 @@ import 'ui/autoload/styles';
 import '../bower_components/ace-builds/src-min-noconflict/ace.js';
 import '../bower_components/ace-builds/src-min-noconflict/mode-lua.js';
 import '../bower_components/ace-builds/src-min-noconflict/theme-chrome.js';
-
 import '../bower_components/angular-ui-ace/ui-ace.js';
 import './less/main.less';
 import index from './templates/index.html';
