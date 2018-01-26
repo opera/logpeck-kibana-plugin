@@ -96,9 +96,9 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $scope.T_IpList.push(response['data']['hits']['hits'][id]['_id']);
       if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
         if(response['data']['hits']['hits'][id]['_source']['version']==version){
-          t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+          status[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
         }else{
-          t[response['data']['hits']['hits'][id]['_id']]="#F39C12";
+          status[response['data']['hits']['hits'][id]['_id']]="#F39C12";
         }
       }else{
         status[response['data']['hits']['hits'][id]['_id']]="#e8488b";

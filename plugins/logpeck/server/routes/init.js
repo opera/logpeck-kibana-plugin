@@ -554,14 +554,12 @@ export default function (server) {
                   version = payload.toString();
                 }
               }
-              if (status != now) {
-                Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
-                  (err, xyResponse, payload) => {
-                    if (err) {
+              Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
+                (err, xyResponse, payload) => {
+                  if (err) {
 
-                    }
-                  });
-              }
+                  }
+                });
               i = i + 1;
             });
           return i;
@@ -610,16 +608,22 @@ export default function (server) {
               var code;
               if (err) {
                 code = err.output.statusCode;
+                now = "false";
                 version = 'error';
               }
               else {
                 code = xyResponse.statusCode;
+                now = "true";
                 if (code == 200) {
                   version = payload.toString();
-                }else{
-                  version = 'error';
                 }
               }
+              Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
+                (err, xyResponse, payload) => {
+                  if (err) {
+
+                  }
+                });
               reply(version);
             });
         };
