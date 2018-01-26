@@ -30,8 +30,8 @@ uiRoutes
 var task_ip_exist=false;
 var task_ip=[];
 var status=[];
+var version="0.4.0";
 var app=uiModules.get("app",['ui.ace']);
-
 
 //**************************controller "logpeckInit"****************************
 app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interval) {
@@ -63,10 +63,15 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       url: '../api/logpeck/init',
     }).then(function successCallback(response) {
       for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
+        console.log(response['data']['hits']['hits'][id]['_source']);
         if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
-          t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+          if(response['data']['hits']['hits'][id]['_source']['version']==version){
+            t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+          }else{
+            t[response['data']['hits']['hits'][id]['_id']]="#F39C12";
+          }
         }else{
-          t[response['data']['hits']['hits'][id]['_id']]="red";
+          t[response['data']['hits']['hits'][id]['_id']]="#e8488b";
         }
       }
     }, function errorCallback(err) {
@@ -90,9 +95,13 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
       $scope.T_IpList.push(response['data']['hits']['hits'][id]['_id']);
       if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
-        status[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+        if(response['data']['hits']['hits'][id]['_source']['version']==version){
+          t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+        }else{
+          t[response['data']['hits']['hits'][id]['_id']]="#F39C12";
+        }
       }else{
-        status[response['data']['hits']['hits'][id]['_id']]="red";
+        status[response['data']['hits']['hits'][id]['_id']]="#e8488b";
       }
     }
     if(task_ip_exist!=false){
@@ -266,11 +275,12 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
             url: '../api/logpeck/version',
             data: {ip: $scope.IP},
           }).then(function successCallback(response) {
-            if(response['data']=="true"){
+            if(response['data']==version){
               status[$scope.IP]="#2f99c1";
-            }
-            else{
-              status[$scope.IP]="red";
+            }else if(response['data']=="error"){
+              status[$scope.IP]="#e8488b";
+            } else{
+              status[$scope.IP]="#F39C12";
             }
           }, function errorCallback() {
             console.log('err');
