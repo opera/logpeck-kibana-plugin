@@ -350,14 +350,14 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
     var _session = _editor.getSession();
     var a="--example:client=105.160.71.175 method=GET status=404\n"+
       "function extract(s)\n" +
-      "ret = {}\n" +
-      "--*********此线下可修改*********\n" +
-      "i,j=string.find(s,'client=.- ')\n" +
-      "ret['client']=string.sub(request,i+7,j-1)\n" +
-      "i,j=string.find(s,'method=.- ')\n" +
-      "ret['method']=string.sub(s,i+7,j-1)\n" +
-      "--*********此线上可修改*********\n" +
-      "return ret\n" +
+      "    ret = {}\n" +
+      "    --*********此线下可修改*********\n" +
+      "    i,j=string.find(s,'client=.- ')\n" +
+      "    ret['client']=string.sub(request,i+7,j-1)\n" +
+      "    i,j=string.find(s,'method=.- ')\n" +
+      "    ret['method']=string.sub(s,i+7,j-1)\n" +
+      "    --*********此线上可修改*********\n" +
+      "    return ret\n" +
       "end";
     _session.setValue(a);
     $rootScope.LuaString=_session.getValue()
