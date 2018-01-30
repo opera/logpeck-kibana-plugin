@@ -208,7 +208,6 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        Wreck.put('http://localhost:9200/logpeck?');
         const example = async function () {
           var ip=req.payload.ip;
           var res;
@@ -383,7 +382,6 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        Wreck.put('http://localhost:9200/logpeck_group?');
         const example = async function () {
           var res;
           Wreck.get('http://localhost:9200/logpeck_group/name/_search',
@@ -540,7 +538,6 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        Wreck.put('http://localhost:9200/.logpeck?');
         const example = async function () {
           var template_name=req.payload.template_name;
           var res;
