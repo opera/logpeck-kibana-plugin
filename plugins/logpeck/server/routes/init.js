@@ -208,6 +208,7 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
+        Wreck.put('http://localhost:9200/logpeck?');
         const example = async function () {
           var ip=req.payload.ip;
           var res;
@@ -263,6 +264,141 @@ export default function (server) {
               else {
                 res = '{"result":"' + ip + '"}';
                 reply(res);
+              }
+            });
+        }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+    {
+      path: '/api/logpeck/addGroup',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var Group=req.payload.Group;
+          var res;
+          Wreck.get('http://localhost:9200/logpeck_group/name/'+Group+'?',
+            (err, xyResponse, payload) => {
+              var result=JSON.parse(payload.toString());
+              console.log(result);
+              var res;
+              if (err) {
+                res = '{"result":"'+err.toString()+'"}';
+                reply(res);
+              }
+              else if(result['found']==false) {
+                var a={ip:[]};
+                Wreck.put('http://localhost:9200/logpeck_group/name/'+Group+'?',{payload: JSON.stringify(a)},
+                  (err, xyResponse, payload) => {
+                    if (err) {
+                      res = '{"result":"'+err.toString()+'"}';
+                      reply(res);
+                    }
+                    else {
+                      //console.log(payload.toString());
+                      res = '{"result":"Add group success"}';
+                      reply(res);
+                    }
+                  });
+              }
+              else{
+                res = '{"result":"Group already exist"}';
+                reply(res);
+              }
+            });
+        }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+    {
+      path: '/api/logpeck/removeGroup',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var Group=req.payload.Group;
+          var res;
+
+          Wreck.delete('http://localhost:9200/logpeck_group/name/' + Group + '?',
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '{"result":"'+err.toString()+'"}';
+                reply(res);
+              }
+              else {
+                res = '{"result":"Remove group success"}';
+                reply(res);
+              }
+            });
+        }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+    {
+      path: '/api/logpeck/updateGroup',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        const example = async function () {
+          var Group=req.payload.Group;
+          var GroupMembers=req.payload.GroupMembers;
+          var res;
+          var a={ip:GroupMembers};
+          console.log(GroupMembers);
+          Wreck.put('http://localhost:9200/logpeck_group/name/'+Group+'?',{payload: JSON.stringify(a)},
+            (err, xyResponse, payload) => {
+              if (err) {
+                res = '{"result":"'+err.toString()+'"}';
+                reply(res);
+              }
+              else {
+                //console.log(payload.toString());
+                res = '{"result":"update group success"}';
+                reply(res);
+              }
+            });
+        }
+        try {
+          example();
+        }
+        catch (err) {
+        }
+      }
+    },
+    {
+      path: '/api/logpeck/searchGroup',
+      method: 'POST',
+      handler(req, reply) {
+        const Wreck = require('wreck');
+        Wreck.put('http://localhost:9200/logpeck_group?');
+        const example = async function () {
+          var res;
+          Wreck.get('http://localhost:9200/logpeck_group/name/_search',
+            (err, xyResponse, payload) => {
+              var result=JSON.parse(payload.toString());
+              var res;
+              if (err) {
+                res = '{"result":"'+err.toString()+'"}';
+                reply(res);
+              } else{
+                var group={};
+                for(var i=0;i<result['hits']['total'];i++){
+                  group[result['hits']['hits'][i]['_id']]=result['hits']['hits'][i]['_source']['ip']
+                }
+                reply(group);
               }
             });
         }
@@ -404,10 +540,10 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
+        Wreck.put('http://localhost:9200/.logpeck?');
         const example = async function () {
           var template_name=req.payload.template_name;
           var res;
-
           Wreck.get('http://localhost:9200/.logpeck/template/' + template_name ,
             (err, xyResponse, payload) => {
               if (err) {
