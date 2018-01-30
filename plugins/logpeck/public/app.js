@@ -7,6 +7,7 @@ import '../bower_components/ace-builds/src-min-noconflict/ace.js';
 import '../bower_components/ace-builds/src-min-noconflict/mode-lua.js';
 import '../bower_components/ace-builds/src-min-noconflict/theme-chrome.js';
 import '../bower_components/angular-ui-ace/ui-ace.js';
+
 import './less/main.less';
 import index from './templates/index.html';
 import addTask from './templates/addTask.html';
@@ -34,16 +35,161 @@ var version="0.4.0";
 var app=uiModules.get("app",['ui.ace']);
 
 //**************************controller "logpeckInit"****************************
-app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interval) {
-  $rootScope.mycolor1={"color":"#e4e4e4"};
-  $rootScope.mycolor2={"color":"#e4e4e4"};
-  $rootScope.mycolor3={"color":"#e4e4e4"};
-  $rootScope.mycolor4={"color":"#e4e4e4"};
-  $rootScope.mycolor5={"color":"#e4e4e4"};
-  $rootScope.mycolor6={"color":"#e4e4e4"};
-  $rootScope.mycolor7={"color":"#e4e4e4"};
-  $rootScope.mycolor8={"color":"#e4e4e4"};
-  $rootScope.mycolor9={"color":"#e4e4e4"};
+app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interval,$timeout) {
+  $scope.search_group =function(){
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/searchGroup',
+    }).then(function successCallback(response) {
+      $scope.GroupMap={};
+      $scope.GroupMap=response['data'];
+      $scope.GroupList=[];
+      for(var k in $scope.GroupMap){
+        $scope.GroupList.push(k);
+        $scope.showEdit[k]=true;
+      }
+    }, function errorCallback() {
+      console.log('err');
+    });
+  };
+
+  $scope.addGroup=function(){
+    if ($scope.Group == ""||$scope.Group ==undefined) {
+      $scope.indexLog = "Group name is null";
+      $scope.logstat1=true;
+      $scope.logstat2=false;
+    }
+    else{
+      $http({
+        method: 'POST',
+        url: '../api/logpeck/addGroup',
+        data: {Group: $scope.Group},
+      }).then(function successCallback(response) {
+        if (response['data']['result'] == "Add group success") {
+          $scope.GroupList.push($scope.Group);
+          $scope.showEdit[$scope.Group]=true;
+          $scope.logstat1=false;
+          $scope.logstat2=true;
+          $scope.indexLog="Add group success";
+        }
+        else{
+          $scope.logstat1=true;
+          $scope.logstat2=false;
+          $scope.indexLog=response['data']['result'];
+        }
+      }, function errorCallback() {
+        console.log('err');
+      });
+    }
+  }
+
+  $scope.removeGroup = function(name) {
+    if(!confirm("Remove a group")){
+      return;
+    }
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/removeGroup',
+      data:{Group: name},
+    }).then(function successCallback(response) {
+      $scope.indexLog ='';
+      if(response['data']['result'] == "Remove group success"){
+        var list = [];
+        for (var id=0 ; id<$scope.GroupList.length ; id++) {
+          if(name!=$scope.GroupList[id]) {
+            list.push($scope.GroupList[id]);
+          }
+        }
+        $scope.T_IpList=[];
+        $scope.showGroup=false;
+        $scope.GroupList=list;
+      }
+      else{
+        $scope.logstat1=true;
+        $scope.logstat2=false;
+        $scope.indexLog=response['data']['result'];
+      }
+    }, function errorCallback() {
+    });
+  };
+
+  $scope.listGroup = function (name) {
+    $rootScope.GroupName=name;
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/searchGroup',
+    }).then(function successCallback(response) {
+      $scope.GroupMap={};
+      $scope.GroupMap=response['data'];
+      $scope.GroupList=[];
+      for(var k in $scope.GroupMap){
+        $scope.GroupList.push(k);
+        $scope.showEdit[k]=true;
+      }
+      $scope.T_IpList=$scope.GroupMap[$rootScope.GroupName];
+      console.log($scope.T_IpList);
+      $scope.showGroup=false;
+    }, function errorCallback() {
+      console.log('err');
+    });
+  };
+
+  $scope.editGroup = function (name) {
+    $scope.T_IpList=$scope.allList;
+    $scope.showGroup=true;
+    $scope.showEdit[name]=false;
+    $scope.GroupCheck={};
+    for(var i=0;i<$scope.T_IpList.length;i++){
+      $scope.GroupCheck[$scope.T_IpList[i]]=false;
+    }
+    for(var i=0;i<$scope.GroupMap[name].length;i++){
+      $scope.GroupCheck[$scope.GroupMap[name][i]]=true;
+    }
+  };
+
+  $scope.updateGroup = function (name) {
+    $rootScope.GroupName=name;
+    $scope.showGroup=false;
+    $scope.showEdit[$rootScope.GroupName]=true;
+    var list=[];
+    for(var k in $scope.GroupCheck){
+      if($scope.GroupCheck[k]==true){
+        list.push(k);
+      }
+    }
+    $scope.T_IpList=list;
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/updateGroup',
+      data: {GroupMembers:list,Group:$rootScope.GroupName},
+    }).then(function successCallback(response) {
+      if (response['data']['result'] == "update group success") {
+        $scope.logstat1=false;
+        $scope.logstat2=true;
+        $scope.indexLog="update group success";
+      }
+      else{
+        $scope.T_IpList=[];
+        $scope.logstat1=true;
+        $scope.logstat2=false;
+        $scope.indexLog=response['data']['result'];
+      }
+    }, function errorCallback() {
+      console.log('err');
+    });
+  };
+
+  $scope.tag_list = function (){
+    init();
+    $rootScope.GroupName="All";
+  }
+  $scope.selectGroupMember=function(key){
+    if($scope.GroupCheck[key]===false){
+      $scope.GroupCheck[key]=true;
+    }else{
+      $scope.GroupCheck[key]=false;
+    }
+  };
 
   //refresh
   var timer = $interval(function(){
@@ -63,7 +209,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       url: '../api/logpeck/init',
     }).then(function successCallback(response) {
       for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-        console.log(response['data']['hits']['hits'][id]['_source']);
         if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
           if(response['data']['hits']['hits'][id]['_source']['version']==version){
             t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
@@ -87,40 +232,65 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   }
 
   //Init
-  $http({
-    method: 'POST',
-    url: '../api/logpeck/init',
-  }).then(function successCallback(response) {
-    $scope.T_IpList=[];
-    for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-      $scope.T_IpList.push(response['data']['hits']['hits'][id]['_id']);
-      if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
-        if(response['data']['hits']['hits'][id]['_source']['version']==version){
-          status[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
-        }else{
-          status[response['data']['hits']['hits'][id]['_id']]="#F39C12";
-        }
-      }else{
-        status[response['data']['hits']['hits'][id]['_id']]="#e8488b";
-      }
-    }
-    if(task_ip_exist!=false){
-      $scope.T_array=task_ip;
-      $scope.visible=true;
-      task_ip_exist=false;
-      task_ip=[];
-    }
-    else {
-      $scope.T_array = [];            //index:   tasklist
-      $scope.visible = false;
-    }
+  $scope.showEdit={};
+  var init=function(){
+    $rootScope.mycolor1={"color":"#e4e4e4"};
+    $rootScope.mycolor2={"color":"#e4e4e4"};
+    $rootScope.mycolor3={"color":"#e4e4e4"};
+    $rootScope.mycolor4={"color":"#e4e4e4"};
+    $rootScope.mycolor5={"color":"#e4e4e4"};
+    $rootScope.mycolor6={"color":"#e4e4e4"};
+    $rootScope.mycolor7={"color":"#e4e4e4"};
+    $rootScope.mycolor8={"color":"#e4e4e4"};
+    $rootScope.mycolor9={"color":"#e4e4e4"};
+    $scope.search_group();
+    $scope.visible = false;
+    $scope.showGroup=false;
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
+    $scope.T_IpList=[];
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/init',
+    }).then(function successCallback(response) {
+      $scope.allList=[];
+      for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
+        $scope.allList.push(response['data']['hits']['hits'][id]['_id']);
+        if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
+          if(response['data']['hits']['hits'][id]['_source']['version']==version){
+            status[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+          }else{
+            status[response['data']['hits']['hits'][id]['_id']]="#F39C12";
+          }
+        }else{
+          status[response['data']['hits']['hits'][id]['_id']]="#e8488b";
+        }
+      }
+      $scope.T_IpList=$scope.allList;
+      console.log($scope.T_IpList);
+      if(task_ip_exist!=false){
+        $scope.T_array=task_ip;
+        $scope.visible=true;
+        task_ip_exist=false;
+        task_ip=[];
+      }
+      else {
+        $scope.T_array = [];            //index:   tasklist
+        $scope.visible = false;
+      }
+      if($rootScope.GroupName==undefined){
+        $rootScope.GroupName="All";
+      }else if($rootScope.GroupName!="All"){
+        $scope.listGroup($rootScope.GroupName);
+      }
 
-  }, function errorCallback() {
-    console.log('err');
-  });
+    }, function errorCallback() {
+      console.log('err');
+    });
+  }
+  init();
+
 
   //Input click event
   $scope.focus = function (string,target,mycolor) {
@@ -297,7 +467,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       });
     }
   };
-
   //remove host
   $scope.removeHost = function ($event) {
     if(!confirm("Remove a host")){
