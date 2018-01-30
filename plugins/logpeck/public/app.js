@@ -137,6 +137,9 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   $scope.editGroup = function (name) {
     $scope.T_IpList=$scope.allList;
     $scope.showGroup=true;
+    for(var k in $scope.showEdit){
+      $scope.showEdit[k]=true;
+    }
     $scope.showEdit[name]=false;
     $scope.GroupCheck={};
     for(var i=0;i<$scope.T_IpList.length;i++){
@@ -167,6 +170,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         $scope.logstat1=false;
         $scope.logstat2=true;
         $scope.indexLog="update group success";
+        $scope.GroupMap[$rootScope.GroupName]=$scope.T_IpList;
       }
       else{
         $scope.T_IpList=[];
@@ -180,8 +184,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   };
 
   $scope.tag_list = function (){
-    init();
     $rootScope.GroupName="All";
+    init();
   }
   $scope.selectGroupMember=function(key){
     if($scope.GroupCheck[key]===false){
@@ -267,8 +271,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           status[response['data']['hits']['hits'][id]['_id']]="#e8488b";
         }
       }
-      $scope.T_IpList=$scope.allList;
-      console.log($scope.T_IpList);
       if(task_ip_exist!=false){
         $scope.T_array=task_ip;
         $scope.visible=true;
@@ -281,7 +283,10 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       }
       if($rootScope.GroupName==undefined){
         $rootScope.GroupName="All";
-      }else if($rootScope.GroupName!="All"){
+        $scope.T_IpList=$scope.allList;
+      }else if($rootScope.GroupName=="All"){
+        $scope.T_IpList=$scope.allList;
+      }else{
         $scope.listGroup($rootScope.GroupName);
       }
 
@@ -434,7 +439,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         data: {ip: $scope.IP},
       }).then(function successCallback(response) {
         if (response['data']['result'] == "Add success") {
-          $scope.T_IpList.push($scope.IP);
+          $scope.allList.push($scope.IP);
           $scope.T_array=[];
           $scope.logstat1=false;
           $scope.logstat2=true;
