@@ -114,6 +114,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   };
 
   $scope.listGroup = function (name) {
+    $scope.indexLog="";
     $rootScope.GroupName=name;
     $http({
       method: 'POST',
@@ -135,6 +136,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   };
 
   $scope.editGroup = function (name) {
+    $scope.indexLog="";
     $scope.T_IpList=$scope.allList;
     $scope.showGroup=true;
     for(var k in $scope.showEdit){
