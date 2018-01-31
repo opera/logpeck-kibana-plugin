@@ -275,7 +275,7 @@
         </li>
       </div>
       <div ng-show="!visible" style="width: 72%;height:100%;float: left;margin-left: 2%;background-color:#F6F6F6 ">
-         <div style="float:left;width:30%;height:100%;border-right: 2px solid white;background-color:#F6F6F6">
+         <div style="float:left;width:35%;height:100%;border-right: 2px solid white;background-color:#F6F6F6">
            <div class="subject_add" style="border-bottom: 1px solid white;background-color:#F6F6F6">
              <input type="text" style="width: 65%" ng-model="Group">
              <a class="kuiButton kuiButton--primary Button--middle" ng-click="addGroup()" style="float:right;margin-top: 2px">add</a>
@@ -283,20 +283,20 @@
            <div class="subject_list">
              <li ng-repeat="index in GroupList | orderBy:index">
                <div class="host_list" style="border-bottom: 1px solid white;background-color:#F6F6F6">
-                 <div class="host_list_name" style="width:50%;float: left">
-                   <a ng-click="listGroup(index)"  name="{{ index }}">
+                 <div class="host_list_name" style="width:60%;float: left;display:table;">
+                   <a ng-click="listGroup(index)"  name="{{ index }}" style="vertical-align:middle; display:table-cell;word-wrap:break-word; word-break:break-all; overflow: scroll;">
                      {{ index }}
                    </a>
                  </div>
-                 <div class="host_list_control" style="width:25%;float: left;">
-                   <a class="kuiButton kuiButton--primary Button--small" ng-show="showEdit[index]" ng-click="editGroup(index)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: grey;;">
+                 <div class="host_list_control" style="width:20%;float: left;">
+                   <a class="kuiButton kuiButton--primary Button--small" ng-show="showEdit[index]" ng-click="editGroup(index)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: burlywood;">
                      edit
                    </a>
                    <a class="kuiButton kuiButton--primary kuiButton--small" ng-show="!showEdit[index]" ng-click="updateGroup(index)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: #6EADC1">
                      update
                    </a>
                  </div>
-                 <div class="host_list_control" style="width:25%;float: left">
+                 <div class="host_list_control" style="width:20%;float: left">
                    <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeGroup(index)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: #e8488b">
                      remove
                    </a>
