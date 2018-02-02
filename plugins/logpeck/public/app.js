@@ -237,6 +237,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     return { color: status[payment] }
   }
 
+  console.log($scope.showGroup);
   //Init
   $scope.showEdit={};
   var init=function(){
@@ -256,6 +257,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
+    $rootScope.useTemplate=false;
     $scope.T_IpList=[];
     $http({
       method: 'POST',
@@ -498,6 +500,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interval) {
   //init
   $rootScope.page="add";
+
   $rootScope.T_ip=localStorage.getItem("T_ip");
   $rootScope.init_task();
 
@@ -567,10 +570,7 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   //init
   var update_ip=angular.fromJson(localStorage.getItem("update_ip"));
   $rootScope.T_ip=localStorage.getItem("T_ip");
-
   $rootScope.init_task();
-
-  $rootScope.show_task(update_ip);
 
   $http({
     method: 'POST',
@@ -583,6 +583,8 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   }, function errorCallback(err) {
     console.log('err');
   });
+
+  $rootScope.show_task(update_ip);
 
   //update
   $scope.updateTask = function () {
@@ -959,6 +961,7 @@ app.run(function($rootScope,$route, $http) {
       if(response['data']['result']==undefined) {
         $rootScope.init_task();
         var task=response['data']['_source'];
+        $rootScope.useTemplate=true;
         $rootScope.show_task(task);
         $rootScope.updateLua();
 
@@ -1163,11 +1166,13 @@ app.run(function($rootScope,$route, $http) {
 
 
   $rootScope.show_task=function (task) {
-    if($rootScope.page!="update"){
+    console.log($rootScope.useTemplate);
+    if($rootScope.page=="update"&&$rootScope.useTemplate==true){
+      $rootScope.useTemplate=false;
+    }else{
       $rootScope.Name=task['Name'];
     }
     $rootScope.LogPath=task['LogPath'];
-
     $rootScope.LogFormat=task['Extractor']['Name'];
     $rootScope.typeChange($rootScope.LogFormat);
     if($rootScope.LogFormat=="text"){
