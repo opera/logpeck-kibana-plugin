@@ -91,7 +91,6 @@
     width: 72%;
     height:802px;
     float: left;
-    background-color: #F6F6F6;
     margin-left: 2%;
     margin-top: 20px;
   }
@@ -246,14 +245,16 @@
       </div>
     </div>
     <div class="subject_2" ng-show="visible">
-      <div class="task_list_name" style="padding-left: 10px;height: 25px">
+      <div style="width:100%;background-color: #F6F6F6;float:left">
+      <div class="task_list_name" style="padding-left: 10px;height: 25px;float:left">
         Name
       </div>
-      <div class="task_list_status" style="width: 20%;height: 25px">
+      <div class="task_list_status" style="width: 20%;height: 25px;float:left">
         Status
       </div>
-      <div class="task_list_logpath" style=";height: 25px">
+      <div class="task_list_logpath" style=";height: 25px;float:left">
         LogPath
+      </div>
       </div>
       <li ng-repeat="(key,value) in T_array">
         <div class="task_list">
