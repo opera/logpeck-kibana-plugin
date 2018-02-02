@@ -141,6 +141,7 @@ export default function (server) {
         const example = async function () {
           var name=req.payload.Name;
           var ip=req.payload.ip;
+          console.log(name);
           Wreck.post('http://'+ip+'/peck_task/remove',{ payload: '{ "Name" : "'+name+'" }' },
             (err, xyResponse, payload) => {
               var res;
@@ -169,17 +170,17 @@ export default function (server) {
         const Add = async function () {
           var name = req.payload.Name;
           var logpath = req.payload.Logpath;
-          var ExtractorConfig = req.payload.ExtractorConfig;
-          var SenderConfig = req.payload.SenderConfig;
-          var AggregatorConfig = req.payload.AggregatorConfig;
+          var Extractor = req.payload.Extractor;
+          var Sender = req.payload.Sender;
+          var Aggregator = req.payload.Aggregator;
           var Keywords = req.payload.Keywords;
           var ip = req.payload.ip;
           var esLog = {
             Name: name,
             LogPath: logpath,
-            ExtractorConfig: ExtractorConfig,
-            SenderConfig: SenderConfig,
-            AggregatorConfig: AggregatorConfig,
+            Extractor: Extractor,
+            Sender: Sender,
+            Aggregator: Aggregator,
             Keywords: Keywords
           };
           Wreck.post('http://' + ip + '/peck_task/add', {payload: JSON.stringify(esLog)},
@@ -194,7 +195,6 @@ export default function (server) {
               }
             });
         };
-
         try {
           Add();
         }
@@ -208,7 +208,6 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        Wreck.put('http://localhost:9200/logpeck?');
         const example = async function () {
           var ip=req.payload.ip;
           var res;
@@ -383,7 +382,6 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        Wreck.put('http://localhost:9200/logpeck_group?');
         const example = async function () {
           var res;
           Wreck.get('http://localhost:9200/logpeck_group/name/_search',
@@ -419,17 +417,17 @@ export default function (server) {
         const Update = async function () {
           var name = req.payload.Name;
           var logpath = req.payload.Logpath;
-          var ExtractorConfig = req.payload.ExtractorConfig;
-          var SenderConfig = req.payload.SenderConfig;
-          var AggregatorConfig = req.payload.AggregatorConfig;
+          var Extractor = req.payload.Extractor;
+          var Sender = req.payload.Sender;
+          var Aggregator = req.payload.Aggregator;
           var Keywords = req.payload.Keywords;
           var ip = req.payload.ip;
           var esLog = {
             Name: name,
             LogPath: logpath,
-            ExtractorConfig: ExtractorConfig,
-            SenderConfig: SenderConfig,
-            AggregatorConfig: AggregatorConfig,
+            Extractor: Extractor,
+            Sender: Sender,
+            Aggregator: Aggregator,
             Keywords: Keywords
           };
           Wreck.post('http://' + ip + '/peck_task/update', {payload: JSON.stringify(esLog)},
@@ -466,16 +464,16 @@ export default function (server) {
           var template_name=req.payload.template_name;
           var name = req.payload.Name;
           var logpath = req.payload.Logpath;
-          var ExtractorConfig = req.payload.ExtractorConfig;
-          var SenderConfig = req.payload.SenderConfig;
-          var AggregatorConfig = req.payload.AggregatorConfig;
+          var Extractor = req.payload.Extractor;
+          var Sender = req.payload.Sender;
+          var Aggregator = req.payload.Aggregator;
           var Keywords = req.payload.Keywords;
           var esLog = {
             Name: name,
             LogPath: logpath,
-            ExtractorConfig: ExtractorConfig,
-            SenderConfig: SenderConfig,
-            AggregatorConfig: AggregatorConfig,
+            Extractor: Extractor,
+            Sender: Sender,
+            Aggregator: Aggregator,
             Keywords: Keywords
           };
           Wreck.post('http://localhost:9200/.logpeck/template/'+template_name, {payload: JSON.stringify(esLog)},
@@ -540,7 +538,6 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         const Wreck = require('wreck');
-        Wreck.put('http://localhost:9200/.logpeck?');
         const example = async function () {
           var template_name=req.payload.template_name;
           var res;
@@ -623,18 +620,18 @@ export default function (server) {
         const example = async function () {
           var name = req.payload.Name;
           var logpath = req.payload.Logpath;
-          var ExtractorConfig = req.payload.ExtractorConfig;
-          var SenderConfig = req.payload.SenderConfig;
-          var AggregatorConfig = req.payload.AggregatorConfig;
+          var Extractor = req.payload.Extractor;
+          var Sender = req.payload.Sender;
+          var Aggregator = req.payload.Aggregator;
           var Keywords = req.payload.Keywords;
           var Test=req.payload.Test;
           var ip = req.payload.ip;
           var esLog = {
             Name: name,
             LogPath: logpath,
-            ExtractorConfig: ExtractorConfig,
-            SenderConfig: SenderConfig,
-            AggregatorConfig: AggregatorConfig,
+            Extractor: Extractor,
+            Sender: Sender,
+            Aggregator: Aggregator,
             Keywords: Keywords,
             Test:Test,
           };
