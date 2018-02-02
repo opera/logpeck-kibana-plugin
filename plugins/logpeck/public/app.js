@@ -31,7 +31,7 @@ uiRoutes
 var task_ip_exist=false;
 var task_ip=[];
 var status=[];
-var version="0.4.0";
+var version="0.5.0";
 var app=uiModules.get("app",['ui.ace']);
 
 //**************************controller "logpeckInit"****************************
@@ -298,43 +298,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     });
   }
   init();
-
-
-  //Input click event
-  $scope.focus = function (string,target,mycolor) {
-    if ($scope[target]) {
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.blur = function (string,target,mycolor) {
-    if (!$scope[target] ) {
-      $scope[target] = string;
-      $scope[mycolor]={"color":"#e4e4e4"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.focus2 = function (target,mycolor) {
-    if ($scope[target]) {
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.blur2 = function (target,mycolor) {
-    if (!$scope[target] ) {
-      $scope[target] = "";
-      $scope[mycolor]={"color":"#e4e4e4"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
 
   //A host task list
   $scope.listTask = function ($event,list) {
@@ -719,6 +682,43 @@ app.run(function($rootScope,$route, $http) {
       $rootScope.influxdb_array[key]['Aggregations']={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
     }
   };
+
+  //Input click event
+  $rootScope.focus = function (string,target,mycolor) {
+    if ($rootScope[target]) {
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $rootScope.blur = function (string,target,mycolor) {
+    if (!$rootScope[target] ) {
+      $rootScope[target] = string;
+      $rootScope[mycolor]={"color":"#e4e4e4"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $rootScope.focus2 = function (target,mycolor) {
+    if ($rootScope[target]) {
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $rootScope.blur2 = function (target,mycolor) {
+    if (!$rootScope[target] ) {
+      $rootScope[target] = "";
+      $rootScope[mycolor]={"color":"#e4e4e4"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+
 
   //plus influxdb config
   $rootScope.plusinfluxdb=function () {
