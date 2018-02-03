@@ -61,12 +61,12 @@
   }
   .container_0{
     width: 100%;
-    height: 100%;
+    height: 832px;
     float: left;
   }
   .container_1{
     width: 20%;
-    height: 100%;
+    height: 676px;
     float: left;
   }
   .model_add{
@@ -77,14 +77,14 @@
   }
   .model_list{
     width: 100%;
-    height: 460px;
+    height: 100%;
     float: left;
     overflow: auto;
   }
   .container_2{
     margin-left: 2%;
     width: 78%;
-    height: 640px;
+    height: 100%;
     float: left;
     overflow: auto;
   }
@@ -353,7 +353,7 @@ function extract(s)
     ret = {}
     --*********此线下可修改*********
     i,j=string.find(s,'client=.- ')
-    ret['client']=string.sub(request,i+7,j-1)
+    ret['client']=string.sub(s,i+7,j-1)
     i,j=string.find(s,'method=.- ')
     ret['method']=string.sub(s,i+7,j-1)
     --*********此线上可修改*********

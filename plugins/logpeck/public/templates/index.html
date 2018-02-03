@@ -61,12 +61,13 @@
     float: left;
   }
   .subject{
-    height: 640px;
+    height:822px;
     width: 100%;
     float: left;
   }
   .subject_1{
     width: 26%;
+    height: 100%;
     float: left;
   }
   .subject_add{
@@ -82,14 +83,14 @@
   }
   .subject_list{
     width: 100%;
-    height: 603px;
+    height: 782px;
     float: left;
     overflow: auto;
   }
   .subject_2{
     width: 72%;
+    height:802px;
     float: left;
-    background-color: #F6F6F6;
     margin-left: 2%;
     margin-top: 20px;
   }
@@ -169,6 +170,25 @@
     height: 22px;
     width: 58px;
   }
+  dev-tools__app-container {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+  .app-container > * {
+    position: relative;
+    z-index: 0;
+  }
 
 </style>
 
@@ -185,11 +205,11 @@
   <div class="head">
     <div class="head_1" style="border-bottom: 2px solid white;border-right: 2px solid white;">
       <p class="describe">Host</p>
-      <p class="describe" style="color:#328CAA">({{ GroupName }})</p>
+      <p class="describe" style="color:#5a5a5a">({{ GroupName }})</p>
     </div>
     <div class="head_2" ng-show="visible">
       <p class="describe" >Task List</p>
-      <p class="describe" style="color:#328CAA">({{ T_ip }})</p>
+      <p class="describe" style="color:#5a5a5a">({{ T_ip }})</p>
       <a href='#/addTask' ng-show="visible" class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
         Add
       </a>
@@ -225,14 +245,16 @@
       </div>
     </div>
     <div class="subject_2" ng-show="visible">
-      <div class="task_list_name" style="padding-left: 10px;height: 25px">
+      <div style="width:100%;background-color: #F6F6F6;float:left">
+      <div class="task_list_name" style="padding-left: 10px;height: 25px;float:left">
         Name
       </div>
-      <div class="task_list_status" style="width: 20%;height: 25px">
+      <div class="task_list_status" style="width: 20%;height: 25px;float:left">
         Status
       </div>
-      <div class="task_list_logpath" style=";height: 25px">
+      <div class="task_list_logpath" style=";height: 25px;float:left">
         LogPath
+      </div>
       </div>
       <li ng-repeat="(key,value) in T_array">
         <div class="task_list">

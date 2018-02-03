@@ -31,7 +31,7 @@ uiRoutes
 var task_ip_exist=false;
 var task_ip=[];
 var status=[];
-var version="0.4.0";
+var version="0.5.0";
 var app=uiModules.get("app",['ui.ace']);
 
 //**************************controller "logpeckInit"****************************
@@ -237,6 +237,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     return { color: status[payment] }
   }
 
+  console.log($scope.showGroup);
   //Init
   $scope.showEdit={};
   var init=function(){
@@ -251,11 +252,12 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $rootScope.mycolor9={"color":"#e4e4e4"};
     $scope.search_group();
     $rootScope.page="init";
-    $scope.visible = false;
+    $rootScope.visible = false;
     $scope.showGroup=false;
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
+    $rootScope.useTemplate=false;
     $scope.T_IpList=[];
     $http({
       method: 'POST',
@@ -276,13 +278,13 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       }
       if(task_ip_exist!=false){
         $scope.T_array=task_ip;
-        $scope.visible=true;
+        $rootScope.visible=true;
         task_ip_exist=false;
         task_ip=[];
       }
       else {
         $scope.T_array = [];            //index:   tasklist
-        $scope.visible = false;
+        $rootScope.visible = false;
       }
       if($rootScope.GroupName==undefined){
         $rootScope.GroupName="All";
@@ -299,43 +301,6 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   }
   init();
 
-
-  //Input click event
-  $scope.focus = function (string,target,mycolor) {
-    if ($scope[target]) {
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.blur = function (string,target,mycolor) {
-    if (!$scope[target] ) {
-      $scope[target] = string;
-      $scope[mycolor]={"color":"#e4e4e4"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.focus2 = function (target,mycolor) {
-    if ($scope[target]) {
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-  $scope.blur2 = function (target,mycolor) {
-    if (!$scope[target] ) {
-      $scope[target] = "";
-      $scope[mycolor]={"color":"#e4e4e4"};
-    }
-    else{
-      $scope[mycolor]={"color":"#2d2d2d"};
-    }
-  }
-
   //A host task list
   $scope.listTask = function ($event,list) {
     $rootScope.T_ip=event.target.getAttribute('name');
@@ -345,7 +310,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   }
   function callback_listTask(response) {
     if(response["err"]==null){
-      $scope.visible = true;
+      $rootScope.visible = true;
       $scope.T_array=response["result"];
     }else {
       $scope.logstat1=true;
@@ -535,6 +500,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
 app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interval) {
   //init
   $rootScope.page="add";
+
   $rootScope.T_ip=localStorage.getItem("T_ip");
   $rootScope.init_task();
 
@@ -585,7 +551,7 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
 
   function Callback(response) {
     if(response["err"]==null){
-      $scope.visible = true;
+      $rootScope.visible = true;
       task_ip = response["result"];
       task_ip_exist = true;
       window.location.href = "#/";
@@ -604,11 +570,8 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   //init
   var update_ip=angular.fromJson(localStorage.getItem("update_ip"));
   $rootScope.T_ip=localStorage.getItem("T_ip");
-
   $rootScope.init_task();
-
   $rootScope.show_task(update_ip);
-
   $http({
     method: 'POST',
     url: '../api/logpeck/list_template',
@@ -652,7 +615,7 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   };
   function Callback(response) {
     if(response["err"]==null){
-      $scope.visible = true;
+      $rootScope.visible = true;
       task_ip = response["result"];
       task_ip_exist = true;
       window.location.href = "#/";
@@ -719,6 +682,43 @@ app.run(function($rootScope,$route, $http) {
       $rootScope.influxdb_array[key]['Aggregations']={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
     }
   };
+
+  //Input click event
+  $rootScope.focus = function (string,target,mycolor) {
+    if ($rootScope[target]) {
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $rootScope.blur = function (string,target,mycolor) {
+    if (!$rootScope[target] ) {
+      $rootScope[target] = string;
+      $rootScope[mycolor]={"color":"#e4e4e4"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $rootScope.focus2 = function (target,mycolor) {
+    if ($rootScope[target]) {
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+  $rootScope.blur2 = function (target,mycolor) {
+    if (!$rootScope[target] ) {
+      $rootScope[target] = "";
+      $rootScope[mycolor]={"color":"#e4e4e4"};
+    }
+    else{
+      $rootScope[mycolor]={"color":"#2d2d2d"};
+    }
+  }
+
 
   //plus influxdb config
   $rootScope.plusinfluxdb=function () {
@@ -957,8 +957,8 @@ app.run(function($rootScope,$route, $http) {
       data:{template_name: event.target.getAttribute('name')},
     }).then(function successCallback(response) {
       if(response['data']['result']==undefined) {
-        $rootScope.init_task();
         var task=response['data']['_source'];
+        $rootScope.useTemplate=true;
         $rootScope.show_task(task);
         $rootScope.updateLua();
 
@@ -981,6 +981,7 @@ app.run(function($rootScope,$route, $http) {
       task_ip = response["result"];
       task_ip_exist = true;
       window.location.href = "#/";
+      $rootScope.visible=false;
     }else {
       $rootScope.testArea=true;
       $rootScope.testResults = response["err"];
@@ -1007,7 +1008,7 @@ app.run(function($rootScope,$route, $http) {
       "    ret = {}\n" +
       "    --*********此线下可修改*********\n" +
       "    i,j=string.find(s,'client=.- ')\n" +
-      "    ret['client']=string.sub(request,i+7,j-1)\n" +
+      "    ret['client']=string.sub(s,i+7,j-1)\n" +
       "    i,j=string.find(s,'method=.- ')\n" +
       "    ret['method']=string.sub(s,i+7,j-1)\n" +
       "    --*********此线上可修改*********\n" +
@@ -1118,7 +1119,7 @@ app.run(function($rootScope,$route, $http) {
     }else if(($rootScope.LogFormat=="json")){
       Extractor={Name:$rootScope.LogFormat,Config:{Fields:$rootScope.fields_array}};
     }else if(($rootScope.LogFormat=="lua")){
-      Extractor ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString}};
+      Extractor ={Name:$rootScope.LogFormat,Config:{LuaString: $rootScope.LuaString,Fields:$rootScope.fields_array}};
     }
 
     if($rootScope.ConfigName=="Elasticsearch"){
@@ -1163,11 +1164,13 @@ app.run(function($rootScope,$route, $http) {
 
 
   $rootScope.show_task=function (task) {
-    if($rootScope.page!="update"){
+    console.log($rootScope.useTemplate);
+    if($rootScope.page=="update"&&$rootScope.useTemplate==true){
+      $rootScope.useTemplate=false;
+    }else{
       $rootScope.Name=task['Name'];
     }
     $rootScope.LogPath=task['LogPath'];
-
     $rootScope.LogFormat=task['Extractor']['Name'];
     $rootScope.typeChange($rootScope.LogFormat);
     if($rootScope.LogFormat=="text"){
@@ -1177,6 +1180,7 @@ app.run(function($rootScope,$route, $http) {
       $rootScope.fields_array=task['Extractor']['Config']['Fields'];
     }else if($rootScope.LogFormat=="lua"){
       $rootScope.LuaString=task['Extractor']['Config']['LuaString'];
+      $rootScope.fields_array=task['Extractor']['Config']['Fields'];
     }
     if($rootScope.fields_array==null){
       $rootScope.fields_array=[];
