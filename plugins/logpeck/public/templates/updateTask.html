@@ -381,7 +381,7 @@
               <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
             </div>
             <div  class="table_title">
-              <input type="text" ng-model="$root.esHosts" style="width: 100%"  ng-focus="focus('127.0.0.1:9200','esHosts','mycolor3')" ng-blur="blur('127.0.0.1:9200','esHosts','mycolor3')" ng-style="mycolor3">
+              <input type="text" ng-model="$root.esHosts" style="width: 100%"  ng-focus="focus(export_esHosts,'esHosts','mycolor3')" ng-blur="blur(export_esHosts,'esHosts','mycolor3')" ng-style="mycolor3">
             </div>
           </div>
           <div style="width: 100%;float: left">
@@ -431,10 +431,10 @@
             </div>
             <div  class="table_title">
               <div style="width: 35%;float: left">
-                <input type="text" ng-model="$root.influxHosts" style="width: 80%"  ng-focus="focus('127.0.0.1:8086','influxHosts','mycolor7')" ng-blur="blur('127.0.0.1:8086','influxHosts','mycolor7')" ng-style="mycolor7">
+                <input type="text" ng-model="$root.influxHosts" style="width: 80%"  ng-focus="focus(export_influxHosts,'influxHosts','mycolor7')" ng-blur="blur(export_influxHosts,'influxHosts','mycolor7')" ng-style="mycolor7">
               </div>
               <div style="width: 35%;float: left">
-                <input type="text" ng-model="$root.influxDBName" style="width: 60%"  ng-focus="focus('DBname','influxDBName','mycolor8')" ng-blur="blur('DBname','influxDBName','mycolor8')" ng-style="mycolor8">
+                <input type="text" ng-model="$root.influxDBName" style="width: 60%"  ng-focus="focus(export_influxDBName,'influxDBName','mycolor8')" ng-blur="blur(export_influxDBName,'influxDBName','mycolor8')" ng-style="mycolor8">
               </div>
               <div style="width: 30%;float: left">
                 <input type="text" ng-model="$root.influxInterval" style="width: 70%"  ng-focus="focus(30,'influxInterval','mycolor9')" ng-blur="blur(30,'influxInterval','mycolor9')" ng-style="mycolor9">
@@ -558,7 +558,7 @@
             </div>
             <div  class="table_title">
               <div style="width:70%;float:left">
-                <input type="text" ng-model="$root.kafkaBrokers" style="width: 90%"  ng-focus="focus('127.0.0.1:9202','kafkaHosts','mycolor3')" ng-blur="blur('127.0.0.1:9202','kafkaHosts','mycolor3')" ng-style="mycolor3">
+                <input type="text" ng-model="$root.kafkaBrokers" style="width: 90%"  ng-focus="focus(export_kafkaBrokers,'kafkaHosts','mycolor3')" ng-blur="blur(export_kafkaBrokers,'kafkaHosts','mycolor3')" ng-style="mycolor3">
               </div>
               <div style="width:30%;float: left;">
                 <input type="text" ng-model="$root.kafkaTopic" style="width: 100%" >

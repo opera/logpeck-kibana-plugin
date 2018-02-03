@@ -13,6 +13,13 @@ import index from './templates/index.html';
 import addTask from './templates/addTask.html';
 import updateTask from './templates/updateTask.html';
 
+var version="0.5.0";
+var export_esHosts="127.0.0.1:9200";
+var export_influxHosts="127.0.0.1:8086";
+var export_influxDBName="DBname";
+var export_kafkaBrokers="127.0.0.1:9092";
+var export_kafkaTopic="";
+
 uiRoutes.enable();
 uiRoutes
   .when('/', {
@@ -31,7 +38,6 @@ uiRoutes
 var task_ip_exist=false;
 var task_ip=[];
 var status=[];
-var version="0.5.0";
 var app=uiModules.get("app",['ui.ace']);
 
 //**************************controller "logpeckInit"****************************
@@ -641,6 +647,11 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
 //*************the share function of 'Add' and 'Update'******************
 
 app.run(function($rootScope,$route, $http) {
+  $rootScope.export_esHosts=export_esHosts;
+  $rootScope.export_influxHosts=export_influxHosts;
+  $rootScope.export_influxDBName=export_influxDBName;
+  $rootScope.export_kafkaBrokers=export_kafkaBrokers;
+  $rootScope.export_kafkaTopic=export_kafkaTopic;
   //Change configName (Elasticsearch InfluxDb Kafka)
   $rootScope.configChange = function(configName){
     if(configName=="Elasticsearch"){
@@ -1023,18 +1034,18 @@ app.run(function($rootScope,$route, $http) {
       "    return ret\n" +
       "end";
 
-    $rootScope.esHosts = "127.0.0.1:9200";
+    $rootScope.esHosts = $rootScope.export_esHosts;
     $rootScope.esIndex = "my_index-%{+2006.01.02}";
     $rootScope.esType = "MyType";
     $rootScope.esMapping = JSON.stringify(JSON.parse('{"MyType":{"properties": {"MyField": {"type": "long"}}}}'), null, 4);
 
-    $rootScope.influxHosts = "127.0.0.1:8086";
+    $rootScope.influxHosts = $rootScope.export_influxHosts;
     $rootScope.influxInterval = 30;
-    $rootScope.influxDBName = "DBname";
+    $rootScope.influxDBName = $rootScope.export_influxDBName;
     $rootScope.influxdb_array.push({"PreMeasurment":"","Measurment":"_default","Target":"","Aggregations":{"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false},"Tags":[],"Timestamp":"_default"});
 
-    $rootScope.kafkaBrokers = "127.0.0.1:9092";
-    $rootScope.kafkaTopic = "";
+    $rootScope.kafkaBrokers = $rootScope.export_kafkaBrokers;
+    $rootScope.kafkaTopic = $rootScope.export_kafkaTopic;
     $rootScope.kafkaMaxMessageBytes = 1000000;
     $rootScope.kafkaRequiredAcks = "1";
     $rootScope.kafkaTimeout= 10;
