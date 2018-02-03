@@ -214,7 +214,7 @@
         Add
       </a>
     </div>
-    <div class="head_1" ng-show="!visible" style="border-bottom: 2px solid white;margin-left:2%">
+    <div class="head_1" ng-show="gvisible" style="border-bottom: 2px solid white;margin-left:2%">
       <p class="describe" >Group</p>
     </div>
   </div>
@@ -226,9 +226,9 @@
       </div>
       <div class="subject_list" style="background-color:#e4e4e4">
         <li ng-repeat="index in T_IpList | orderBy:index">
-          <div class="host_list">
-            <div class="host_list_name">
-              <a ng-click="listTask($event)"  name="{{ index }}" ng-style="set_color(index)" >
+          <div class="host_list" ng-style="set_color(index,T_ip)">
+            <div class="host_list_name" ng-style="set_color(index,T_ip)">
+              <a ng-click="listTask(index)"  name="{{ index }}" ng-style="set_color(index,T_ip)">
                 {{ index }}
               </a>
             </div>
@@ -296,7 +296,7 @@
         </div>
       </li>
     </div>
-    <div ng-show="!visible" style="width: 26%;height:100%;float: left;margin-left:2%">
+    <div ng-show="gvisible" style="width: 26%;height:100%;float: left;margin-left:2%">
       <div style="float:left;width:100%;height:100%;border-right: 2px solid white;background-color:#F6F6F6">
         <div class="subject_add" style="border-bottom: 1px solid white;background-color:#F6F6F6">
           <input type="text" style="width: 65%" ng-model="Group">
