@@ -9,7 +9,8 @@ export default function (server) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.post('http://localhost:9200/logpeck/host/_search?q=*&size=1000&pretty',
+          var local_ip=req.payload.local_ip;
+          Wreck.post('http://'+local_ip+'/logpeck/host/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '{"result":"'+err.toString()+'"}';
@@ -211,7 +212,8 @@ export default function (server) {
         const example = async function () {
           var ip=req.payload.ip;
           var res;
-          Wreck.get('http://localhost:9200/logpeck/host/'+ip,
+          var local_ip=req.payload.local_ip;
+          Wreck.get('http://'+local_ip+'/logpeck/host/'+ip,
             (err, xyResponse, payload) => {
               var exist=JSON.parse(payload.toString());
               var res;
@@ -220,7 +222,7 @@ export default function (server) {
                 reply(res);
               }
               else if(exist['found']==false) {
-                Wreck.put('http://localhost:9200/logpeck/host/'+ip,{payload: '{ "exist" : "false"}'},
+                Wreck.put('http://'+local_ip+'/logpeck/host/'+ip,{payload: '{ "exist" : "false"}'},
                   (err, xyResponse, payload) => {
                     if (err) {
                       res = '{"result":"'+err.toString()+'"}';
@@ -253,8 +255,8 @@ export default function (server) {
         const example = async function () {
           var ip=req.payload.ip;
           var res;
-
-          Wreck.delete('http://localhost:9200/logpeck/host/' + ip + '?',
+          var local_ip=req.payload.local_ip;
+          Wreck.delete('http://'+local_ip+'/logpeck/host/' + ip + '?',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '{"result":"'+err.toString()+'"}';
@@ -281,7 +283,8 @@ export default function (server) {
         const example = async function () {
           var Group=req.payload.Group;
           var res;
-          Wreck.get('http://localhost:9200/logpeck_group/name/'+Group+'?',
+          var local_ip=req.payload.local_ip;
+          Wreck.get('http://'+local_ip+'/logpeck_group/name/'+Group+'?',
             (err, xyResponse, payload) => {
               var result=JSON.parse(payload.toString());
               console.log(result);
@@ -292,7 +295,7 @@ export default function (server) {
               }
               else if(result['found']==false) {
                 var a={ip:[]};
-                Wreck.put('http://localhost:9200/logpeck_group/name/'+Group+'?',{payload: JSON.stringify(a)},
+                Wreck.put('http://'+local_ip+'/logpeck_group/name/'+Group+'?',{payload: JSON.stringify(a)},
                   (err, xyResponse, payload) => {
                     if (err) {
                       res = '{"result":"'+err.toString()+'"}';
@@ -326,8 +329,8 @@ export default function (server) {
         const example = async function () {
           var Group=req.payload.Group;
           var res;
-
-          Wreck.delete('http://localhost:9200/logpeck_group/name/' + Group + '?',
+          var local_ip=req.payload.local_ip;
+          Wreck.delete('http://'+local_ip+'/logpeck_group/name/' + Group + '?',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '{"result":"'+err.toString()+'"}';
@@ -356,8 +359,8 @@ export default function (server) {
           var GroupMembers=req.payload.GroupMembers;
           var res;
           var a={ip:GroupMembers};
-          console.log(GroupMembers);
-          Wreck.put('http://localhost:9200/logpeck_group/name/'+Group+'?',{payload: JSON.stringify(a)},
+          var local_ip=req.payload.local_ip;
+          Wreck.put('http://'+local_ip+'/logpeck_group/name/'+Group+'?',{payload: JSON.stringify(a)},
             (err, xyResponse, payload) => {
               if (err) {
                 res = '{"result":"'+err.toString()+'"}';
@@ -384,7 +387,8 @@ export default function (server) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.get('http://localhost:9200/logpeck_group/name/_search?q=*&size=1000&pretty',
+          var local_ip=req.payload.local_ip;
+          Wreck.get('http://'+local_ip+'/logpeck_group/name/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               var result=JSON.parse(payload.toString());
               var res;
@@ -476,7 +480,8 @@ export default function (server) {
             Aggregator: Aggregator,
             Keywords: Keywords
           };
-          Wreck.post('http://localhost:9200/.logpeck/template/'+template_name, {payload: JSON.stringify(esLog)},
+          var local_ip=req.payload.local_ip;
+          Wreck.post('http://'+local_ip+'/.logpeck/template/'+template_name, {payload: JSON.stringify(esLog)},
             (err, xyResponse, payload) => {
               var res;
               if (err) {
@@ -512,8 +517,8 @@ export default function (server) {
         const example = async function () {
           var template_name=req.payload.template_name;
           var res;
-
-          Wreck.delete('http://localhost:9200/.logpeck/template/' + template_name + '?',
+          var local_ip=req.payload.local_ip;
+          Wreck.delete('http://'+local_ip+'/.logpeck/template/' + template_name + '?',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '{"result":"'+err.toString()+'"}';
@@ -541,7 +546,8 @@ export default function (server) {
         const example = async function () {
           var template_name=req.payload.template_name;
           var res;
-          Wreck.get('http://localhost:9200/.logpeck/template/' + template_name ,
+          var local_ip=req.payload.local_ip;
+          Wreck.get('http://'+local_ip+'/.logpeck/template/' + template_name ,
             (err, xyResponse, payload) => {
               if (err) {
                 res = '{"result":"'+err.toString()+'"}';
@@ -567,7 +573,8 @@ export default function (server) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.post('http://localhost:9200/.logpeck/template/_search?q=*&size=1000&pretty',
+          var local_ip=req.payload.local_ip;
+          Wreck.post('http://'+local_ip+'/.logpeck/template/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               if (err) {
                 res = '{"result":"'+err.toString()+'"}';
@@ -669,6 +676,7 @@ export default function (server) {
       handler(req, reply) {
         const Wreck = require('wreck');
         function list(ip,status) {
+          var local_ip=req.payload.local_ip;
           var i=0;
           Wreck.post('http://' + ip + '/version',
             (err, xyResponse, payload) => {
@@ -687,7 +695,7 @@ export default function (server) {
                   version = payload.toString();
                 }
               }
-              Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
+              Wreck.put('http://'+local_ip+'/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
                 (err, xyResponse, payload) => {
                   if (err) {
 
@@ -698,7 +706,8 @@ export default function (server) {
           return i;
         }
         const example = function () {
-          Wreck.post('http://localhost:9200/logpeck/host/_search?q=*&size=1000&pretty',
+          var local_ip=req.payload.local_ip;
+          Wreck.post('http://'+local_ip+'/logpeck/host/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               var ip;
               var status;
@@ -734,6 +743,7 @@ export default function (server) {
         var status="false";
         const Wreck = require('wreck');
         const example = function () {
+          var local_ip=req.payload.local_ip;
           Wreck.post('http://' + ip + '/version',
             (err, xyResponse, payload) => {
               var version = '';
@@ -751,7 +761,7 @@ export default function (server) {
                   version = payload.toString();
                 }
               }
-              Wreck.put('http://localhost:9200/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
+              Wreck.put('http://'+local_ip+'/logpeck/host/' + ip, {payload: '{ "exist" : "' + now + '","version" : "' + version + '"}'},
                 (err, xyResponse, payload) => {
                   if (err) {
 
