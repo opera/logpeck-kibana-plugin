@@ -5,7 +5,7 @@ import uiRoutes from 'ui/routes';
 import 'ui/autoload/styles';
 import '../bower_components/ace-builds/src-min-noconflict/ace.js';
 import '../bower_components/ace-builds/src-min-noconflict/mode-lua.js';
-import '../bower_components/ace-builds/src-min-noconflict/theme-chrome.js';
+import '../bower_components/ace-builds/src-min-noconflict/theme-crimson_editor.js';
 import '../bower_components/angular-ui-ace/ui-ace.js';
 
 import './less/main.less';
@@ -250,9 +250,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $rootScope.mycolor7={"color":"#e4e4e4"};
     $rootScope.mycolor8={"color":"#e4e4e4"};
     $rootScope.mycolor9={"color":"#e4e4e4"};
-    $scope.search_group();
     $rootScope.page="init";
-    $rootScope.visible = false;
+
     $scope.showGroup=false;
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
     $scope.logstat1=true;
@@ -278,14 +277,15 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       }
       if(task_ip_exist!=false){
         $scope.T_array=task_ip;
-        $rootScope.visible=true;
+        $scope.visible=true;
         task_ip_exist=false;
         task_ip=[];
       }
       else {
         $scope.T_array = [];            //index:   tasklist
-        $rootScope.visible = false;
+        $scope.visible = false;
       }
+      $scope.search_group();
       if($rootScope.GroupName==undefined){
         $rootScope.GroupName="All";
         $scope.T_IpList=$scope.allList;
@@ -310,7 +310,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   }
   function callback_listTask(response) {
     if(response["err"]==null){
-      $rootScope.visible = true;
+      $scope.visible = true;
       $scope.T_array=response["result"];
     }else {
       $scope.logstat1=true;
@@ -551,7 +551,6 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
 
   function Callback(response) {
     if(response["err"]==null){
-      $rootScope.visible = true;
       task_ip = response["result"];
       task_ip_exist = true;
       window.location.href = "#/";
@@ -615,7 +614,6 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   };
   function Callback(response) {
     if(response["err"]==null){
-      $rootScope.visible = true;
       task_ip = response["result"];
       task_ip_exist = true;
       window.location.href = "#/";
@@ -981,7 +979,6 @@ app.run(function($rootScope,$route, $http) {
       task_ip = response["result"];
       task_ip_exist = true;
       window.location.href = "#/";
-      $rootScope.visible=false;
     }else {
       $rootScope.testArea=true;
       $rootScope.testResults = response["err"];
@@ -1246,7 +1243,6 @@ app.run(function($rootScope,$route, $http) {
       data: {ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
       if(response['data']["result"]==undefined) {
-        //$scope.visible = true;
         var name;
         var stat;
         var start;
