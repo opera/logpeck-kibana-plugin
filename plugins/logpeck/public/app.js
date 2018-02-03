@@ -251,6 +251,8 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $rootScope.mycolor8={"color":"#e4e4e4"};
     $rootScope.mycolor9={"color":"#e4e4e4"};
     $rootScope.page="init";
+    $scope.visible=false;
+    $scope.gvisible=false;
 
     $scope.showGroup=false;
     $scope.IP="127.0.0.1:7117";                //addhost:   input IP
@@ -278,12 +280,15 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       if(task_ip_exist!=false){
         $scope.T_array=task_ip;
         $scope.visible=true;
+        $scope.gvisible=false;
+
         task_ip_exist=false;
         task_ip=[];
       }
       else {
         $scope.T_array = [];            //index:   tasklist
         $scope.visible = false;
+        $scope.gvisible=true;
       }
       $scope.search_group();
       if($rootScope.GroupName==undefined){
@@ -311,6 +316,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   function callback_listTask(response) {
     if(response["err"]==null){
       $scope.visible = true;
+      $scope.gvisible=false;
       $scope.T_array=response["result"];
     }else {
       $scope.logstat1=true;
