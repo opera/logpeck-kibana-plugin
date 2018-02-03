@@ -384,7 +384,7 @@ export default function (server) {
         const Wreck = require('wreck');
         const example = async function () {
           var res;
-          Wreck.get('http://localhost:9200/logpeck_group/name/_search',
+          Wreck.get('http://localhost:9200/logpeck_group/name/_search?q=*&size=1000&pretty',
             (err, xyResponse, payload) => {
               var result=JSON.parse(payload.toString());
               var res;

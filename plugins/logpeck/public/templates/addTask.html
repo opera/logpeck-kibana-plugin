@@ -353,7 +353,7 @@ function extract(s)
     ret = {}
     --*********此线下可修改*********
     i,j=string.find(s,'client=.- ')
-    ret['client']=string.sub(request,i+7,j-1)
+    ret['client']=string.sub(s,i+7,j-1)
     i,j=string.find(s,'method=.- ')
     ret['method']=string.sub(s,i+7,j-1)
     --*********此线上可修改*********
