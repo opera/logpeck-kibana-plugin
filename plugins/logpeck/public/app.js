@@ -233,11 +233,15 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   $scope.$on('$destroy',function(){
     $interval.cancel(timer);
   });
-  $scope.set_color = function (payment) {
-    return { color: status[payment] }
+  $scope.set_color = function (ip,click_ip) {
+    if(ip==click_ip){
+      console.log("asdasdasdasdaasdasd");
+      return { color: status[ip], backgroundColor:"#d4d4d4"};
+    }else{
+      return { color: status[ip],backgroundColor: "#e4e4e4" };
+    }
   }
 
-  console.log($scope.showGroup);
   //Init
   $scope.showEdit={};
   var init=function(){
@@ -286,6 +290,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
         task_ip=[];
       }
       else {
+        $rootScope.T_ip="";
         $scope.T_array = [];            //index:   tasklist
         $scope.visible = false;
         $scope.gvisible=true;
@@ -307,9 +312,9 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
   init();
 
   //A host task list
-  $scope.listTask = function ($event,list) {
-    $rootScope.T_ip=event.target.getAttribute('name');
-    localStorage.setItem("T_ip",event.target.getAttribute('name'));
+  $scope.listTask = function (name) {
+    $rootScope.T_ip=name;
+    localStorage.setItem("T_ip",name);
     $scope.indexLog ='';
     $rootScope.list(callback_listTask);
   }
@@ -1167,7 +1172,6 @@ app.run(function($rootScope,$route, $http) {
 
 
   $rootScope.show_task=function (task) {
-    console.log($rootScope.useTemplate);
     if($rootScope.page=="update"&&$rootScope.useTemplate==true){
       $rootScope.useTemplate=false;
     }else{
