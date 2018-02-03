@@ -12,14 +12,7 @@ import './less/main.less';
 import index from './templates/index.html';
 import addTask from './templates/addTask.html';
 import updateTask from './templates/updateTask.html';
-
-var version="0.5.0";
-var local_ip="127.0.0.1:9200";
-var export_esHosts="127.0.0.1:9200";
-var export_influxHosts="127.0.0.1:8086";
-var export_influxDBName="DBname";
-var export_kafkaBrokers="127.0.0.1:9092";
-var export_kafkaTopic="";
+import * as myConfig from './logpeckConfig.js';
 
 uiRoutes.enable();
 uiRoutes
@@ -47,7 +40,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/searchGroup',
-      data: {local_ip: local_ip},
+      data: {local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       $scope.GroupMap={};
       $scope.GroupMap=response['data'];
@@ -71,7 +64,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $http({
         method: 'POST',
         url: '../api/logpeck/addGroup',
-        data: {Group: $scope.Group,local_ip: local_ip},
+        data: {Group: $scope.Group,local_ip: myConfig.local_ip},
       }).then(function successCallback(response) {
         if (response['data']['result'] == "Add group success") {
           $scope.GroupList.push($scope.Group);
@@ -98,7 +91,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/removeGroup',
-      data:{Group: name,local_ip: local_ip},
+      data:{Group: name,local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
       if(response['data']['result'] == "Remove group success"){
@@ -127,7 +120,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/searchGroup',
-      data:{local_ip: local_ip},
+      data:{local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       $scope.GroupMap={};
       $scope.GroupMap=response['data'];
@@ -175,7 +168,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/updateGroup',
-      data: {GroupMembers:list,Group:$rootScope.GroupName,local_ip: local_ip},
+      data: {GroupMembers:list,Group:$rootScope.GroupName,local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       if (response['data']['result'] == "update group success") {
         $scope.logstat1=false;
@@ -213,7 +206,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/refresh',
-      data:{local_ip: local_ip},
+      data:{local_ip: myConfig.local_ip},
     }).then(function successCallback(response2) {
 
     }, function errorCallback(err) {
@@ -223,11 +216,11 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/init',
-      data: {local_ip: local_ip},
+      data: {local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
         if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
-          if(response['data']['hits']['hits'][id]['_source']['version']==version){
+          if(response['data']['hits']['hits'][id]['_source']['version']==myConfig.version){
             t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
           }else{
             t[response['data']['hits']['hits'][id]['_id']]="#F39C12";
@@ -277,13 +270,13 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/init',
-      data: {local_ip: local_ip},
+      data: {local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       $scope.allList=[];
       for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
         $scope.allList.push(response['data']['hits']['hits'][id]['_id']);
         if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
-          if(response['data']['hits']['hits'][id]['_source']['version']==version){
+          if(response['data']['hits']['hits'][id]['_source']['version']==myConfig.version){
             status[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
           }else{
             status[response['data']['hits']['hits'][id]['_id']]="#F39C12";
@@ -426,7 +419,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
       $http({
         method: 'POST',
         url: '../api/logpeck/addHost',
-        data: {ip: $scope.IP,local_ip: local_ip},
+        data: {ip: $scope.IP,local_ip: myConfig.local_ip},
       }).then(function successCallback(response) {
         if (response['data']['result'] == "Add success") {
           $scope.allList.push($scope.IP);
@@ -438,9 +431,9 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
           $http({
             method: 'POST',
             url: '../api/logpeck/version',
-            data: {ip: $scope.IP,local_ip: local_ip},
+            data: {ip: $scope.IP,local_ip: myConfig.local_ip},
           }).then(function successCallback(response) {
-            if(response['data']==version){
+            if(response['data']==myConfig.version){
               status[$scope.IP]="#2f99c1";
             }else if(response['data']=="error"){
               status[$scope.IP]="#e8488b";
@@ -470,7 +463,7 @@ app.controller('logpeckInit',function ($scope ,$rootScope,$route, $http, $interv
     $http({
       method: 'POST',
       url: '../api/logpeck/removeHost',
-      data:{ip: event.target.getAttribute('name'),local_ip: local_ip},
+      data:{ip: event.target.getAttribute('name'),local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
       if(response['data']['result'] != "err"&&response['data']['result']!="Ip not exist"){
@@ -529,7 +522,7 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
   $http({
     method: 'POST',
     url: '../api/logpeck/list_template',
-    data:{local_ip: local_ip},
+    data:{local_ip: myConfig.local_ip},
   }).then(function successCallback(response) {
     $rootScope.TemplateList=[];
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
@@ -597,7 +590,7 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
   $http({
     method: 'POST',
     url: '../api/logpeck/list_template',
-    data:{local_ip: local_ip},
+    data:{local_ip: myConfig.local_ip},
   }).then(function successCallback(response) {
     $rootScope.TemplateList=[];
     for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
@@ -654,11 +647,11 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
 //*************the share function of 'Add' and 'Update'******************
 
 app.run(function($rootScope,$route, $http) {
-  $rootScope.export_esHosts=export_esHosts;
-  $rootScope.export_influxHosts=export_influxHosts;
-  $rootScope.export_influxDBName=export_influxDBName;
-  $rootScope.export_kafkaBrokers=export_kafkaBrokers;
-  $rootScope.export_kafkaTopic=export_kafkaTopic;
+  $rootScope.export_esHosts=myConfig.export_esHosts;
+  $rootScope.export_influxHosts=myConfig.export_influxHosts;
+  $rootScope.export_influxDBName=myConfig.export_influxDBName;
+  $rootScope.export_kafkaBrokers=myConfig.export_kafkaBrokers;
+  $rootScope.export_kafkaTopic=myConfig.export_kafkaTopic;
   //Change configName (Elasticsearch InfluxDb Kafka)
   $rootScope.configChange = function(configName){
     if(configName=="Elasticsearch"){
@@ -915,7 +908,7 @@ app.run(function($rootScope,$route, $http) {
           Sender: config.Sender,
           Aggregator: config.Aggregator,
           Keywords: $rootScope.Keywords,
-          local_ip: local_ip,
+          local_ip: myConfig.local_ip,
         },
       }).then(function successCallback(response) {
         if (response['data']['result'] == "Add success") {
@@ -946,7 +939,7 @@ app.run(function($rootScope,$route, $http) {
     $http({
       method: 'POST',
       url: '../api/logpeck/removeTemplate',
-      data:{template_name: event.target.getAttribute('name'),local_ip: local_ip},
+      data:{template_name: event.target.getAttribute('name'),local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       if(response['data']['result'] != "err"){
         var new_arr = [];
@@ -982,7 +975,7 @@ app.run(function($rootScope,$route, $http) {
     $http({
       method: 'POST',
       url: '../api/logpeck/applyTemplate',
-      data:{template_name: event.target.getAttribute('name'),local_ip: local_ip},
+      data:{template_name: event.target.getAttribute('name'),local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
       if(response['data']['result']==undefined) {
         var task=response['data']['_source'];
