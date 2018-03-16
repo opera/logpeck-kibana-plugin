@@ -329,7 +329,10 @@
               <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
                   <div style="width: auto;float: left">
                       name
-                      <input type="text" ng-model="$root.fields_array[key].Name" style="width: 120px">
+                    <ng-form name="filename">
+                      <input type="text" ng-model="$root.fields_array[key].Name" name="file_name" style="width: 120px" ng-pattern="/^[a-z，A-Z，0-9，-，_]*$/">
+                      <span ng-show="rules(filename.file_name.$error.pattern,key)"></span>
+                    </ng-form>
                   </div>
                   <div  style="width: auto;float: left" ng-show="type">
                       value
@@ -469,7 +472,10 @@
                 <div  class="table_title">
                   <div style="float: left;width: 70%;">
                     <div style="float:left;width: 25%;">
-                      <input type="text" ng-model="$root.influxdb_array[key].PreMeasurment" style="width: 94%;float:left;">
+                      <ng-form name="filename">
+                        <input type="text" ng-model="$root.influxdb_array[key].PreMeasurment" name="file_name" style="width: 94%;float:left;" ng-pattern="/^[a-z，A-Z，0-9，-，_]*$/">
+                        <span ng-show="rules(filename.file_name.$error.pattern,'measurment')"></span>
+                      </ng-form>
                       <div style="width: 6%;float:left;margin-top:6px">_</div>
                     </div>
                     <div style="width: 25%;float:left">
