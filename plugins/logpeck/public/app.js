@@ -534,6 +534,12 @@ app.controller('logpeckAdd',function ($scope ,$rootScope,$route, $http, $interva
 
   //Add task
   $scope.addTask = function () {
+    for(var key in $rootScope.comply_rules){
+      if($rootScope.comply_rules[key]==true){
+        alert("Only letters,numbers,'-' and '_' are allowed");
+        return;
+      }
+    }
     if($rootScope.init_add_or_update()==true){
       var config=$rootScope.get_configs()
       $http({
@@ -602,6 +608,12 @@ app.controller('logpeckUpdate',function ($scope ,$rootScope,$route, $http) {
 
   //update
   $scope.updateTask = function () {
+    for(var key in $rootScope.comply_rules){
+      if($rootScope.comply_rules[key]==true){
+        alert("Only letters,numbers,- and _ are allowed");
+        return;
+      }
+    }
     if($rootScope.init_add_or_update()==true){
       var config=$rootScope.get_configs()
       $http({
@@ -652,6 +664,17 @@ app.run(function($rootScope,$route, $http) {
   $rootScope.export_influxDBName=myConfig.export_influxDBName;
   $rootScope.export_kafkaBrokers=myConfig.export_kafkaBrokers;
   $rootScope.export_kafkaTopic=myConfig.export_kafkaTopic;
+  $rootScope.comply_rules=[];
+  $rootScope.comply_rules["measurment"]=false;
+  $rootScope.rules = function(rule_bool,key){
+    if(rule_bool != true){
+      $rootScope.comply_rules[key]=false;
+    }else{
+      $rootScope.comply_rules[key]=true;
+    }
+    console.log($rootScope.comply_rules);
+    return rule_bool;
+  };
   //Change configName (Elasticsearch InfluxDb Kafka)
   $rootScope.configChange = function(configName){
     if(configName=="Elasticsearch"){
