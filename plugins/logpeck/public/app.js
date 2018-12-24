@@ -1188,7 +1188,7 @@ app.run(function($rootScope,$route, $http) {
       }
 
       Sender={Name:$rootScope.ConfigName,Config:{Hosts: $rootScope.influxHosts,  Database: $rootScope.influxDBName}};
-      Aggregator={Enable:true,Interval: $rootScope.influxInterval,Options:$rootScope.influxdb_array};
+      Aggregator={Enable:true,Interval: parseInt($rootScope.influxInterval),Options:$rootScope.influxdb_array};
     }else if ($rootScope.ConfigName="Kafka"){
       var brokersarray = $rootScope.kafkaBrokers.split(',');
       var brokers = [];
@@ -1196,9 +1196,10 @@ app.run(function($rootScope,$route, $http) {
         brokers.push(brokersarray[id]);
       }
       Sender={Name:$rootScope.ConfigName,Config:{
-          Brokers: brokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:$rootScope.kafkaMaxMessageBytes,RequiredAcks:Number($rootScope.kafkaRequiredAcks),
-          Timeout:$rootScope.kafkaTimeout,Compression:Number($rootScope.kafkaCompression),Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
-          Flush:$rootScope.kafkaFlush,Retry:$rootScope.kafkaRetry
+          Brokers: brokers,Topic :$rootScope.kafkaTopic,MaxMessageBytes:parseInt($rootScope.kafkaMaxMessageBytes),Timeout:parseInt($rootScope.kafkaTimeout),
+		  Retry:{RetryMax:parseInt($rootScope.kafkaRetry.RetryMax), RetryBackoff:parseInt($rootScope.kafkaRetry.RetryBackoff)},
+          RequiredAcks:Number($rootScope.kafkaRequiredAcks),Compression:Number($rootScope.kafkaCompression),Partitioner:$rootScope.kafkaPartitioner,ReturnErrors:$rootScope.kafkaReturnErrors,
+          Flush:{FlushBytes:parseInt($rootScope.kafkaFlush.FlushBytes), FlushMessages:parseInt($rootScope.kafkaFlush.FlushMessages), FlushFrequency:parseInt($rootScope.kafkaFlush.FlushFrequency), FlushMaxMessages:parseInt($rootScope.kafkaFlush.FlushMaxMessages)}
         }};
       Aggregator={Enable:false};
     }
