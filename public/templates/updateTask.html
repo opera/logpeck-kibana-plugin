@@ -1,0 +1,694 @@
+<style>
+  .title{
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    min-height: 70px;
+    color: #2d2d2d;
+    background-color: #e4e4e4;
+    line-height: 1.5;
+  }
+  .title_top{
+    height: 32px;
+    width: 100%;
+    float: left;
+  }
+  .name{
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 100%;
+    padding-left: 10px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .head{
+    margin-top: 20px;
+    height: 40px;
+    width: 100%;
+    float: left;
+  }
+  .head_1{
+    width: 20%;
+    height: 100%;
+    float: left;
+    background-color: #F6F6F6;
+    padding-right: 10px;
+    padding-top: 10px;
+  }
+  .head_2{
+    width: 78%;
+    height: 100%;
+    float: left;
+    background-color: #F6F6F6;
+    margin-left: 2%;
+    padding-right: 30px;
+    padding-top: 10px;
+  }
+  .describe{
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 50%;
+    padding-left: 10px;
+    padding-top: 7px;
+    font-size: 14px;
+    font-weight: bold;
+    float: left;
+  }
+  .container_0{
+    width: 100%;
+    height: 832px;
+    float: left;
+  }
+  .container_1{
+    width: 20%;
+    height: 676px;
+    float: left;
+  }
+  .model_add{
+    margin-top: 25px;
+    height:81px;
+    width: 100%;
+    float: left;
+  }
+  .model_list{
+    width: 100%;
+    height: 460px;
+    float: left;
+    overflow: auto;
+  }
+  .container_2{
+    padding-top: 20px;
+    margin-left: 2%;
+    width: 78%;
+    height: 100%;
+    float: left;
+    overflow: auto;
+  }
+  li{
+    list-style-type:none
+  }
+  .name_list{
+    background-color: #e4e4e4;
+    padding-left: 2%;
+    padding-right: 1%;
+    padding-top: 10px;
+    padding-bottom: 2px;
+    margin-bottom: 1px;
+    width: 100%;
+    height: 40px;
+    float: left;
+  }
+  .host_list{
+    background-color: #e4e4e4;
+    padding-left: 2%;
+    padding-top: 15px;
+    width: 100%;
+    height: 50px;
+    float: left;
+  }
+  .table_1{
+    width: 98%;
+    height: 50px;
+    float: left;
+  }
+  .table_2{
+    margin-top: 20px;
+    padding-top: 20px;
+    width: 86%;
+    float: left;
+    border-top:3px solid #e4e4e4;
+  }
+  .table_3{
+    width: 86%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-top:3px solid #e4e4e4;
+    border-bottom:3px solid #e4e4e4;
+    float: left;
+  }
+  .table_4{
+    margin-top: 25px;
+    margin-bottom: 20px;
+    float: left;
+    width: 100%;
+  }
+  .table_test{
+    margin-top: 25px;
+    width: 100%;
+    float: left;
+  }
+  .table_line{
+    width: 100%;
+    height: 50px;
+    float: left;
+    margin-bottom: 5px;
+  }
+  .table_title{
+    width: 100%;
+    height: 20px;
+    float: left;
+  }
+  .Button--small {
+    font-size: 9px;
+    padding: 2px 2px 3px 3px;
+    width: 40px;
+    height: 20px;
+  }
+  .Button--middle {
+    font-size: 12px;
+    padding: 2px 15px 3px;
+    height: 22px;
+    width: 58px;
+  }
+  .Button--big--test {
+    font-size: 18px;
+    padding: 3px 20px;
+    width: 80px;
+    height: 35px;
+  }
+  .Button--big {
+    font-size: 18px;
+    padding: 3px 10px;
+    width: 80px;
+    height: 35px;
+  }
+  .Button--tag{
+    height: 24px;
+    width: 24px;
+    padding-bottom: 10px;
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    padding: 2px 6px 2px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+  }
+
+  .kuiButton--primary--del {
+    color: #FFF;
+    background-color: #e8488b;
+  }
+  .ace_editor {
+    height: 200px;
+  }
+</style>
+
+
+<div>
+  <div class="title">
+    <div class="title_top">
+      <div class="name">
+        <a href="#/">Logpeck</a>/UpdateTask
+      </div>
+    </div>
+  </div>
+  <div class="head">
+    <div class="head_1">
+      <p class="describe">Logpeck Host</p>
+      <!--<a href="#/addHost"  class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
+        addHost
+      </a>-->
+    </div>
+    <div class="head_2">
+      <p class="describe">Task Config</p>
+      <!--<p style="float: right;margin-right: 20px;color: red">{{addTaskResult}}</p>-->
+    </div>
+  </div>
+  <div class="container_0">
+    <div class="container_1">
+      <div class="host_list">
+        <a ng-click="jump()">{{ $root.T_ip }}</a>
+      </div>
+      <div class="model_add">
+        <div style="width: 100%;float: left;height: 40px;background-color: #F6F6F6;" class="head_1">
+          <p class="describe">Task Templates</p>
+        </div>
+        <div style="width: 100%;height: 40px;float: left;background-color: #e4e4e4;padding-top: 8px;padding-bottom: 10px;padding-left:2%;padding-right: 13px">
+          <input type="text" ng-model="$root.template_name" style="width: 70%">
+          <a class="kuiButton kuiButton--primary Button--middle" ng-click="addTemplate()" style="float:right;margin-top: 2px">save</a>
+        </div>
+      </div>
+      <div class="model_list">
+        <li ng-repeat="index in TemplateList | orderBy:index ">
+          <div class="name_list">
+            <div style="width: 70%;float: left">
+              <a ng-click="applyTemplate($event)" name="{{ index }}">
+                {{index}}
+              </a>
+            </div>
+            <div style="width: 30%;float: right">
+              <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeTemplate($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: #e8488b">
+                remove
+              </a>
+            </div>
+          </div>
+        </li>
+      </div>
+    </div>
+    <div class="container_2">
+      <div class="table_1">
+          <div class="table_line">
+            <div class="table_title">
+              <div style="width: 30%;float: left">
+                <div style="float: left">Name</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+              <div style="width: 70%;float: left">
+                <div style="float: left">LogPath</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+            </div>
+            <div  class="table_title">
+              <div style="width: 30%;float: left">
+                {{Name}}
+              </div>
+              <div style="width: 70%;float: left">
+                <input list="Path" ng-keyup="keyUp()" ng-change="optionChange()" type="text" ng-model="$root.LogPath" style="width: 83%" >
+                <datalist id="Path">
+                  <option ng-repeat="index in path_array track by $index">{{LogPath}}{{index}}</option>
+                </datalist>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="table_2">
+        <div  class="table_title">
+          <div style="width: 30%;float: left;">
+            <select ng-model="$root.LogFormat" style="width: 82px;font-size:17px" ng-change="typeChange(LogFormat)">
+              <option value="json">json</option>
+              <option value ="text">text</option>
+              <option value ="lua">lua</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="float: left;width: 51%;margin-top: 10px;margin-bottom: 15px;padding-top: 20px;height: 50px;">
+          Fields
+          <a  ng-click="plusfields()" class="kuiButton kuiButton--primary " style="margin-left: 10px">
+              <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
+              </span>
+          </a>
+        </div>
+
+        <div style="float: right;width: 49%;margin-bottom: 15px;margin-top: 15px">
+          <div class="table_title" style="width: 100%;float: right">
+            <div style="width: 100%;float: left">Keywords</div>
+          </div>
+          <div  class="table_title" style="width: 100%;float: right">
+            <div style="width: 100%;float: right">
+              <input style="width: 100%;" type="text" ng-model="$root.Keywords" >
+            </div>
+          </div>
+          <div class="table_title" style="width: 100%;float: right;margin-top: 10px"  ng-show="type">
+            <div style="width: 100%;float: left">
+              <div style="width: 80px;float: left" >Delimiters</div>
+              <div style="width: 25px;float: left" ><a class="kuiButton kuiButton--primary Button--small " ng-click="addDefault()" >":{} ,[]</a></div>
+            </div>
+          </div>
+          <div  class="table_title" style="width: 100%;float: right"  ng-show="type">
+            <div style="width: 100%;float: right">
+              <input style="width: 100%;" type="text" ng-model="$root.Delimiters" >
+            </div>
+          </div>
+        </div>
+
+        <div style="width: 51%;float: left">
+              <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
+                  <div style="width: auto;float: left">
+                      name
+                    <ng-form name="filename">
+                      <input type="text" ng-model="$root.fields_array[key].Name" name="file_name" style="width: 120px" ng-pattern="/^[a-z，A-Z，0-9，-，_]*$/">
+                      <span ng-show="rules(filename.file_name.$error.pattern,key)"></span>
+                    </ng-form>
+                  </div>
+                  <div  style="width: auto;float: left" ng-show="type">
+                      value
+                      <input type="text" ng-model="$root.fields_array[key].Value" style="width: 120px">
+                  </div>
+                  <div style="width: auto;float: left;margin-left:10px">
+                      <a  ng-click="minusfields($index)" class="Button--tag kuiButton--primary--del ">
+                <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
+                </span>
+                      </a>
+                  </div>
+              </li>
+          </div>
+
+        <div ng-show="type_lua" style="margin-top: 10px;float: left;width: 100%">
+          <div class="table_title" style="margin-bottom:2px;">
+            LuaCode
+          </div>
+          <div style="width: 100%;float: left">
+            <section>
+              <div  ui-ace="{mode: 'lua',theme:'crimson_editor',onLoad:aceLoaded ,onChange: aceChanged,useWrapMode : true,workerPath:'https://cdn.rawgit.com/ajaxorg/ace-builds/master/src-min-noconflict/'}"  style="width: 100%;float: left;border: 1px solid gray">
+
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="table_test">
+          <div style="width: 100%;float: left;margin-bottom: 20px" ng-show="testArea">
+             <textarea rows="10" ng-model="$root.testResults" style="border: 1px solid gainsboro;width: 100%;" ng-style="error">
+               {{testResults}}
+             </textarea>
+          </div>
+          <a class="kuiButton kuiButton--primary Button--big--test " ng-click="testTask()" >test</a>
+        </div>
+      </div>
+      <div class="table_3">
+        <div style="padding-bottom: 10px">
+          <select ng-model="$root.ConfigName" style="width: 150px;font-size:17px" ng-change="configChange(ConfigName)">
+            <option value="Elasticsearch">Elasticsearch</option>
+            <option value="InfluxDb">InfluxDb</option>
+            <option value="Kafka">Kafka</option>
+          </select>
+        </div>
+        <div ng-show="elasticsearch">
+          <div class="table_line">
+            <div  class="table_title">
+              <div style="float: left">Hosts</div>
+              <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+            </div>
+            <div  class="table_title">
+              <input type="text" ng-model="$root.esHosts" style="width: 100%"  ng-focus="focus(export_esHosts,'esHosts','mycolor3')" ng-blur="blur(export_esHosts,'esHosts','mycolor3')" ng-style="mycolor3">
+            </div>
+          </div>
+          <div style="width: 100%;float: left">
+            <div style="width: 50%;float: left">
+              <div style="width: 100%;float: left">
+                <div style="float: left">Index</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+              <div style="width: 100%;float: left">
+                <input style="width: 85%;" type="text" ng-model="$root.esIndex" ng-focus="focus('my_index-%{+2006.01.02}','esIndex','mycolor4')" ng-blur="blur('my_index-%{+2006.01.02}','esIndex','mycolor4')" ng-style="mycolor4">
+              </div>
+              <div style="width: 100%;float: left;margin-top: 15px">
+                <div style="float: left">Type</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+              <div style="width: 100%;float: left">
+                <input style="width: 85%;" type="text" ng-model="$root.esType" ng-focus="focus('MyType','esType','mycolor5')" ng-blur="blur('MyType','esType','mycolor5')" ng-style="mycolor5">
+              </div>
+            </div>
+            <div style="width: 50%;float: left">
+              <div style="width: 100%;float: left">
+                Mapping
+              </div>
+              <div style="width: 100%;float: left">
+                <textarea rows="4" ng-model="$root.esMapping" style="border: 1px solid gainsboro;width: 100%" ng-focus="focus2('Mapping','mycolor6')" ng-focus="blur2('Mapping','mycolor6')" ng-style="mycolor6">
+                   {{Mapping}}
+                </textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-show="influxdb">
+          <div class="table_line">
+            <div  class="table_title">
+              <div style="width: 35%;float: left">
+                <div style="float: left">Host</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+              <div style="width: 35%;float: left">
+                <div style="float: left">DBName</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+              <div style="width: 30%;float: left">
+                <div style="float: left">Interval</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+            </div>
+            <div  class="table_title">
+              <div style="width: 35%;float: left">
+                <input type="text" ng-model="$root.influxHosts" style="width: 80%"  ng-focus="focus(export_influxHosts,'influxHosts','mycolor7')" ng-blur="blur(export_influxHosts,'influxHosts','mycolor7')" ng-style="mycolor7">
+              </div>
+              <div style="width: 35%;float: left">
+                <input type="text" ng-model="$root.influxDBName" style="width: 60%"  ng-focus="focus(export_influxDBName,'influxDBName','mycolor8')" ng-blur="blur(export_influxDBName,'influxDBName','mycolor8')" ng-style="mycolor8">
+              </div>
+              <div style="width: 30%;float: left">
+                <input type="text" ng-model="$root.influxInterval" style="width: 70%"  ng-focus="focus(30,'influxInterval','mycolor9')" ng-blur="blur(30,'influxInterval','mycolor9')" ng-style="mycolor9">
+              </div>
+            </div>
+          </div>
+          <div  class="table_title" style="margin-top: 10px;margin-bottom: 25px;font-size:15px">
+            Measurments
+            <a  ng-click="plusinfluxdb()" class="kuiButton kuiButton--primary ">
+              <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
+              </span>
+            </a>
+          </div>
+
+          <li ng-repeat="(key,value) in influxdb_array track by $index">
+            <div style="padding-top: 15px;padding-bottom:15px;width: 100%;height:auto;float: left;border-top:1px solid #6EADC1;">
+              <div class="table_line">
+                <div  class="table_title">
+                  <div style="width: 35%;float: left">
+                    <div style="float: left">Measurment</div>
+                    <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(optional)</div>
+                  </div>
+                  <div style="width: 35%;float: left">
+                    <div style="float: left">AggregationTarget</div>
+                    <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+                  </div>
+                  <div style="width: 30%;float: left">
+                    <div style="float: left">Timestamp</div>
+                    <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(optional)</div>
+                  </div>
+                </div>
+                <div  class="table_title">
+                  <div style="float: left;width: 70%;">
+                    <div style="float:left;width: 25%;">
+                      <ng-form name="filename">
+                        <input type="text" ng-model="$root.influxdb_array[key].PreMeasurment" name="file_name" style="width: 94%;float:left;" ng-pattern="/^[a-z，A-Z，0-9，-，_]*$/">
+                        <span ng-show="rules(filename.file_name.$error.pattern,'measurment')"></span>
+                      </ng-form>
+                      <div style="width: 6%;float:left;margin-top:6px">_</div>
+                    </div>
+                    <div style="width: 25%;float:left">
+                      <select  ng-model="$root.influxdb_array[key].Measurment" style="width: 94%;float:left">
+                        <option >_default</option>
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                      <div style="width: 6%;float:left;margin-top:6px">_</div>
+                    </div>
+                    <select  ng-model="$root.influxdb_array[key].Target" style="width: 25%;float:left;">
+                      <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                    </select>
+                  </div>
+                  <div style="float: left;width: 30%;">
+                    <select  ng-model="$root.influxdb_array[key].Timestamp" style="width: 70%">
+                      <option >_default</option>
+                      <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div style="width: 100%;float: left;margin-bottom: 5px;">
+                <div  style="float: left;width: 100%;">
+                  <div style="width: 50%;float: left;padding-top:20px;">
+                    <div style="float: left;margin-right:15px;">Aggregations</div>
+                    <input type="checkbox"  style="float:left;" ng-click="selectAll(key)"/>
+                    <div style="float:left">all</div>
+                  </div>
+                  <div style="width: 45%;float: left;padding-top:20px;">
+                    <div style="float:left;width:50px">
+                      Tags
+                    </div>
+                    <a  ng-click="plusTags(key)" class=" kuiButton--primary Button--tag ">
+                        <span class="kuiButton--icon kuiButton__icon kuiIcon fa-plus">
+                        </span>
+                    </a>
+                    <a  ng-click="minusTags(key)" class=" kuiButton--primary--del Button--tag ">
+                        <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
+                        </span>
+                    </a>
+                  </div>
+                  <div style="float: left;width: 5%;margin-bottom:20px;">
+                    <a  ng-click="minusinfluxdb($index)" class="kuiButton kuiButton--primary--del ">
+                     <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
+                     </span>
+                    </a>
+                  </div>
+                </div>
+                <div style="float: left;width: 100%;">
+                  <div style="float: left;width: 50%;margin-top:5px;">
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.cnt" ng-click='selectOne("cnt",key)' style="float:left"/> <div style="margin-right:8px;float:left">cnt</div>
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.sum" ng-click='selectOne("sum",key)' style="float:left"/> <div style="margin-right:8px;float:left">sum</div>
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.avg" ng-click='selectOne("avg",key)' style="float:left"/> <div style="margin-right:8px;float:left">avg</div>
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p99" ng-click='selectOne("p99",key)' style="float:left"/> <div style="margin-right:8px;float:left">p99</div>
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p90" ng-click='selectOne("p90",key)' style="float:left"/> <div style="margin-right:8px;float:left">p90</div>
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.p50" ng-click='selectOne("p50",key)' style="float:left"/> <div style="margin-right:8px;float:left">p50</div>
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.max" ng-click='selectOne("max",key)' style="float:left"/> <div style="margin-right:8px;float:left">max</div>
+                    <input type="checkbox" ng-checked="influxdb_array[key].Aggregations.min" ng-click='selectOne("min",key)' style="float:left"/> <div style="margin-right:8px;float:left">min</div>
+                  </div>
+                  <div style="float: left;width: 50%;">
+                    <div ng-repeat="(key2,value2) in influxdb_array[key]['Tags'] track by $index" style="float: left;margin-left:1%;margin-top:2px;width:32%">
+                      <select  ng-model="influxdb_array[key]['Tags'][key2]" style="width: 100%">
+                        <option ng-repeat="option in fields_array track by $index" value="{{option.Name}}">{{option.Name}}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+        </div>
+
+        <div ng-show="kafka">
+          <div class="table_line">
+            <div  class="table_title">
+              <div style="width:70%;float:left">
+                <div style="float: left">brokers</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+              <div style="width:30%;float: left;">
+                <div style="float: left">Topic</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
+              </div>
+            </div>
+            <div  class="table_title">
+              <div style="width:70%;float:left">
+                <input type="text" ng-model="$root.kafkaBrokers" style="width: 90%"  ng-focus="focus(export_kafkaBrokers,'kafkaHosts','mycolor3')" ng-blur="blur(export_kafkaBrokers,'kafkaHosts','mycolor3')" ng-style="mycolor3">
+              </div>
+              <div style="width:30%;float: left;">
+                <input type="text" ng-model="$root.kafkaTopic" style="width: 100%" >
+              </div>
+            </div>
+          </div>
+
+          <div class="table_line">
+            <div  class="table_title">
+              <div style="width:26%;float:left">
+                <div style="float: left">MaxMessageBytes</div>
+              </div>
+              <div style="width:26%;float: left;">
+                <div style="float: left">Timeout</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(s)</div>
+              </div>
+              <div style="width:26%;float:left">
+                <div style="float: left">Retry.Max</div>
+              </div>
+              <div style="width:22%;float: left;">
+                <div style="float: left">Retry.Backoff</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(s)</div>
+              </div>
+            </div>
+            <div  class="table_title">
+              <div style="width:26%;float:left">
+                <input type="text" ng-model="$root.kafkaMaxMessageBytes" style="width: 80%">
+              </div>
+              <div style="width:26%;float: left;">
+                <input type="text" ng-model="$root.kafkaTimeout" style="width: 80%">
+              </div>
+              <div style="width:26%;float:left">
+                <input type="text" ng-model="$root.kafkaRetry.RetryMax" style="width: 80%">
+              </div>
+              <div style="width:22%;float: left;">
+                <input type="text" ng-model="$root.kafkaRetry.RetryBackoff" style="width: 100%">
+              </div>
+            </div>
+          </div>
+
+          <div class="table_line">
+            <div  class="table_title">
+              <div style="width:26%;float: left;">
+                <div style="float: left">RequiredAcks</div>
+              </div>
+              <div style="width:26%;float:left">
+                <div style="float: left">Compression</div>
+              </div>
+              <div style="width:26%;float: left;">
+                <div style="float: left">Partitioner</div>
+              </div>
+              <div style="width:22%;float: left;">
+                <div style="float: left">Return.Errors</div>
+              </div>
+            </div>
+            <div  class="table_title">
+              <div style="width:26%;float: left;">
+                <select ng-model="$root.kafkaRequiredAcks" style="width: 80%;">
+                  <option value="0">NoResponse</option>
+                  <option value="1">WaitForLocal</option>
+                  <option value="-1">WaitForAll</option>
+                </select>
+              </div>
+              <div style="width:26%;float:left">
+                <select ng-model="$root.kafkaCompression" style="width: 80%;">
+                  <option value="0">CompressionNone</option>
+                  <option value="1">CompressionGZIP</option>
+                  <option value="2">CompressionSnappy</option>
+                  <option value="3">CompressionLZ4</option>
+                </select>
+              </div>
+              <div style="width:26%;float: left;">
+                <select ng-model="$root.kafkaPartitioner" style="width: 80%;">
+                  <option value="RandomPartitioner">RandomPartitioner</option>
+                  <option value="HashPartitioner">HashPartitioner</option>
+                  <option value="ManualPartitioner">ManualPartitioner</option>
+                  <option value="RoundRobinPartitioner">RoundRobinPartitioner</option>
+                </select>
+              </div>
+              <div style="width:22%;float: left;">
+                <input value="Errors" ng-model="$root.kafkaReturnErrors" type="checkbox">
+              </div>
+            </div>
+          </div>
+
+          <div class="table_line">
+            <div  class="table_title">
+              <div style="width:26%;float:left">
+                <div style="float: left">Flush.Bytes</div>
+              </div>
+              <div style="width:26%;float: left;">
+                <div style="float: left">Flush.Messages</div>
+              </div>
+              <div style="width:26%;float: left;">
+                <div style="float: left">Flush.Frequency</div>
+                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(s)</div>
+              </div>
+              <div style="width:22%;float: left;">
+                <div style="float: left">Flush.MaxMessages</div>
+              </div>
+            </div>
+            <div  class="table_title">
+              <div style="width:26%;float:left">
+                <input type="text" ng-model="$root.kafkaFlush.FlushBytes" style="width: 80%">
+              </div>
+              <div style="width:26%;float: left;">
+                <input type="text" ng-model="$root.kafkaFlush.FlushMessages" style="width: 80%">
+              </div>
+              <div style="width:26%;float: left;">
+                <input type="text" ng-model="$root.kafkaFlush.FlushFrequency" style="width: 80%">
+              </div>
+              <div style="width:22%;float: left;">
+                <input type="text" ng-model="$root.kafkaFlush.FlushMaxMessages" style="width: 100%">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="table_4">
+        <a class="kuiButton kuiButton--primary Button--big " ng-click="updateTask()" >update</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
