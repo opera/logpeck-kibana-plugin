@@ -1,4 +1,5 @@
-import initRoute from './server/routes/init';
+import local from './server/routes/local-request';
+import remote from './server/routes/remote-request';
 
 export default function (kibana) {
   return new kibana.Plugin({
@@ -24,7 +25,8 @@ export default function (kibana) {
 
     init(server, options) { // eslint-disable-line no-unused-vars
       // Add server routes and initialize the plugin here
-      initRoute(server);
+      local(server);
+      remote(server);
     }
   });
 }

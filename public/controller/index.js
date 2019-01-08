@@ -2,26 +2,17 @@
 import { uiModules } from 'ui/modules';
 import * as myConfig from "../logpeckConfig";
 
-var app=uiModules.get("app",['ui.ace']);
+var app=uiModules.get("app",[]);
 app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $interval, $timeout) {
 
-  //Init
   $scope.showEdit={};
   var init=function(){
-    $rootScope.mycolor1={"color":"#e4e4e4"};
-    $rootScope.mycolor2={"color":"#e4e4e4"};
-    $rootScope.mycolor3={"color":"#e4e4e4"};
-    $rootScope.mycolor4={"color":"#e4e4e4"};
-    $rootScope.mycolor5={"color":"#e4e4e4"};
-    $rootScope.mycolor6={"color":"#e4e4e4"};
-    $rootScope.mycolor7={"color":"#e4e4e4"};
-    $rootScope.mycolor8={"color":"#e4e4e4"};
-    $rootScope.mycolor9={"color":"#e4e4e4"};
     $rootScope.page="init";
     $scope.visible=false;
     $scope.gvisible=false;
 
     $scope.showGroup=false;
+    $scope.IP="";                //addhost:   input IP
     $scope.logstat1=true;
     $scope.logstat2=false;
     $rootScope.useTemplate=false;
@@ -29,66 +20,127 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
     $http({
       method: 'POST',
       url: '../api/logpeck/init',
-      data: {local_ip: myConfig.local_ip},
+      data: {},
     }).then(function successCallback(response) {
       $scope.allList=[];
-      for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-        $scope.allList.push(response['data']['hits']['hits'][id]['_id']);
-        if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
-          if(response['data']['hits']['hits'][id]['_source']['version']==myConfig.version){
-            status[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
+      for (var id in response.data) {
+        $scope.allList.push(response.data[id].data.host);
+        if(response.data[id].data.version){
+          if(response.data[id].data.version==myConfig.version){
+            console.log(response.data[id].data.host);
+            $rootScope.status[response.data[id].data.host]="#2f99c1";
           }else{
-            status[response['data']['hits']['hits'][id]['_id']]="#F39C12";
+            $rootScope.status[response.data[id].data.host]="#F39C12";
           }
         }else{
-          status[response['data']['hits']['hits'][id]['_id']]="#e8488b";
+          $rootScope.status[response.data[id].data.host]="#e8488b";
         }
       }
-      if(task_ip_exist!=false){
-        $scope.T_array=task_ip;
+      if($rootScope.task_ip_exist!=false){
+        $scope.T_array=$rootScope.task_ip;
         $scope.visible=true;
         $scope.gvisible=false;
 
-        task_ip_exist=false;
-        task_ip=[];
-      }
-      else {
+        $rootScope.task_ip_exist=false;
+        $rootScope.task_ip=[];
+      } else {
         $rootScope.T_ip="";
         $scope.T_array = [];            //index:   tasklist
         $scope.visible = false;
         $scope.gvisible=true;
       }
-      $scope.search_group();
+      $scope.listGroup();
       if($rootScope.GroupName==undefined){
         $rootScope.GroupName="All";
         $scope.T_IpList=$scope.allList;
       }else if($rootScope.GroupName=="All"){
         $scope.T_IpList=$scope.allList;
       }else{
-        $scope.listGroup($rootScope.GroupName);
+        $scope.listGroupMember($rootScope.GroupName);
       }
-
     }, function errorCallback() {
       console.log('err');
     });
   }
   init();
 
-  $scope.search_group =function(){
+  //Add Host
+  $scope.addHost = function () {
+    if ($scope.IP == ""||$scope.IP==undefined) {
+      $scope.addHostResult = "host not exist";
+    } else {
+      $http({
+        method: 'POST',
+        url: '../api/logpeck/addHost',
+        data: {ip: $scope.IP},
+      }).then(function successCallback(response) {
+        if (response.data.err == null) {
+          $scope.allList.push($scope.IP);
+          $scope.T_array=[];
+          $scope.logstat1=false;
+          $scope.logstat2=true;
+          $scope.indexLog="Add success";
+
+          $http({
+            method: 'POST',
+            url: '../api/logpeck/version',
+            data: {ip: $scope.IP},
+          }).then(function successCallback(response) {
+            console.log(response);
+            if (response.data.data) {
+              if(response['data']== myConfig.version){
+                $rootScope.status[$scope.IP]="#2f99c1";
+              } else{
+                $rootScope.status[$scope.IP]="#F39C12";
+              }
+            } else {
+              $rootScope.status[$scope.IP]="#e8488b";
+            }
+          }, function errorCallback() {
+            console.log('err');
+          });
+
+        }
+        else{
+          $scope.logstat1=true;
+          $scope.logstat2=false;
+          $scope.indexLog=response.data.err;
+        }
+      }, function errorCallback() {
+        console.log('err');
+      });
+    }
+  };
+
+  //remove host
+  $scope.removeHost = function ($event) {
+    if(!confirm("Remove a host")){
+      return;
+    }
     $http({
       method: 'POST',
-      url: '../api/logpeck/searchGroup',
-      data: {local_ip: myConfig.local_ip},
+      url: '../api/logpeck/removeHost',
+      data:{ip: event.target.getAttribute('name')},
     }).then(function successCallback(response) {
-      $scope.GroupMap={};
-      $scope.GroupMap=response['data'];
-      $scope.GroupList=[];
-      for(var k in $scope.GroupMap){
-        $scope.GroupList.push(k);
-        $scope.showEdit[k]=true;
+      console.log(response);
+      $scope.indexLog ='';
+      if (response.data.err == null) {
+        /*
+        var new_arr = [];
+        for (var id=0 ; id<$scope.T_IpList.length ; id++) {
+          if(response.data.data != $scope.T_IpList[id]) {
+            new_arr.push($scope.T_IpList[id]);
+          }
+        }*/
+
+        $scope.T_IpList = response.data.data;
+        $scope.T_array = [];
+      } else {
+        $scope.logstat1=true;
+        $scope.logstat2=false;
+        $scope.indexLog = response.data.err;
       }
     }, function errorCallback() {
-      console.log('err');
     });
   };
 
@@ -102,19 +154,18 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
       $http({
         method: 'POST',
         url: '../api/logpeck/addGroup',
-        data: {Group: $scope.Group,local_ip: myConfig.local_ip},
+        data: {Group: $scope.Group},
       }).then(function successCallback(response) {
-        if (response['data']['result'] == "Add group success") {
+        if (response.data.err == null) {
           $scope.GroupList.push($scope.Group);
           $scope.showEdit[$scope.Group]=true;
           $scope.logstat1=false;
           $scope.logstat2=true;
           $scope.indexLog="Add group success";
-        }
-        else{
+        } else {
           $scope.logstat1=true;
           $scope.logstat2=false;
-          $scope.indexLog=response['data']['result'];
+          $scope.indexLog=response.data.err;
         }
       }, function errorCallback() {
         console.log('err');
@@ -129,47 +180,69 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
     $http({
       method: 'POST',
       url: '../api/logpeck/removeGroup',
-      data:{Group: name,local_ip: myConfig.local_ip},
+      data:{Group: name},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
-      if(response['data']['result'] == "Remove group success"){
+      if(response.data.err == null){
+        /*
         var list = [];
         for (var id=0 ; id<$scope.GroupList.length ; id++) {
           if(name!=$scope.GroupList[id]) {
             list.push($scope.GroupList[id]);
           }
         }
-        $scope.T_IpList=[];
+        */
         $scope.showGroup=false;
-        $scope.GroupList=list;
-      }
-      else{
+        $scope.GroupList=response.data.data;
+      } else {
         $scope.logstat1=true;
         $scope.logstat2=false;
-        $scope.indexLog=response['data']['result'];
+        $scope.indexLog=response.data.err;
       }
     }, function errorCallback() {
     });
   };
 
-  $scope.listGroup = function (name) {
+  $scope.listGroup =function(){
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/listGroup',
+      data: {},
+    }).then(function successCallback(response) {
+      if(response.data.err == null) {
+        $scope.GroupMap = [];
+        $scope.GroupMap = response.data.data;
+        $scope.GroupList = [];
+        for (var i in response.data.data) {
+          $scope.GroupList.push(response.data.data[i]);
+          $scope.showEdit[response.data.data[i]] = true;
+        }
+      } else {
+        $scope.logstat1=true;
+        $scope.logstat2=false;
+        $scope.indexLog=response.data.err;
+      }
+    }, function errorCallback() {
+      console.log('err');
+    });
+  };
+
+  $scope.listGroupMember = function (name) {
     $scope.indexLog="";
     $rootScope.GroupName=name;
     $http({
       method: 'POST',
-      url: '../api/logpeck/searchGroup',
-      data:{local_ip: myConfig.local_ip},
+      url: '../api/logpeck/listGroupMember',
+      data:{Group:$rootScope.GroupName},
     }).then(function successCallback(response) {
-      $scope.GroupMap={};
-      $scope.GroupMap=response['data'];
-      $scope.GroupList=[];
-      for(var k in $scope.GroupMap){
-        $scope.GroupList.push(k);
-        $scope.showEdit[k]=true;
+      if(response.data.err == null) {
+        $scope.T_IpList = response.data.data;
+        $scope.showGroup = false;
+      } else {
+        $scope.logstat1=true;
+        $scope.logstat2=false;
+        $scope.indexLog=response.data.err;
       }
-      $scope.T_IpList=$scope.GroupMap[$rootScope.GroupName];
-      console.log($scope.T_IpList);
-      $scope.showGroup=false;
     }, function errorCallback() {
       console.log('err');
     });
@@ -187,9 +260,23 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
     for(var i=0;i<$scope.T_IpList.length;i++){
       $scope.GroupCheck[$scope.T_IpList[i]]=false;
     }
-    for(var i=0;i<$scope.GroupMap[name].length;i++){
-      $scope.GroupCheck[$scope.GroupMap[name][i]]=true;
-    }
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/listGroupMember',
+      data:{Group:$rootScope.GroupName},
+    }).then(function successCallback(response) {
+      if(response.data.err == null) {
+        for(var i=0;i<response.data.data.length;i++){
+          $scope.GroupCheck[response.data.data[i]]=true;
+        }
+      } else {
+        $scope.logstat1=true;
+        $scope.logstat2=false;
+        $scope.indexLog=response.data.err;
+      }
+    }, function errorCallback() {
+      console.log('err');
+    });
   };
 
   $scope.updateGroup = function (name) {
@@ -208,17 +295,15 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
       url: '../api/logpeck/updateGroup',
       data: {GroupMembers:list,Group:$rootScope.GroupName,local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
-      if (response['data']['result'] == "update group success") {
+      if (response.data.err == null) {
         $scope.logstat1=false;
         $scope.logstat2=true;
         $scope.indexLog="update group success";
-        $scope.GroupMap[$rootScope.GroupName]=$scope.T_IpList;
-      }
-      else{
+      } else {
         $scope.T_IpList=[];
         $scope.logstat1=true;
         $scope.logstat2=false;
-        $scope.indexLog=response['data']['result'];
+        $scope.indexLog=response.data.err;
       }
     }, function errorCallback() {
       console.log('err');
@@ -237,52 +322,6 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
     }
   };
 
-  //refresh
-  var timer = $interval(function(){
-    var t = [];
-
-    $http({
-      method: 'POST',
-      url: '../api/logpeck/refresh',
-      data:{local_ip: myConfig.local_ip},
-    }).then(function successCallback(response2) {
-
-    }, function errorCallback(err) {
-      console.log('err2');
-    });
-
-    $http({
-      method: 'POST',
-      url: '../api/logpeck/init',
-      data: {local_ip: myConfig.local_ip},
-    }).then(function successCallback(response) {
-      for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-        if(response['data']['hits']['hits'][id]['_source']['exist']=="true"){
-          if(response['data']['hits']['hits'][id]['_source']['version']==myConfig.version){
-            t[response['data']['hits']['hits'][id]['_id']]="#2f99c1";
-          }else{
-            t[response['data']['hits']['hits'][id]['_id']]="#F39C12";
-          }
-        }else{
-          t[response['data']['hits']['hits'][id]['_id']]="#e8488b";
-        }
-      }
-    }, function errorCallback(err) {
-      console.log('err1');
-    });
-    status = t;
-  },1,1);
-  $scope.$on('$destroy',function(){
-    $interval.cancel(timer);
-  });
-  $scope.set_color = function (ip,click_ip) {
-    if(ip==click_ip){
-      return { color: status[ip], backgroundColor:"#d4d4d4"};
-    }else{
-      return { color: status[ip],backgroundColor: "#e4e4e4" };
-    }
-  }
-
   //A host task list
   $scope.listTask = function (name) {
     $rootScope.T_ip=name;
@@ -291,18 +330,25 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
     $rootScope.list(callback_listTask);
   }
   function callback_listTask(response) {
-    if(response["err"]==null){
+    if(response.err==null){
       $scope.visible = true;
       $scope.gvisible=false;
-      $scope.T_array=response["result"];
+      $scope.T_array=response.data;
     }else {
       $scope.logstat1=true;
       $scope.logstat2=false;
-      $scope.indexLog =response["err"];
+      $scope.indexLog =response.err;
       $scope.T_array = [];
     }
   }
 
+  $scope.set_color = function (ip,click_ip) {
+    if(ip==click_ip){
+      return { color: $rootScope.status[ip], backgroundColor:"#d4d4d4"};
+    }else{
+      return { color: $rootScope.status[ip],backgroundColor: "#e4e4e4" };
+    }
+  }
 
   //Start Task
   $scope.startTask = function ($event) {
@@ -313,18 +359,23 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
       data: {Name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
-      if(response['data']['result']!="Start Success"){
-        $scope.indexLog =response['data']['result'];
+      if (response.data.err == null) {
+        if(response.data.data!="Start Success"){
+          $scope.indexLog = response.data.data;
+          $scope.logstat1=true;
+          $scope.logstat2=false;
+          // $scope.T_array[]
+        } else {
+          $scope.logstat1=false;
+          $scope.logstat2=true;
+          $scope.indexLog=response.data.data;
+          $scope.T_array[key]['stop']=false;
+          $scope.T_array[key]['start']=true;
+        }
+      } else {
+        $scope.indexLog = response.data.err;
         $scope.logstat1=true;
         $scope.logstat2=false;
-        // $scope.T_array[]
-      }
-      else{
-        $scope.logstat1=false;
-        $scope.logstat2=true;
-        $scope.indexLog="Start Success";
-        $scope.T_array[key]['stop']=false;
-        $scope.T_array[key]['start']=true;
       }
     }, function errorCallback() {
     });
@@ -340,17 +391,23 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
       data: {Name: $scope.T_array[key]['name'],ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
       $scope.indexLog ='';
-      if(response['data']['result']!="Stop Success"){
-        $scope.indexLog =response['data']['result'];
-        $scope.logstat1=true;
-        $scope.logstat2=false;
-      }
-      else{
-        $scope.logstat1=false;
-        $scope.logstat2=true;
-        $scope.indexLog="Stop Success";
-        $scope.T_array[key]['stop']=true;
-        $scope.T_array[key]['start']=false;
+      if (response.data.err == null) {
+        if (response.data.data != "Stop Success") {
+          $scope.indexLog = response.data.data;
+          $scope.logstat1 = true;
+          $scope.logstat2 = false;
+        }
+        else {
+          $scope.logstat1 = false;
+          $scope.logstat2 = true;
+          $scope.indexLog = response.data.data;
+          $scope.T_array[key]['stop'] = true;
+          $scope.T_array[key]['start'] = false;
+        }
+      } else {
+        $scope.indexLog = response.data.err;
+        $scope.logstat1 = true;
+        $scope.logstat2 = false;
       }
     }, function errorCallback() {
     });
@@ -367,85 +424,18 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
       url: '../api/logpeck/remove',
       data: {Name: event.target.getAttribute('name'),ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
-      if(response['data']['result']=="Remove Success") {
-        $rootScope.list(callback_listTask);
-      }else {
-        $scope.logstat1=true;
-        $scope.logstat2=false;
-        $scope.indexLog=response['data']['result'];
-      }
-    }, function errorCallback() {
-    });
-  };
-
-  //Add Host
-  $scope.addHost = function () {
-    if ($scope.IP == ""||$scope.IP==undefined) {
-      $scope.addHostResult = "host not exist";
-    }
-    else{
-      $http({
-        method: 'POST',
-        url: '../api/logpeck/addHost',
-        data: {ip: $scope.IP,local_ip: myConfig.local_ip},
-      }).then(function successCallback(response) {
-        if (response['data']['result'] == "Add success") {
-          $scope.allList.push($scope.IP);
-          $scope.T_array=[];
-          $scope.logstat1=false;
-          $scope.logstat2=true;
-          $scope.indexLog="Add success";
-
-          $http({
-            method: 'POST',
-            url: '../api/logpeck/version',
-            data: {ip: $scope.IP,local_ip: myConfig.local_ip},
-          }).then(function successCallback(response) {
-            if(response['data']==myConfig.version){
-              status[$scope.IP]="#2f99c1";
-            }else if(response['data']=="error"){
-              status[$scope.IP]="#e8488b";
-            } else{
-              status[$scope.IP]="#F39C12";
-            }
-          }, function errorCallback() {
-            console.log('err');
-          });
-
+      if (response.data.err == null) {
+        if (response.data.data == "Remove Success") {
+          $rootScope.list(callback_listTask);
+        } else {
+          $scope.logstat1 = true;
+          $scope.logstat2 = false;
+          $scope.indexLog = response.data.data;
         }
-        else{
-          $scope.logstat1=true;
-          $scope.logstat2=false;
-          $scope.indexLog=response['data']['result'];
-        }
-      }, function errorCallback() {
-        console.log('err');
-      });
-    }
-  };
-  //remove host
-  $scope.removeHost = function ($event) {
-    if(!confirm("Remove a host")){
-      return;
-    }
-    $http({
-      method: 'POST',
-      url: '../api/logpeck/removeHost',
-      data:{ip: event.target.getAttribute('name'),local_ip: myConfig.local_ip},
-    }).then(function successCallback(response) {
-      $scope.indexLog ='';
-      if(response['data']['result'] != "err"&&response['data']['result']!="Ip not exist"){
-        var new_arr = [];
-        for (var id=0 ; id<$scope.T_IpList.length ; id++) {
-          if(response['data']['result']!=$scope.T_IpList[id]) {
-            new_arr.push($scope.T_IpList[id]);
-          }
-        }
-        $scope.T_IpList=new_arr;
-        $scope.T_array=[];
-      }
-      else{
-        $scope.indexLog=response['data']['result'];
+      } else {
+        $scope.logstat1 = true;
+        $scope.logstat2 = false;
+        $scope.indexLog = response.data.err;
       }
     }, function errorCallback() {
     });
@@ -459,14 +449,14 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
       url: '../api/logpeck/list',
       data: {ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
-      if(response['data']["result"]==undefined) {
-        localStorage.setItem("update_ip", angular.toJson(response['data']["configs"][name]));
+      if(response.data.err == null) {
+        console.log(response.data.data);
+        localStorage.setItem("update_ip", angular.toJson(response.data.data.configs[name]));
         window.location.href = "#/updateTask";
-      }
-      else{
-        $scope.logstat1=true;
-        $scope.logstat2=false;
-        $scope.indexLog =response['data']['result'];
+      } else {
+        $scope.logstat1 = true;
+        $scope.logstat2 = false;
+        $scope.indexLog = response.data.err;
       }
     }, function errorCallback(err) {
       console.log('err');

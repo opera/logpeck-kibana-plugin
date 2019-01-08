@@ -260,29 +260,29 @@
     </div>
     <div class="container_2">
       <div class="table_1">
-          <div class="table_line">
-            <div class="table_title">
-              <div style="width: 30%;float: left">
-                <div style="float: left">Name</div>
-                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
-              </div>
-              <div style="width: 70%;float: left">
-                <div style="float: left">LogPath</div>
-                <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
-              </div>
+        <div class="table_line">
+          <div class="table_title">
+            <div style="width: 30%;float: left">
+              <div style="float: left">Name</div>
+              <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
             </div>
-            <div  class="table_title">
-              <div style="width: 30%;float: left">
-                {{Name}}
-              </div>
-              <div style="width: 70%;float: left">
-                <input list="Path" ng-keyup="keyUp()" ng-change="optionChange()" type="text" ng-model="$root.LogPath" style="width: 83%" >
-                <datalist id="Path">
-                  <option ng-repeat="index in path_array track by $index">{{LogPath}}{{index}}</option>
-                </datalist>
-              </div>
+            <div style="width: 70%;float: left">
+              <div style="float: left">LogPath</div>
+              <div style="font-size: 12px;color:#6EADC1 ;float: left;margin-left: 10px">(required)</div>
             </div>
           </div>
+          <div  class="table_title">
+            <div style="width: 30%;float: left">
+              {{Name}}
+            </div>
+            <div style="width: 70%;float: left">
+              <input list="Path" ng-keyup="keyUp()" ng-change="optionChange()" type="text" ng-model="$root.LogPath" style="width: 83%" >
+              <datalist id="Path">
+                <option ng-repeat="index in path_array track by $index">{{LogPath}}{{index}}</option>
+              </datalist>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="table_2">
         <div  class="table_title">
@@ -326,26 +326,26 @@
         </div>
 
         <div style="width: 51%;float: left">
-              <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
-                  <div style="width: auto;float: left">
-                      name
-                    <ng-form name="filename">
-                      <input type="text" ng-model="$root.fields_array[key].Name" name="file_name" style="width: 120px" ng-pattern="/^[a-z，A-Z，0-9，-，_]*$/">
-                      <span ng-show="rules(filename.file_name.$error.pattern,key)"></span>
-                    </ng-form>
-                  </div>
-                  <div  style="width: auto;float: left" ng-show="type">
-                      value
-                      <input type="text" ng-model="$root.fields_array[key].Value" style="width: 120px">
-                  </div>
-                  <div style="width: auto;float: left;margin-left:10px">
-                      <a  ng-click="minusfields($index)" class="Button--tag kuiButton--primary--del ">
+          <li ng-repeat="(key,value) in fields_array track by $index" style="margin-top:3px;width: 100%;float: left">
+            <div style="width: auto;float: left">
+              name
+              <ng-form name="filename">
+                <input type="text" ng-model="$root.fields_array[key].Name" name="file_name" style="width: 120px" ng-pattern="/^[a-z，A-Z，0-9，-，_]*$/">
+                <span ng-show="rules(filename.file_name.$error.pattern,key)"></span>
+              </ng-form>
+            </div>
+            <div  style="width: auto;float: left" ng-show="type">
+              value
+              <input type="text" ng-model="$root.fields_array[key].Value" style="width: 120px">
+            </div>
+            <div style="width: auto;float: left;margin-left:10px">
+              <a  ng-click="minusfields($index)" class="Button--tag kuiButton--primary--del ">
                 <span class="kuiButton--icon kuiButton__icon kuiIcon fa-minus">
                 </span>
-                      </a>
-                  </div>
-              </li>
-          </div>
+              </a>
+            </div>
+          </li>
+        </div>
 
         <div ng-show="type_lua" style="margin-top: 10px;float: left;width: 100%">
           <div class="table_title" style="margin-bottom:2px;">

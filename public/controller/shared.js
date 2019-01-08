@@ -2,14 +2,23 @@
 import { uiModules } from 'ui/modules';
 import * as myConfig from "../logpeckConfig";
 
+import '../../bower_components/ace-builds/src-min-noconflict/ace.js';
+import '../../bower_components/ace-builds/src-min-noconflict/mode-lua.js';
+import '../../bower_components/ace-builds/src-min-noconflict/theme-crimson_editor.js';
+import '../../bower_components/angular-ui-ace/ui-ace.js';
+
 var app=uiModules.get("app",['ui.ace']);
 app.run(function($rootScope, $route, $http) {
-  $rootScope.config_default_logpeck_ip = myConfig.default_logpeck_ip;
+  $rootScope.task_ip_exist=false;
+  $rootScope.task_ip=[];
+  $rootScope.status=[];
+
   $rootScope.export_esHosts=myConfig.export_esHosts;
   $rootScope.export_influxHosts=myConfig.export_influxHosts;
   $rootScope.export_influxDBName=myConfig.export_influxDBName;
   $rootScope.export_kafkaBrokers=myConfig.export_kafkaBrokers;
   $rootScope.export_kafkaTopic=myConfig.export_kafkaTopic;
+
   $rootScope.comply_rules=[];
   $rootScope.comply_rules["measurment"]=false;
   $rootScope.rules = function(rule_bool,key){
@@ -18,9 +27,9 @@ app.run(function($rootScope, $route, $http) {
     }else{
       $rootScope.comply_rules[key]=true;
     }
-    console.log($rootScope.comply_rules);
     return rule_bool;
   };
+
   //Change configName (Elasticsearch InfluxDb Kafka)
   $rootScope.configChange = function(configName){
     if(configName=="Elasticsearch"){
@@ -140,6 +149,7 @@ app.run(function($rootScope, $route, $http) {
   $rootScope.optionChange = function(){
     $rootScope.keyUp();
   };
+
   $rootScope.keyUp = function (){
     $http({
       method: 'POST',
@@ -149,12 +159,11 @@ app.run(function($rootScope, $route, $http) {
       },
     }).then(function successCallback(response) {
       $rootScope.path_array=[];
-      if(response['data']=="null"||response['data']=='open '+$rootScope.LogPath+'/: no such file or directory'){
+      if(response.data.data == "null"||response.data.data == 'open '+$rootScope.LogPath+'/: no such file or directory'){
         $rootScope.path_array=[];
-      }
-      else {
-        for (var id=0;id<response['data'].length;id++){
-          $rootScope.path_array.push(response['data'][id]);
+      } else {
+        for (var id=0;id<response.data.data.length;id++){
+          $rootScope.path_array.push(response.data.data[id]);
         }
       }
     }, function errorCallback() {
@@ -225,14 +234,18 @@ app.run(function($rootScope, $route, $http) {
           ip: $rootScope.T_ip
         },
       }).then(function successCallback(response) {
-        if(response['data']['result']==undefined) {
-          var obj = angular.fromJson(response['data']);
-          $rootScope.testResults=JSON.stringify(response['data'],null,4);
+        console.log(response);
+        console.log(response.toString());
+        if (response.data.err == null) {
+          if (response.data.data == "null") {
+
+          }
+          var tmp = JSON.parse(response.data.data);
+          $rootScope.testResults=JSON.stringify(tmp, null, 4);
           $rootScope.error={"color":"#2d2d2d"};
-        }
-        else {
+        } else {
           $rootScope.testArea=true;
-          $rootScope.testResults = response['data']['result'];
+          $rootScope.testResults = response.data.err;
           $rootScope.error={"color":"#ff0000"};
         }
       }, function errorCallback(err) {
@@ -280,18 +293,16 @@ app.run(function($rootScope, $route, $http) {
           local_ip: myConfig.local_ip,
         },
       }).then(function successCallback(response) {
-        if (response['data']['result'] == "Add success") {
+        if (response.data.err == null) {
           $rootScope.TemplateList.push($rootScope.template_name);
-          $rootScope.testResults = response['data']['result'];
+          $rootScope.testResults = "Add success";
           $rootScope.template_name ="";
-        }
-        else{
+        } else {
           $rootScope.testArea=true;
-          $rootScope.testResults = response['data']['result'];
+          $rootScope.testResults = response.data.err;
           $rootScope.error={"color":"#ff0000"};
         }
-        for(var key in $rootScope.influxdb_array)
-        {
+        for(var key in $rootScope.influxdb_array) {
           var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
           for(var key2 in $rootScope.influxdb_array[key]["Aggregations"]){
             Aggregations[$rootScope.influxdb_array[key]["Aggregations"][key2]]=true;
@@ -303,32 +314,32 @@ app.run(function($rootScope, $route, $http) {
       });
     }
   };
+
   $rootScope.removeTemplate = function ($event) {
+    var template_name = event.target.getAttribute('name');
+    if(!confirm("Remove " + template_name)){
+      return;
+    }
     $rootScope.testArea=false;
     $http({
       method: 'POST',
       url: '../api/logpeck/removeTemplate',
-      data:{template_name: event.target.getAttribute('name'),local_ip: myConfig.local_ip},
+      data:{template_name: template_name},
     }).then(function successCallback(response) {
-      if(response['data']['result'] != "err"){
-        var new_arr = [];
-        for (var id=0 ; id<$rootScope.TemplateList.length ; id++) {
-          if(response['data']['result']!=$rootScope.TemplateList[id]) {
-            new_arr.push($rootScope.TemplateList[id]);
-          }
-        }
-        $rootScope.TemplateList=new_arr;
-      }
-      else{
+      if (response.data.err == null) {
+        $rootScope.TemplateList=response.data.data;
+      } else {
         $rootScope.testArea=true;
-        $rootScope.testResults = response['data']['result'];
+        $rootScope.testResults = response.data.err;
         $rootScope.error={"color":"#ff0000"};
       }
     }, function errorCallback() {
     });
   };
 
+  /*
   $rootScope.aceLoaded = function(_editor){
+    console.log("*******************");
     var _session = _editor.getSession();
     _session.setValue($rootScope.LuaString);
     _session.on("change", function(){ $rootScope.LuaString=_session.getValue()});
@@ -337,6 +348,7 @@ app.run(function($rootScope, $route, $http) {
       _session.setValue($rootScope.LuaString);
     }
   };
+*/
 
   //Apply a template
   $rootScope.applyTemplate = function ($event){
@@ -346,15 +358,14 @@ app.run(function($rootScope, $route, $http) {
       url: '../api/logpeck/applyTemplate',
       data:{template_name: event.target.getAttribute('name'),local_ip: myConfig.local_ip},
     }).then(function successCallback(response) {
-      if(response['data']['result']==undefined) {
-        var task=response['data']['_source'];
+      console.log(response);
+      if (response.data.err == null) {
         $rootScope.useTemplate=true;
-        $rootScope.show_task(task);
-        $rootScope.updateLua();
-
-      }else{
+        $rootScope.show_task(response.data.data);
+        //$rootScope.updateLua();
+      } else {
         $rootScope.testArea=true;
-        $rootScope.testResults = response['data']['result'];
+        $rootScope.testResults = response.data.err;
         $rootScope.error={"color":"#ff0000"};
       }
 
@@ -367,13 +378,13 @@ app.run(function($rootScope, $route, $http) {
     $rootScope.list(Callback);
   }
   function Callback(response) {
-    if(response["err"]==null){
-      task_ip = response["result"];
-      task_ip_exist = true;
+    if(response.err==null){
+      $rootScope.task_ip = response.data;
+      $rootScope.task_ip_exist = true;
       window.location.href = "#/";
     }else {
       $rootScope.testArea=true;
-      $rootScope.testResults = response["err"];
+      $rootScope.testResults = response.err;
       $rootScope.error={"color":"#ff0000"};
     }
   }
@@ -634,27 +645,27 @@ app.run(function($rootScope, $route, $http) {
       url: '../api/logpeck/list',
       data: {ip: $rootScope.T_ip},
     }).then(function successCallback(response) {
-      if(response['data']["result"]==undefined) {
+      console.log
+      if (response.data.err == null) {
         var name;
         var stat;
         var start;
         var logpath;
         var array=[];
-        for (var Name in response['data']['configs']) {
+        for (var Name in response.data.data.configs) {
           name=Name;
-          logpath=response['data']['configs'][Name]['LogPath'];
-          stat=response['data']['stats'][Name]['Stop'];
+          logpath=response.data.data.configs[Name]['LogPath'];
+          stat=response.data.data.stats[Name]['Stop'];
           start=!stat;
           array.push({name:name,logpath:logpath,stop:stat,start:start});
         }
-        Callback({result:array,err:null});
-      }
-      else{
-        Callback({result:null,err:response['data']['result']});
+        Callback({data:array,err:null});
+      } else {
+        Callback({data:null,err:response.data.err});
       }
     }, function errorCallback(err) {
       console.log('err');
-      Callback({result:null,err:err});
+      Callback({data:null,err:err});
     });
   };
 

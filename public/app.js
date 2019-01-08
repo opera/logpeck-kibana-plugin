@@ -17,11 +17,12 @@ import './controller/updateTask.js';
 import './controller/shared.js';
 
 import * as myConfig from './logpeckConfig.js';
-
+/*
 import React, {
   Component,
   Fragment,
 } from 'react';
+*/
 
 uiRoutes.enable();
 uiRoutes
@@ -34,14 +35,10 @@ uiRoutes
   controller : 'logpeckAdd',
   })
   .when('/updateTask', {
-    templateUrl : updateTask,
+    template : updateTask,
     controller : 'logpeckUpdate',
   })
   .otherwise({redirectTo:'/'});
-
-var task_ip_exist=false;
-var task_ip=[];
-var status=[];
 
 
 

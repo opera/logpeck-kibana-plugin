@@ -1,9 +1,63 @@
 //********************controller "logpeckUpdate"***************************
 import { uiModules } from 'ui/modules';
-import * as myConfig from "../logpeckConfig";
 
-var app=uiModules.get("app",['ui.ace']);
+//******************Code Editor********************
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+
+import 'brace/theme/github';
+import 'brace/mode/lua';
+import 'brace/snippets/lua';
+import 'brace/ext/language_tools';
+
+import {
+  EuiCodeEditor,
+} from '@elastic/eui';
+
+export class CodeEditor extends Component {
+  state = {
+    value: '--example:client=105.160.71.175 method=GET status=404\nfunction extract(s)\n'+
+    '    ret = {}\n'+
+    '    --*********此线下可修改*********\n'+
+    '    i,j=string.find(s,\'client=.- \')\n'+
+    '    ret[\'client\']=string.sub(s,i+7,j-1)\n'+
+    '    i,j=string.find(s,\'method=.- \')\n'+
+    '    ret[\'method\']=string.sub(s,i+7,j-1)\n'+
+    '    --*********此线上可修改*********\n'+
+    '    return ret\n'+
+    'end'
+  };
+
+  onChange = (value) => {
+    this.setState({ value });
+  };
+
+  render() {
+    return (
+      <EuiCodeEditor
+    mode="lua"
+    theme="github"
+    width="100%"
+    height='250px'
+    value={this.state.value}
+    onChange={this.onChange}
+    setOptions={{
+      fontSize: '14px',
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+    }}
+    onBlur={() => { console.log('blur'); }} // eslint-disable-line no-console
+    aria-label="Code Editor"
+      />
+  );
+  }
+}
+
+var app=uiModules.get("app",[]);
 app.controller('logpeckUpdate',function ($scope , $rootScope, $route, $http) {
+  ReactDOM.render(<CodeEditor />, document.getElementById('CodeEditor'));
+
   $rootScope.page="update";
   //init
   var update_ip=angular.fromJson(localStorage.getItem("update_ip"));
@@ -13,11 +67,11 @@ app.controller('logpeckUpdate',function ($scope , $rootScope, $route, $http) {
   $http({
     method: 'POST',
     url: '../api/logpeck/list_template',
-    data:{local_ip: myConfig.local_ip},
+    data:{},
   }).then(function successCallback(response) {
     $rootScope.TemplateList=[];
-    for (var id=0 ; id<response['data']['hits']['total'] ; id++) {
-      $rootScope.TemplateList.push(response['data']['hits']['hits'][id]['_id']);
+    for (var id in response.data.data) {
+      $rootScope.TemplateList.push(response.data.data[id]);
     }
   }, function errorCallback(err) {
     console.log('err');
@@ -46,12 +100,18 @@ app.controller('logpeckUpdate',function ($scope , $rootScope, $route, $http) {
           ip: $rootScope.T_ip
         },
       }).then(function successCallback(response) {
-        if(response['data']['result']=="Update Success") {
-          $rootScope.list(Callback);
-        }
-        else {
+        if (response.data.err == null) {
+          if(response.data.data == "Update Success") {
+            $rootScope.list(Callback);
+          }
+          else {
+            $rootScope.testArea=true;
+            $rootScope.testResults = response.data.data;
+            $rootScope.error={"color":"#ff0000"};
+          }
+        } else {
           $rootScope.testArea=true;
-          $rootScope.testResults = response['data']['result'];
+          $rootScope.testResults = response.data.err;
           $rootScope.error={"color":"#ff0000"};
         }
       }, function errorCallback() {
@@ -60,8 +120,8 @@ app.controller('logpeckUpdate',function ($scope , $rootScope, $route, $http) {
   };
   function Callback(response) {
     if(response["err"]==null){
-      task_ip = response["result"];
-      task_ip_exist = true;
+      $rootScope.task_ip = response["result"];
+      $rootScope.task_ip_exist = true;
       window.location.href = "#/";
     }else {
       $rootScope.testArea=true;
