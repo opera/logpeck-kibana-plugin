@@ -1,5 +1,5 @@
 //******************Code Editor********************
-import React, { Component } from 'react';
+import React,{ Component } from 'react';
 
 import 'brace/theme/github';
 import 'brace/mode/lua';
@@ -9,30 +9,27 @@ import 'brace/ext/language_tools';
 import {
   EuiCodeEditor,
 } from '@elastic/eui';
-var luaString;
+
 export class CodeEditor extends Component {
-  state = {
-    value: '--example:client=105.160.71.175 method=GET status=404\nfunction extract(s)\n'+
-    '    ret = {}\n'+
-    '    --*********此线下可修改*********\n'+
-    '    i,j=string.find(s,\'client=.- \')\n'+
-    '    ret[\'client\']=string.sub(s,i+7,j-1)\n'+
-    '    i,j=string.find(s,\'method=.- \')\n'+
-    '    ret[\'method\']=string.sub(s,i+7,j-1)\n'+
-    '    --*********此线上可修改*********\n'+
-    '    return ret\n'+
-    'end'
-  };
-  luaString = {this.state.value}
+  constructor(props) {
+    super(props);
+    this.state = {value:props.lua};
+  }
 
   onChange = (value) => {
     this.setState({ value });
-    luaString = {this.state.value}
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return { value:nextProps.lua };
+  }
 
   render() {
     return (
-      <EuiCodeEditor
+      <div>
+      <textarea id="luastring" value={this.state.value} hidden onChange={(value) => {}}>
+  </textarea>
+    <EuiCodeEditor
     mode="lua"
     theme="github"
     width="100%"
@@ -48,6 +45,7 @@ export class CodeEditor extends Component {
     onBlur={() => { console.log('blur'); }} // eslint-disable-line no-console
     aria-label="Code Editor"
       />
+      </div>
   );
   }
 }

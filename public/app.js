@@ -15,6 +15,8 @@ import './controller/index.js';
 import './controller/addTask.js';
 import './controller/updateTask.js';
 import './controller/shared.js';
+import './controller/page-variable.js';
+import './controller/event.js';
 
 import * as myConfig from './logpeckConfig.js';
 /*

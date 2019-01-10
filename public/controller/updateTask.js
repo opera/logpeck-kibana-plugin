@@ -1,62 +1,8 @@
 //********************controller "logpeckUpdate"***************************
 import { uiModules } from 'ui/modules';
 
-//******************Code Editor********************
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-
-import 'brace/theme/github';
-import 'brace/mode/lua';
-import 'brace/snippets/lua';
-import 'brace/ext/language_tools';
-
-import {
-  EuiCodeEditor,
-} from '@elastic/eui';
-
-export class CodeEditor extends Component {
-  state = {
-    value: '--example:client=105.160.71.175 method=GET status=404\nfunction extract(s)\n'+
-    '    ret = {}\n'+
-    '    --*********此线下可修改*********\n'+
-    '    i,j=string.find(s,\'client=.- \')\n'+
-    '    ret[\'client\']=string.sub(s,i+7,j-1)\n'+
-    '    i,j=string.find(s,\'method=.- \')\n'+
-    '    ret[\'method\']=string.sub(s,i+7,j-1)\n'+
-    '    --*********此线上可修改*********\n'+
-    '    return ret\n'+
-    'end'
-  };
-
-  onChange = (value) => {
-    this.setState({ value });
-  };
-
-  render() {
-    return (
-      <EuiCodeEditor
-    mode="lua"
-    theme="github"
-    width="100%"
-    height='250px'
-    value={this.state.value}
-    onChange={this.onChange}
-    setOptions={{
-      fontSize: '14px',
-        enableBasicAutocompletion: true,
-        enableSnippets: true,
-        enableLiveAutocompletion: true,
-    }}
-    onBlur={() => { console.log('blur'); }} // eslint-disable-line no-console
-    aria-label="Code Editor"
-      />
-  );
-  }
-}
-
 var app=uiModules.get("app",[]);
 app.controller('logpeckUpdate',function ($scope , $rootScope, $route, $http) {
-  ReactDOM.render(<CodeEditor />, document.getElementById('CodeEditor'));
 
   $rootScope.page="update";
   //init
@@ -64,6 +10,8 @@ app.controller('logpeckUpdate',function ($scope , $rootScope, $route, $http) {
   $rootScope.T_ip=localStorage.getItem("T_ip");
   $rootScope.init_task();
   $rootScope.show_task(update_ip);
+  $rootScope.luaLoad();
+
   $http({
     method: 'POST',
     url: '../api/logpeck/list_template',

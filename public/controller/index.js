@@ -26,7 +26,7 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
       for (var id in response.data) {
         $scope.allList.push(response.data[id].data.host);
         if(response.data[id].data.version){
-          if(response.data[id].data.version==myConfig.version){
+          if(response.data[id].data.version==myConfig.Version){
             console.log(response.data[id].data.host);
             $rootScope.status[response.data[id].data.host]="#2f99c1";
           }else{
@@ -88,7 +88,7 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
           }).then(function successCallback(response) {
             console.log(response);
             if (response.data.data) {
-              if(response['data']== myConfig.version){
+              if(response['data']== myConfig.Version){
                 $rootScope.status[$scope.IP]="#2f99c1";
               } else{
                 $rootScope.status[$scope.IP]="#F39C12";
@@ -293,7 +293,7 @@ app.controller('logpeckInit',function ($scope , $rootScope, $route, $http, $inte
     $http({
       method: 'POST',
       url: '../api/logpeck/updateGroup',
-      data: {GroupMembers:list,Group:$rootScope.GroupName,local_ip: myConfig.local_ip},
+      data: {GroupMembers:list,Group:$rootScope.GroupName},
     }).then(function successCallback(response) {
       if (response.data.err == null) {
         $scope.logstat1=false;

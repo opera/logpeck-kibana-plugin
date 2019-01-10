@@ -134,6 +134,7 @@ export default function (server) {
         });
       }
     },
+
     {
       path: '/api/logpeck/testTask',
       method: 'POST',
