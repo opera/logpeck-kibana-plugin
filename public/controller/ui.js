@@ -49,3 +49,26 @@ export class CodeEditor extends Component {
   );
   }
 }
+
+export class Button extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <EuiFlexItem grow={false}>
+        <EuiButton
+        fill
+        color="ghost"
+        size="s"
+        iconType="check"
+        onClick={() => window.alert('Button clicked')}
+        >
+          Filled
+        </EuiButton>
+     </EuiFlexItem>
+  );
+  }
+}
+

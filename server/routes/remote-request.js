@@ -129,7 +129,6 @@ export default function (server) {
         var path=req.payload.LogPath;
         var ip=req.payload.ip;
         Http.post(ip, '/listpath?path='+path, 'POST', "").then((res)=> {
-          res.data = JSON.parse(res.data);
           reply(res);
         });
       }

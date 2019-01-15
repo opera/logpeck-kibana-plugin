@@ -2,47 +2,63 @@ import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
 import 'ui/autoload/styles';
 
-import '../bower_components/ace-builds/src-min-noconflict/ace.js';
-import '../bower_components/ace-builds/src-min-noconflict/mode-lua.js';
-import '../bower_components/ace-builds/src-min-noconflict/theme-crimson_editor.js';
-import '../bower_components/angular-ui-ace/ui-ace.js';
+import logpeckMain from './templates/logpeck_main.html';
+import logpeckTask from './templates/logpeck_task.html';
 
-import index from './templates/index.html';
-import addTask from './templates/addTask.html';
-import updateTask from './templates/updateTask.html';
-
-import './controller/index.js';
-import './controller/addTask.js';
-import './controller/updateTask.js';
-import './controller/shared.js';
-import './controller/page-variable.js';
-import './controller/event.js';
+import './controller/main_handle.js';
+import './controller/task_handle.js';
 
 import * as myConfig from './logpeckConfig.js';
-/*
-import React, {
-  Component,
-  Fragment,
-} from 'react';
-*/
 
 uiRoutes.enable();
 uiRoutes
   .when('/', {
-    template : index,
-    controller : 'logpeckInit',
+    template : logpeckMain,
+    controller : 'logpeckMain',
   })
   .when('/addTask', {
-    template : addTask,
-  controller : 'logpeckAdd',
+    template : logpeckTask,
+  controller : 'logpeckTask',
   })
   .when('/updateTask', {
-    template : updateTask,
-    controller : 'logpeckUpdate',
+    template : logpeckTask,
+    controller : 'logpeckTask',
   })
   .otherwise({redirectTo:'/'});
 
+var app=uiModules.get("app",[]);
+app.run(function($rootScope, $route, $http, $location) {
+  $rootScope.TaskIP = "";
+  $rootScope.TaskList = [];
+  $rootScope.GroupName = "All";
 
+  $rootScope.DefaultLogpeckIP = myConfig.DefaultLogpeckIP;
+  $rootScope.DefaultName = myConfig.TaskName;
+  $rootScope.DefaultLogPath = myConfig.LogPath;
+
+  $rootScope.list = function (callback) {
+    $http({
+      method: 'POST',
+      url: '../api/logpeck/list',
+      data: {ip: $rootScope.TaskIP},
+    }).then(function successCallback(response) {
+      if (response.data.err == null) {
+        var name, stat, start, logpath;
+        var array = [];
+        for (var Name in response.data.data.configs) {
+          name = Name;
+          logpath = response.data.data.configs[Name]['LogPath'];
+          stat = response.data.data.stats[Name]['Stop'];
+          start = !stat;
+          array.push({name:name,logpath:logpath,stop:stat,start:start});
+        }
+        callback({data:array,err:null});
+      } else {
+        callback({data:null,err:response.data.err});
+      }
+    });
+  };
+});
 
 /*
 const app = uiModules.get('apps/logpeckKibanaPlugin');

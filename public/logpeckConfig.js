@@ -50,4 +50,4 @@ export const KafkaReturnErrors = true;
 export const KafkaFlush={FlushBytes : 0,FlushMessages : 0,FlushFrequency : 0,FlushMaxMessages:0};
 export const KafkaRetry = {RetryMax : 3,RetryBackoff : 100};
 
-export const DefaultLogpeckIp="127.0.0.1:7117";
+export const DefaultLogpeckIP="127.0.0.1:7117";
