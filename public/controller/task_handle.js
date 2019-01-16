@@ -1,6 +1,6 @@
 //************************controller "logpeckAdd"******************************
 import { uiModules } from 'ui/modules';
-import * as myConfig from "../logpeckConfig";
+import * as myConfig from "../../logpeckConfig";
 import "./task_event.js";
 import "./task_config.js";
 
@@ -11,18 +11,17 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
   app.expandControllerEvent($scope, $rootScope, $http, $location);
 
   function init() {
-    console.log($rootScope.TaskIP);
 
     $rootScope.TaskIP = localStorage.getItem("TaskIP");
     $scope.useTemplate = false;
     var url = $location.url();
     var path = new RegExp("/addTask.*");
     if (path.test(url)) {
-      $scope.initTask();
+      $scope.initDefaultTask();
       $scope.addTaskUrl = true;
     } else {
       var TaskInfo = angular.fromJson(localStorage.getItem("TaskInfo"));
-      $scope.show_task(TaskInfo);
+      $scope.initExistTask(TaskInfo);
       $scope.addTaskUrl = false;
     }
     $scope.luaLoad();
@@ -36,8 +35,6 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
       for (var id in response.data.data) {
         $scope.TemplateList.push(response.data.data[id]);
       }
-    }, function errorCallback(err) {
-      console.log('err');
     });
   }
   init();
@@ -50,8 +47,8 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
         return;
       }
     }
-    if($scope.init_add_or_update()==true){
-      var config=$scope.get_configs()
+    if($scope.taskValueRule()==true){
+      var config=$scope.getConfigs()
       $http({
         method: 'POST',
         url: '../api/logpeck/addTask',
@@ -95,8 +92,8 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
         return;
       }
     }
-    if($scope.init_add_or_update()==true){
-      var config=$scope.get_configs()
+    if ($scope.taskValueRule() == true) {
+      var config=$scope.getConfigs()
       $http({
         method: 'POST',
         url: '../api/logpeck/updateTask',
@@ -124,7 +121,6 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
           $scope.testResults = response.data.err;
           $scope.error={"color":"#ff0000"};
         }
-      }, function errorCallback() {
       });
     }
   };
@@ -205,8 +201,6 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
           $scope.testResults = response.data.err;
           $scope.error={"color":"#ff0000"};
         }
-      }, function errorCallback(err) {
-        console.log('err');
       });
     }
   };
@@ -234,7 +228,7 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
         }
       }
 
-      var config=$scope.get_configs();
+      var config=$scope.getConfigs();
 
       $http({
         method: 'POST',
@@ -303,14 +297,13 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
     }).then(function successCallback(response) {
       if (response.data.err == null) {
         $scope.useTemplate
-        $scope.show_task(response.data.data);
+        $scope.initExistTask(response.data.data);
         $scope.luaLoad();
       } else {
         $scope.testArea=true;
         $scope.testResults = response.data.err;
         $scope.error={"color":"#ff0000"};
       }
-
     });
   };
 
@@ -319,7 +312,7 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
     $rootScope.list(callback);
   }
 
-  $scope.JumpMain = function () {
+  $scope.jumpMain = function () {
     localStorage.setItem("TaskIP", "");
     $rootScope.TaskIP = "";
     $rootScope.GroupName = "All";

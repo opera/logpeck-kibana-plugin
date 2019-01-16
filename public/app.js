@@ -8,7 +8,7 @@ import logpeckTask from './templates/logpeck_task.html';
 import './controller/main_handle.js';
 import './controller/task_handle.js';
 
-import * as myConfig from './logpeckConfig.js';
+import * as myConfig from '../logpeckConfig.js';
 
 uiRoutes.enable();
 uiRoutes

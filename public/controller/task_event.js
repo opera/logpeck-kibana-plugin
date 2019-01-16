@@ -1,5 +1,5 @@
 import { uiModules } from 'ui/modules';
-import * as myConfig from "../logpeckConfig";
+import * as myConfig from "../../logpeckConfig";
 
 import {CodeEditor} from "./ui";
 import ReactDOM from 'react-dom';
@@ -129,7 +129,6 @@ app.expandControllerEvent = function ($scope, $rootScope, $http, $location) {
           $scope.path_array.push(data[id]);
         }
       }
-    }, function errorCallback() {
     });
   };
 

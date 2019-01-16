@@ -1,6 +1,6 @@
 //**************************controller "logpeckInit"****************************
 import { uiModules } from 'ui/modules';
-import * as myConfig from "../logpeckConfig";
+import * as myConfig from "../../logpeckConfig";
 
 var app = uiModules.get("app",[]);
 app.controller('logpeckMain',function ($scope , $rootScope, $http) {
@@ -12,6 +12,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
 
     $scope.addHostIP = "";
     $scope.hostList = [];
+    $scope.hostListAll = [];
     $scope.hostStatus = [];
 
     $scope.addGroupName = "";
@@ -48,6 +49,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
       $scope.listGroup();
       if ($rootScope.GroupName == "All") {
         $scope.hostList = hostList;
+        $scope.hostListAll = hostList;
       } else {
         $scope.listGroupMember($rootScope.GroupName);
       }
@@ -72,24 +74,24 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
             url: '../api/logpeck/version',
             data: {ip: $scope.addHostIP},
           }).then(function successCallback(response) {
-              if (response.data.data) {
-                if (response['data'] == myConfig.Version) {
-                  $scope.hostStatus[$scope.addHostIP] = "#2f99c1";
-                } else {
-                  $scope.hostStatus[$scope.addHostIP] = "#F39C12";
-                }
+            if (response.data.data) {
+              if (response.data.data == myConfig.Version) {
+                $scope.hostStatus[$scope.addHostIP] = "#2f99c1";
               } else {
-                $scope.hostStatus[$scope.addHostIP] = "#e8488b";
+                $scope.hostStatus[$scope.addHostIP] = "#F39C12";
               }
-              $scope.hostList.push($scope.addHostIP);
-              $rootScope.TaskIP = "";
-              $rootScope.TaskList = [];
-              $scope.logstat = true;
-              $scope.indexLog = "Add success";
+            } else {
+              $scope.hostStatus[$scope.addHostIP] = "#e8488b";
+            }
+            $scope.hostList.push($scope.addHostIP);
+            $rootScope.TaskIP = "";
+            $rootScope.TaskList = [];
+            $scope.logstat = true;
+            $scope.indexLog = "Add success";
           });
         } else {
-          $scope.logstat=false;
-          $scope.indexLog=response.data.err;
+          $scope.logstat = false;
+          $scope.indexLog = response.data.err;
         }
       });
     }
@@ -205,6 +207,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
     }
     $scope.showEdit[name] = false;
     $scope.groupCheck = {};
+    $scope.hostList = $scope.hostListAll;
     for (var i = 0; i < $scope.hostList.length; i++) {
       $scope.groupCheck[$scope.hostList[i]] = false;
     }
@@ -338,13 +341,6 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
     });
   };
 
-  $scope.JumpMain = function () {
-    localStorage.setItem("TaskIP", "");
-    $rootScope.TaskIP = "";
-    $rootScope.GroupName = "All";
-    init();
-  }
-
   //click task link
   $scope.updateList = function ($event) {
     $scope.indexLog = "";
@@ -373,6 +369,13 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
       $scope.indexLog = response.err;
       $rootScope.TaskList = [];
     }
+  }
+
+  $scope.jumpMain = function () {
+    localStorage.setItem("TaskIP", "");
+    $rootScope.TaskIP = "";
+    $rootScope.GroupName = "All";
+    init();
   }
 
   $scope.selectGroupMember = function(key) {

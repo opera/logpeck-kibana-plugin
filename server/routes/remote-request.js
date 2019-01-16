@@ -1,4 +1,4 @@
-var Config = require('./config');
+var Config = require('../../logpeckConfig').Config;
 var Http = require('./util/http');
 export default function (server) {
   server.route([
