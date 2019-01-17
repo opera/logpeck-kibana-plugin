@@ -228,13 +228,14 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
         }
       }
 
-      var config=$scope.getConfigs();
+      var config = $scope.getConfigs();
 
       $http({
         method: 'POST',
         url: '../api/logpeck/addTemplate',
         data: {
           template_name: $scope.template_name,
+          reset: exist,
           Name: $scope.name,
           Logpath: $scope.logPath,
           Extractor: config.Extractor,
@@ -252,7 +253,7 @@ app.controller('logpeckTask', function ($scope, $rootScope, $http, $location) {
           $scope.testResults = response.data.err;
           $scope.error={"color":"#ff0000"};
         }
-        if ($scope.influxdbArray.Aggregator.Enable ==true) {
+        if (config.Aggregator.Enable == true) {
           for(var key in $scope.influxdbArray) {
             var Aggregations={"cnt":false,"sum":false,"avg":false,"p99":false,"p90":false,"p50":false,"max":false,"min":false};
             for(var key2 in $scope.influxdbArray[key]["Aggregations"]){

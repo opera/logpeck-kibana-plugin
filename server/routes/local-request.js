@@ -7,16 +7,12 @@ export default function (server) {
       path: '/api/logpeck/init',
       method: 'POST',
       handler(req, reply) {
-        var hosts = File.read(Config.HostName);
-        var hostPort =  new Array();
-        if (hosts.data != "") {
-          hostPort =hosts.data.split(",");
-        }
+        var hosts = File.readAllKey(Config.HostName);
         var result = [];
         var async_status = async function() {
-          for (var i in hostPort) {
-            var res = await Http.post(hostPort[i], '/version', 'POST', "");
-            result[i] = {"data":{"host":hostPort[i],"version":res.data},"err":res.err}
+          for (var i in hosts.data) {
+            var res = await Http.post(hosts.data[i], '/version', 'POST', "");
+            result[i] = {"data":{"host":hosts.data[i], "version":res.data},"err":res.err}
           }
           return result;
         }
@@ -29,13 +25,7 @@ export default function (server) {
       path: '/api/logpeck/listHost',
       method: 'POST',
       handler(req, reply) {
-        var res = File.read(Config.HostName);
-        var arr =  new Array();
-        if (res.data != "") {
-          arr =res.data.split(",");
-        }
-        res.data = arr;
-        reply(res);
+        reply(File.readAllKey(Config.HostName));
       }
     },
     {
@@ -43,7 +33,8 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var ip=req.payload.ip;
-        reply(File.writeSet(Config.HostName, ip));
+        var res = File.writeSet(Config.HostName, ip, {});
+        reply(File.keyToList(res));
       }
     },
     {
@@ -51,45 +42,33 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var ip=req.payload.ip;
-        reply(File.removeSet(Config.HostName, ip));
+        var res = File.removeSet(Config.HostName, ip);
+        reply(File.keyToList(res));
       }
     },
     {
       path: '/api/logpeck/addGroup',
       method: 'POST',
       handler(req, reply) {
-        var group=req.payload.Group;
-        reply(File.writeSet(Config.GroupName, group));
+        var group = req.payload.Group;
+        var res = File.writeSet(Config.GroupName, group, []);
+        reply(File.keyToList(res));
       }
     },
     {
       path: '/api/logpeck/removeGroup',
       method: 'POST',
       handler(req, reply) {
-        var group=req.payload.Group;
-        var groupMemberPath = File.getPath(Config.GroupMemberPath, group);
-        try {
-          var fs = require('fs');
-          if (fs.existsSync(groupMemberPath)) {
-            fs.unlinkSync(groupMemberPath);
-          }
-        } catch(e) {
-          reply({"data":"","err":e.toString()});
-        }
-        reply(File.removeSet(Config.GroupName, group));
+        var group = req.payload.Group;
+        var res = File.removeSet(Config.GroupName, group);
+        reply(File.keyToList(res));
       }
     },
     {
       path: '/api/logpeck/listGroup',
       method: 'POST',
       handler(req, reply) {
-        var res = File.read(Config.GroupName);
-        var arr =  new Array();
-        if (res.data != "") {
-          arr =res.data.split(",");
-        }
-        res.data = arr;
-        reply(res);
+        reply(File.readAllKey(Config.GroupName));
       }
     },
     {
@@ -97,13 +76,7 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var group = req.payload.Group;
-        var groupMemberPath = File.getPath(Config.GroupMemberPath, group);
-        var res = File.read(groupMemberPath);
-        var arr =  new Array();
-        if (res.data != "") {
-          arr =res.data.split(",");
-        }
-        res.data = arr;
+        var res = File.readSet(Config.GroupName, group);
         reply(res);
       }
     },
@@ -113,13 +86,43 @@ export default function (server) {
       handler(req, reply) {
         var group = req.payload.Group;
         var GroupMembers = req.payload.GroupMembers;
-        var groupMemberPath = File.getPath(Config.GroupMemberPath, group);
-        reply(File.write(groupMemberPath, GroupMembers));
+        var res = File.resetValue(Config.GroupName, group, GroupMembers);
+        reply(File.keyToList(res));
       }
     },
 
     {
       path: '/api/logpeck/addTemplate',
+      method: 'POST',
+      handler(req, reply) {
+        var template_name = req.payload.template_name;
+        var reset = req.payload.reset;
+        var name = req.payload.Name;
+        var logpath = req.payload.Logpath;
+        var Extractor = req.payload.Extractor;
+        var Sender = req.payload.Sender;
+        var Aggregator = req.payload.Aggregator;
+        var Keywords = req.payload.Keywords;
+        var esLog = {
+          Name: name,
+          LogPath: logpath,
+          Extractor: Extractor,
+          Sender: Sender,
+          Aggregator: Aggregator,
+          Keywords: Keywords
+        };
+        var res;
+        if (reset) {
+          res = File.resetValue(Config.TemplateName, template_name, esLog);
+        } else {
+          res = File.writeSet(Config.TemplateName, template_name, esLog);
+        }
+        reply(File.keyToList(res));
+      }
+    },
+
+    {
+      path: '/api/logpeck/updateTemplate',
       method: 'POST',
       handler(req, reply) {
         var template_name=req.payload.template_name;
@@ -137,12 +140,8 @@ export default function (server) {
           Aggregator: Aggregator,
           Keywords: Keywords
         };
-        var templatePath = File.getPath(Config.TemplatePath, template_name);
-        var res = File.write(templatePath, JSON.stringify(esLog));
-        if (res.err) {
-          reply(res);
-        }
-        reply(File.writeSet(Config.TemplateName, template_name));
+        var res = File.resetValue(Config.TemplateName, template_name, esLog);
+        reply(File.keyToList(res));
       }
     },
 
@@ -151,16 +150,8 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var template_name=req.payload.template_name;
-        var templatePath = File.getPath(Config.TemplatePath, template_name);
-        try {
-          var fs = require('fs');
-          if (fs.existsSync(templatePath)) {
-            fs.unlinkSync(templatePath);
-          }
-        } catch(e) {
-          reply({"data":"","err":e.toString()});
-        }
-        reply(File.removeSet(Config.TemplateName, template_name));
+        var res = File.removeSet(Config.TemplateName, template_name);
+        reply(File.keyToList(res));
       }
     },
     {
@@ -168,9 +159,7 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var template_name=req.payload.template_name;
-        var templatePath = File.getPath(Config.TemplatePath, template_name);
-        var res = File.read(templatePath);
-        res.data = JSON.parse(res.data);
+        var res = File.readSet(Config.TemplateName, template_name);
         reply(res);
       }
     },
@@ -178,12 +167,7 @@ export default function (server) {
       path: '/api/logpeck/list_template',
       method: 'POST',
       handler(req, reply) {
-        var res = File.read(Config.TemplateName);
-        var arr =  new Array();
-        if (res.data != "") {
-          arr =res.data.split(",");
-        }
-        res.data = arr;
+        var res = File.readAllKey(Config.TemplateName);
         reply(res);
       }
     },

@@ -214,7 +214,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
     $http({
       method: 'POST',
       url: '../api/logpeck/listGroupMember',
-      data:{Group:$rootScope.GroupName},
+      data:{Group:name},
     }).then(function successCallback(response) {
       if (response.data.err == null) {
         for (var i = 0; i < response.data.data.length; i++) {
@@ -228,9 +228,8 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
   };
 
   $scope.updateGroup = function (name) {
-    $rootScope.GroupName = name;
     $scope.showGroupEdit = false;
-    $scope.showEdit[$rootScope.GroupName] = true;
+    $scope.showEdit[name] = true;
     var list = [];
     for (var k in $scope.groupCheck) {
       if ($scope.groupCheck[k] == true) {
@@ -241,7 +240,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
     $http({
       method: 'POST',
       url: '../api/logpeck/updateGroup',
-      data: {GroupMembers:list,Group:$rootScope.GroupName},
+      data: {GroupMembers:list,Group:name},
     }).then(function successCallback(response) {
       if (response.data.err == null) {
         $scope.logstat = true;

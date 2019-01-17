@@ -54,6 +54,7 @@ app.expandControllerConfig = function ($scope, $rootScope, $http, $location) {
     } else {
       $scope.name = task['Name'];
     }
+    console.log($scope.name);
     $scope.logPath = task['LogPath'];
     $scope.logFormat = task['Extractor']['Name'];
     $scope.typeChange($scope.logFormat);
