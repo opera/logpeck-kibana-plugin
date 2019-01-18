@@ -31,7 +31,7 @@ exports.post = function(hostPort, path, method, bodyData) {
       */
     });
 
-    req.setTimeout(100, function () {
+    req.setTimeout(2000, function () {
       resolve ({"data": null, "err": "connect ETIMEDOUT" + hostPort});
     });
 
