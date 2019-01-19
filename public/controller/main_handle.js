@@ -6,6 +6,7 @@ var app = uiModules.get("app",[]);
 app.controller('logpeckMain',function ($scope , $rootScope, $http) {
   var init = function() {
     $scope.showTask = false;
+    $scope.showGroup = false;
     $scope.logstat = false;
     $scope.showGroupEdit = false;
     $scope.showEdit = {};
@@ -27,8 +28,10 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
       //list task
       if ($rootScope.TaskIP != "") {
         $scope.showTask = true;
+        $scope.showGroup = false;
       } else {
         $scope.showTask = false;
+        $scope.showGroup = true;
       }
       //list host
       var hostList = [];
@@ -362,6 +365,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
 
   function callback_listTask(response) {
     $scope.showTask = true;
+    $scope.showGroup = false;
     if(response.err == null){
       $rootScope.TaskList = response.data;
     }else {
