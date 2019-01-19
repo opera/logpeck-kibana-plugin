@@ -20,11 +20,16 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
     $scope.groupCheck = {};
 
     $scope.indexLog = "";
-
     $http({
       method: 'POST',
       url: '../api/logpeck/init',
     }).then(function successCallback(response) {
+      //list task
+      if ($rootScope.TaskIP != "") {
+        $scope.showTask = true;
+      } else {
+        $scope.showTask = false;
+      }
       //list host
       var hostList = [];
       for (var id in response.data) {
@@ -39,20 +44,14 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
           $scope.hostStatus[response.data[id].data.host] = "#e8488b";
         }
       }
-      //list task
-      if ($rootScope.TaskIP != "") {
-        $scope.showTask = true;
-      } else {
-        $scope.showTask = false;
-      }
-      //list group
-      $scope.listGroup();
       if ($rootScope.GroupName == "All") {
         $scope.hostList = hostList;
         $scope.hostListAll = hostList;
       } else {
         $scope.listGroupMember($rootScope.GroupName);
       }
+      //list group
+      $scope.listGroup();
     });
   }
   init();
@@ -211,11 +210,13 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
     for (var i = 0; i < $scope.hostList.length; i++) {
       $scope.groupCheck[$scope.hostList[i]] = false;
     }
+    console.log("group name", name);
     $http({
       method: 'POST',
       url: '../api/logpeck/listGroupMember',
       data:{Group:name},
     }).then(function successCallback(response) {
+      console.log("member",response );
       if (response.data.err == null) {
         for (var i = 0; i < response.data.data.length; i++) {
           $scope.groupCheck[response.data.data[i]] = true;

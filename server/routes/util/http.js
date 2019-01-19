@@ -1,5 +1,5 @@
 var http = require('http');
-exports.post = function(hostPort, path, method, bodyData) {
+exports.post = function(hostPort, path, method, bodyData, timeout = 200) {
   return new Promise(function(resolve, reject) {
     var host;
     try {
@@ -31,7 +31,7 @@ exports.post = function(hostPort, path, method, bodyData) {
       */
     });
 
-    req.setTimeout(2000, function () {
+    req.setTimeout(timeout, function () {
       resolve ({"data": null, "err": "connect ETIMEDOUT" + hostPort});
     });
 

@@ -76,7 +76,9 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var group = req.payload.Group;
+        console.log(group);
         var res = File.readSet(Config.GroupName, group);
+        console.log("group member", res);
         reply(res);
       }
     },
