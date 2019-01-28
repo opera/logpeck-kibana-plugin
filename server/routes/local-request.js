@@ -8,16 +8,16 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var hosts = File.readAllKey(Config.HostName);
-        var result = [];
         var async_status = async function() {
+          var result = [];
           for (var i in hosts.data) {
             var res = await Http.post(hosts.data[i], '/version', 'POST', "");
-            result[i] = {"data":{"host":hosts.data[i], "version":res.data},"err":res.err}
+            result[i] = {"host":hosts.data[i], "version":res.data, "err":res.err}
           }
-          return result;
+          return {"data":result, "err":null}
         }
         async_status().then((ret)=> {
-          reply(result);
+          reply(ret);
         });
       }
     },
@@ -76,9 +76,7 @@ export default function (server) {
       method: 'POST',
       handler(req, reply) {
         var group = req.payload.Group;
-        console.log(group);
         var res = File.readSet(Config.GroupName, group);
-        console.log("group member", res);
         reply(res);
       }
     },

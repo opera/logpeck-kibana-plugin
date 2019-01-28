@@ -11,6 +11,24 @@ export default function (server) {
       }
     },
     {
+      path: '/api/logpeck/versions',
+      method: 'POST',
+      handler(req, reply) {
+        var hosts = req.payload.hosts;
+        var async_status = async function() {
+          var result = [];
+          for (var i in hosts) {
+            var res = await Http.post(hosts[i], '/version', 'POST', "");
+            result[i] = {"host":hosts[i], "version":res.data, "err":res.err}
+          }
+          return {"data":result, "err":null}
+        }
+        async_status().then((ret)=> {
+          reply(ret);
+        });
+      }
+    },
+    {
       path: '/api/logpeck/list',
       method: 'POST',
       handler(req, reply) {

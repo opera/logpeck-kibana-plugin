@@ -221,7 +221,8 @@
   <div class="subject">
     <div class="subject_1" style="border-right: 2px solid white;">
       <div class="subject_add">
-        <input type="text" placeholder="{{DefaultLogpeckIP}}" class="euiFieldText" ng-model="addHostIP" style="width:70%;height:80%">
+        <input type="text" placeholder="{{DefaultLogpeckIP}}" class="euiFieldText" ng-model="addHostIP" style="width:50%;height:80%"> :
+        <input type="text" class="euiFieldText" ng-model="addHostPort" style="width:20%;height:80%">
         <a class="kuiButton kuiButton--primary Button--middle" ng-click="addHost()" style="float:right;margin-top: 2px">add</a>
       </div>
       <div class="subject_list" style="background-color:#e4e4e4">
@@ -244,6 +245,7 @@
         </li>
       </div>
     </div>
+
     <div ng-show="showTask" class="subject_2">
       <div style="width:100%;background-color: #F6F6F6;float:left">
         <div class="task_list_name" style="padding-left: 10px;height: 25px;float:left">
@@ -273,7 +275,6 @@
           <div class="task_list_status" ng-show="value.start" style="color: #2f99c1;padding-top: 11px;">
             start
           </div>
-
           <div style="width: 34%;height: 100%;float: left">
             <div class="task_list_name2">
               <div style="vertical-align:middle; display:table-cell;word-wrap:break-word; word-break:break-all; overflow: scroll;">
@@ -281,7 +282,6 @@
               </div>
             </div>
           </div>
-
           <div class="task_list_control">
             <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="removeTask($event)" name="{{  value.name }}"  style="float: right;margin-right: 5px;width: 58px;background-color: #e8488b">
               remove
@@ -296,6 +296,7 @@
         </div>
       </li>
     </div>
+
     <div ng-show="showGroup" style="width: 26%;height:100%;float: left;margin-left:2%">
       <div style="float:left;width:100%;height:100%;border-right: 2px solid white;background-color:#F6F6F6">
         <div class="subject_add" style="border-bottom: 1px solid white;background-color:#F6F6F6">

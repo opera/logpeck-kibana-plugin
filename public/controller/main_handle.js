@@ -12,6 +12,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
     $scope.showEdit = {};
 
     $scope.addHostIP = "";
+    $scope.addHostPort = myConfig.DefaultLogpeckPort;
     $scope.hostList = [];
     $scope.hostListAll = [];
     $scope.hostStatus = [];
@@ -34,19 +35,7 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
         $scope.showGroup = true;
       }
       //list host
-      var hostList = [];
-      for (var id in response.data) {
-        hostList.push(response.data[id].data.host);
-        if (response.data[id].data.version) {
-          if (response.data[id].data.version == myConfig.Version) {
-            $scope.hostStatus[response.data[id].data.host] = "#2f99c1";
-          } else {
-            $scope.hostStatus[response.data[id].data.host] = "#F39C12";
-          }
-        } else {
-          $scope.hostStatus[response.data[id].data.host] = "#e8488b";
-        }
-      }
+      var hostList = getVersion(response.data.data)
       if ($rootScope.GroupName == "All") {
         $scope.hostList = hostList;
         $scope.hostListAll = hostList;
@@ -59,33 +48,51 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
   }
   init();
 
+  function getVersion(data) {
+    var hostList = [];
+    for (var id in data) {
+      hostList.push(data[id].host);
+      if (data[id].version) {
+        if (data[id].version == myConfig.Version) {
+          $scope.hostStatus[data[id].host] = "#2f99c1";
+        } else {
+          $scope.hostStatus[data[id].host] = "#F39C12";
+        }
+      } else {
+        $scope.hostStatus[data[id].host] = "#e8488b";
+      }
+    }
+    return hostList
+  }
+
   //Add Host
   $scope.addHost = function () {
-    if ($scope.addHostIP == "") {
+    if ($scope.addHostIP == "" || $scope.addHostPort == "") {
       $scope.logstat = false;
-      $scope.indexLog = "host not exist";
+      $scope.indexLog = "host port is not complete";
     } else {
+      var host = $scope.addHostIP + ":" + $scope.addHostPort
       $http({
         method: 'POST',
         url: '../api/logpeck/addHost',
-        data: {ip: $scope.addHostIP},
+        data: {ip: host},
       }).then(function successCallback(response) {
         if (response.data.err == null) {
           $http({
             method: 'POST',
             url: '../api/logpeck/version',
-            data: {ip: $scope.addHostIP},
+            data: {ip: host},
           }).then(function successCallback(response) {
             if (response.data.data) {
               if (response.data.data == myConfig.Version) {
-                $scope.hostStatus[$scope.addHostIP] = "#2f99c1";
+                $scope.hostStatus[host] = "#2f99c1";
               } else {
-                $scope.hostStatus[$scope.addHostIP] = "#F39C12";
+                $scope.hostStatus[host] = "#F39C12";
               }
             } else {
-              $scope.hostStatus[$scope.addHostIP] = "#e8488b";
+              $scope.hostStatus[host] = "#e8488b";
             }
-            $scope.hostList.push($scope.addHostIP);
+            $scope.hostList.push(host);
             $rootScope.TaskIP = "";
             $rootScope.TaskList = [];
             $scope.logstat = true;
@@ -192,8 +199,16 @@ app.controller('logpeckMain',function ($scope , $rootScope, $http) {
       data:{Group:$rootScope.GroupName},
     }).then(function successCallback(response) {
       if(response.data.err == null) {
-        $scope.hostList = response.data.data;
-        $scope.showGroupEdit = false;
+        $http({
+          method: 'POST',
+          url: '../api/logpeck/versions',
+          data: {hosts: response.data.data},
+        }).then(function successCallback(response) {
+          console.log(response)
+          var hostList = getVersion(response.data.data)
+          $scope.hostList = hostList;
+          $scope.showGroupEdit = false;
+        });
       } else {
         $scope.logstat = false;
         $scope.indexLog = response.data.err;
