@@ -1,5 +1,5 @@
 
-export const Version = "0.5.0";
+export const Version = "0.6.0";
 
 export const TaskName = "TestLog";
 export const LogPath = "test.log";
