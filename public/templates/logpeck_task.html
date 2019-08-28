@@ -328,7 +328,7 @@
                         <div style="width: auto;float: left">
                             name
                             <ng-form name="filename">
-                                <input type="text" ng-model="fieldsArray[key].Name" name="file_name" style="width: 120px;height:25px" ng-pattern="/^[a-z，A-Z，0-9，-，_]*$/">
+                                <input type="text" ng-model="fieldsArray[key].Name" name="file_name" style="width: 120px;height:25px" ng-pattern="/^[a-z，A-Z，0-9，-，_，.]*$/">
                                 <span ng-show="rules(filename.file_name.$error.pattern,key)"></span>
                             </ng-form>
                         </div>
