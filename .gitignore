@@ -1,1 +1,5 @@
-.idea/workspace.xml
+npm-debug.log*
+node_modules
+/build/
+./server/routes/db
+./idea

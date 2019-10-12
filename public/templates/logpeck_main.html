@@ -1,0 +1,333 @@
+
+<style>
+  .title{
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    min-height: 70px;
+    color: #2d2d2d;
+    background-color: #e4e4e4;
+    line-height: 1.5;
+  }
+  .title_top{
+    height: 32px;
+    width: 100%;
+    float: left;
+  }
+  .name{
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 100%;
+    padding-left: 10px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .head{
+    margin-top: 20px;
+    height: 50px;
+    width: 100%;
+    float: left;
+  }
+  .head_1{
+    width: 26%;
+    height: 100%;
+    float: left;
+    background-color: #F6F6F6;
+    padding-right: 10px;
+    padding-top: 10px;
+  }
+  .head_2{
+    width: 72%;
+    height: 100%;
+    float: left;
+    background-color: #F6F6F6;
+    margin-left: 2%;
+    padding-right: 30px;
+    padding-top: 10px;
+  }
+  .describe{
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 50%;
+    padding-top: 7px;
+    padding-left: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    float: left;
+  }
+  .subject{
+    height:822px;
+    width: 100%;
+    float: left;
+  }
+  .subject_1{
+    width: 26%;
+    height: 100%;
+    float: left;
+  }
+  .subject_add{
+    background-color: #e4e4e4;
+    padding-left: 2%;
+    padding-right: 1%;
+    padding-top: 8px;
+    padding-bottom: 2px;
+    margin-bottom: 1px;
+    width: 100%;
+    height: 40px;
+    float: left;
+  }
+  .subject_list{
+    width: 100%;
+    height: 782px;
+    float: left;
+    overflow: auto;
+  }
+  .subject_2{
+    width: 72%;
+    height:802px;
+    float: left;
+    margin-left: 2%;
+    margin-top: 20px;
+  }
+  li{
+    list-style-type:none
+  }
+  .host_list{
+    background-color: #e4e4e4;
+    padding-left: 2%;
+    padding-right: 1%;
+    padding-top: 10px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid white;
+    width: 100%;
+    height: 40px;
+    float: left;
+  }
+  .host_list_name{
+    width: 70%;
+    height: 100%;
+    float: left;
+  }
+  .host_list_control{
+    width: 25%;
+    height: 100%;
+    float: right;
+  }
+  .task_list{
+    background-color: #e4e4e4;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 1px;
+    width: 100%;
+    height: 52px;
+    float: left;
+  }
+  .task_list_name {
+    width: 23%;
+    height: 100%;
+    padding-right: 10px;
+    float: left;
+  }
+  .task_list_name2{
+    padding-right: 10px;
+    float: left;
+    height: 42px;
+    display:table;
+  }
+  .task_list_status{
+    width: 13%;
+    height: 100%;
+    float: left;
+  }
+  .task_list_logpath{
+    width: 34%;
+    height: 100%;
+    float: left;
+  }
+  .task_list_control{
+    padding-top: 11px;
+    width: 30%;
+    height: 100%;
+    float: left;
+  }
+  .Button--small {
+    font-size: 12px;
+    padding: 2px 16px 3px;
+    height: 22px;
+  }
+  .Button--middle {
+    float: right;
+    margin-right: 10px;
+    font-size: 12px;
+    padding: 2px 17px 3px;
+    height: 22px;
+    width: 58px;
+  }
+  dev-tools__app-container {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+  .app-container > * {
+    position: relative;
+    z-index: 0;
+  }
+
+</style>
+
+<div>
+  <div class="title">
+    <div class="title_top">
+      <div class="name">
+        <a ng-click="jumpMain()">Logpeck</a>
+      </div>
+      <p style="float: right;margin-right: 20px;color: #e8488b" ng-show="!logstat">{{indexLog}}</p>
+      <p style="float: right;margin-right: 20px;color: #2f99c1" ng-show="logstat">{{indexLog}}</p>
+    </div>
+  </div>
+  <div class="head">
+    <div class="head_1" style="border-bottom: 2px solid white;border-right: 2px solid white;">
+      <p class="describe">Host</p>
+      <p class="describe" style="color:#5a5a5a">({{ GroupName }})</p>
+    </div>
+    <div class="head_2" ng-show="showTask">
+      <p class="describe" >Task List</p>
+      <p class="describe" style="color:#5a5a5a">({{ TaskIP }})</p>
+      <a href='#/addTask' ng-show="showTask" class="kuiButton kuiButton--primary kuiButton--iconText kuiButton__icon kuiIcon fa-plus" style="padding-top: 6px;float: right">
+        Add
+      </a>
+    </div>
+    <div class="head_1" ng-show="showGroup" style="border-bottom: 2px solid white;margin-left:2%">
+      <p class="describe" >Group</p>
+    </div>
+  </div>
+  <div class="subject">
+    <div class="subject_1" style="border-right: 2px solid white;">
+      <div class="subject_add">
+        <input type="text" placeholder="{{DefaultLogpeckIP}}" class="euiFieldText" ng-model="addHostIP" style="width:50%;height:80%"> :
+        <input type="text" class="euiFieldText" ng-model="addHostPort" style="width:20%;height:80%">
+        <a class="kuiButton kuiButton--primary Button--middle" ng-click="addHost()" style="float:right;margin-top: 2px">add</a>
+      </div>
+      <div class="subject_list" style="background-color:#e4e4e4">
+        <li ng-repeat="index in hostList | orderBy:index">
+          <div class="host_list" ng-style="set_color(index,TaskIP)">
+            <div class="host_list_name" ng-style="set_color(index,TaskIP)">
+              <a ng-click="listTask(index)"  name="{{ index }}" ng-style="set_color(index,TaskIP)">
+                {{ index }}
+              </a>
+            </div>
+            <div style="width:5%;float: left" ng-show="showGroupEdit">
+              <input type="checkbox" ng-checked="groupCheck[index]" ng-click='selectGroupMember(index)' style="float:left;width: 10px;height: 10px;"/>
+            </div>
+            <div class="host_list_control">
+              <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeHost($event)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: #e8488b">
+                remove
+              </a>
+            </div>
+          </div>
+        </li>
+      </div>
+    </div>
+
+    <div ng-show="showTask" class="subject_2">
+      <div style="width:100%;background-color: #F6F6F6;float:left">
+        <div class="task_list_name" style="padding-left: 10px;height: 25px;float:left">
+          Name
+        </div>
+        <div class="task_list_status" style="width: 20%;height: 25px;float:left">
+          Status
+        </div>
+        <div class="task_list_logpath" style=";height: 25px;float:left">
+          LogPath
+        </div>
+      </div>
+      <li ng-repeat="(key,value) in TaskList">
+        <div class="task_list">
+          <div style="width: 23%;height: 100%;float: left">
+            <div class="task_list_name2">
+              <div style="vertical-align:middle; display:table-cell; word-wrap:break-word; word-break:break-all; overflow: scroll; ">
+                <a ng-click="updateList($event)" name="{{ value.name }}">
+                  {{ value.name }}
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="task_list_status" ng-show="value.stop" style="color: #e8488b;padding-top: 11px;">
+            stop
+          </div>
+          <div class="task_list_status" ng-show="value.start" style="color: #2f99c1;padding-top: 11px;">
+            start
+          </div>
+          <div style="width: 34%;height: 100%;float: left">
+            <div class="task_list_name2">
+              <div style="vertical-align:middle; display:table-cell;word-wrap:break-word; word-break:break-all; overflow: scroll;">
+                {{value.logpath}}
+              </div>
+            </div>
+          </div>
+          <div class="task_list_control">
+            <a class="kuiButton kuiButton--primary kuiButton--small " ng-click="removeTask($event)" name="{{  value.name }}"  style="float: right;margin-right: 5px;width: 58px;background-color: #e8488b">
+              remove
+            </a>
+            <a class="kuiButton kuiButton--primary Button--small " ng-click="stopTask($event)" name="{{  key }}"   style="float: right;margin-right: 5px;width: 58px">
+              stop
+            </a>
+            <a class="kuiButton kuiButton--primary Button--small " ng-click="startTask($event)" name="{{  key }}" id="{{ key }}" style="float: right;margin-right: 5px;width: 58px">
+              start
+            </a>
+          </div>
+        </div>
+      </li>
+    </div>
+
+    <div ng-show="showGroup" style="width: 26%;height:100%;float: left;margin-left:2%">
+      <div style="float:left;width:100%;height:100%;border-right: 2px solid white;background-color:#F6F6F6">
+        <div class="subject_add" style="border-bottom: 1px solid white;background-color:#F6F6F6">
+          <input type="text" style="width: 65%" ng-model="addGroupName">
+          <a class="kuiButton kuiButton--primary Button--middle" ng-click="addGroup()" style="float:right;margin-top: 2px">add</a>
+        </div>
+        <div class="subject_list">
+          <li ng-repeat="index in groupList | orderBy:index">
+            <div class="host_list" style="border-bottom: 1px solid white;background-color:#F6F6F6">
+              <div class="host_list_name" style="width:60%;float: left;display:table;">
+                <a ng-click="listGroupMember(index)"  name="{{ index }}" >
+                  {{ index }}
+                </a>
+              </div>
+              <div class="host_list_control" style="width:20%;float: left;">
+                <a class="kuiButton kuiButton--primary Button--small" ng-show="showEdit[index]" ng-click="editGroup(index)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: burlywood;">
+                  edit
+                </a>
+                <a class="kuiButton kuiButton--primary kuiButton--small" ng-show="!showEdit[index]" ng-click="updateGroup(index)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: #6EADC1">
+                  update
+                </a>
+              </div>
+              <div class="host_list_control" style="width:20%;float: left">
+                <a class="kuiButton kuiButton--primary kuiButton--small" ng-click="removeGroup(index)" name="{{ index }}" style="float: right;margin-right: 10px;width: 58px;background-color: #e8488b">
+                  remove
+                </a>
+              </div>
+            </div>
+          </li>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
