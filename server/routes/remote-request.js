@@ -155,7 +155,7 @@ export default function (server) {
           Keywords: Keywords,
           Test:Test,
         };
-        Http.post(ip, '/peck_task/test', 'POST', JSON.stringify(esLog), 2000).then((res)=> {
+        Http.post(ip, '/peck_task/test', 'POST', JSON.stringify(esLog), 10000).then((res)=> {
           reply(res);
         });
       }
